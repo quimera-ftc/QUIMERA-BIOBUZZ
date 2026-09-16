@@ -45,6 +45,7 @@ public class testIntake {
     }
 
     public void toggle() {
+
         if (!powered) {
             collectOn();
         } else {
@@ -53,9 +54,13 @@ public class testIntake {
     }
 
     public void setPower(double power) {
+
         this.power = power;
         if (powered) {
             intakeLow.setPower(direction * power);
         }
     }
 }
+
+
+

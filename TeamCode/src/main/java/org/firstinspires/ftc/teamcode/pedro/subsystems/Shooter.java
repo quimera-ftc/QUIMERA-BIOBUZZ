@@ -64,7 +64,4 @@ public class Shooter {
 //    public void turnShootOff() {
 //        powered = false;
 //        shooterLeft.setPower(minPower);
-//        shooterRight.setPower(minPower);
-//    }
-
 }

@@ -4,10 +4,11 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.w3c.dom.ls.LSOutput;
+
 public class Intake2 {
 
     public DcMotor topMotor, bottonMotor;
-
     public double topPower = 0.67, bottonPower = 0.40;
     public double direction = 1;
     public boolean topOn = false, bottonOn = false;

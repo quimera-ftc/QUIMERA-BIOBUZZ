@@ -49,11 +49,9 @@ public class TeleOp extends OpMode {
             if (!shooting) {
                 runtime.reset();
             }
-
             if (runtime.milliseconds() > 2000) {
                 intake.collectTop();
             }
-
             shooting = true;
 
         } else {
@@ -61,11 +59,8 @@ public class TeleOp extends OpMode {
             shooting = false;
             intake.stopTop();
         }
-
-
 //----------------------------------------------------------
 
         driveTrain.driveStick();
     }
-
 }
