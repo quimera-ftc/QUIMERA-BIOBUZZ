@@ -49,12 +49,13 @@ public class testTeleOp extends OpMode {
         if (gamepad1.left_trigger_pressed) {
             intake.toggleTop();
         }
-        driveTrain.driveStick();
 
         if (gamepad1.bWasPressed()) {
             intake.toggleTop();
             intake.toggleBottom();
         }
+
+        driveTrain.driveStick();
     }
 
     @Override
