@@ -1,4 +1,5 @@
 package org.firstinspires.ftc.teamcode.pedro.tests;
+import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.gamepad1;
 import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
@@ -9,35 +10,57 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-public class testFlyWheel{
+@TeleOp
+public class testFlyWheel extends OpMode{
 
-    DcMotor fr,fl;
+    DcMotor shooterRight, shooterLeft;
 
     double maxPower = 1.0, minPower = 0.0;
 
 
 
+    @Override
     public void start() {
 
 
-        fr = hardwareMap.get(DcMotor.class, "fr");
-        fl = hardwareMap.get(DcMotor.class, "fl");
+        shooterRight = hardwareMap.get(DcMotor.class, "shooterRight");
+        shooterLeft = hardwareMap.get(DcMotor.class, "shooterLeft");
 
-        fr.setDirection(DcMotor.Direction.REVERSE);
-        fl.setDirection(DcMotor.Direction.FORWARD);
+        shooterRight.setDirection(DcMotor.Direction.REVERSE);
+        shooterLeft.setDirection(DcMotor.Direction.FORWARD);
 
     }
 
+    @Override
     public void init() {
 
-        fr.setPower(maxPower);
-        fl.setPower(maxPower);
     }
-
+    @Override
     public void loop() {
 
-        fr.setPower(minPower);
-        fl.setPower(minPower);
+        if (gamepad1.right_trigger_pressed) {
+
+            shooterRight.setDirection(DcMotor.Direction.REVERSE);
+            shooterLeft.setDirection(DcMotor.Direction.FORWARD);
+            shooterLeft.setPower(maxPower);
+            shooterRight.setPower(maxPower);
+        } else {
+            shooterRight.setPower(minPower);
+            shooterLeft.setPower(minPower);
+        }
+
+        if (gamepad1.left_trigger_pressed) {
+
+            shooterRight.setDirection(DcMotor.Direction.FORWARD);
+            shooterLeft.setDirection(DcMotor.Direction.FORWARD);
+            shooterRight.setPower(maxPower);
+            shooterLeft.setPower(maxPower);
+        } else {
+            shooterRight.setPower(minPower);
+            shooterLeft.setPower(minPower);
+        }
+
+
     }
 
 

@@ -1,66 +1,33 @@
 package org.firstinspires.ftc.teamcode.pedro.subsystems;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 public class Intake {
 
-
-    DcMotor intakeLow;
-    double power = 0.67, direction = 1.0, minPower = 0;
-
-    boolean powered = false;
-
+    private final DcMotor intake;
+    private boolean isOn = false;
     public Intake(HardwareMap hardwareMap) {
-
-        intakeLow = hardwareMap.get(DcMotor.class, "il");
-
-        intakeLow.setDirection(DcMotor.Direction.FORWARD);
-
+        intake = hardwareMap.get(DcMotor.class, "intake");
     }
 
-    public void collectOn() {
-        intakeLow.setPower(power * direction);
-        powered = true;
+    public void turnOn() {
+        isOn = true;
+        intake.setPower(1);
     }
 
-    public void reverse() {
-
-        direction = -direction;
-
-        if (powered) {
-            intakeLow.setPower(direction * power);
-        }
-    }
-
-    public void collectOff(){
-
-        intakeLow.setPower(minPower);
-        powered = false;
+    public void turnOff() {
+        isOn = false;
+        intake.setPower(0);
     }
 
     public void toggle() {
-        if (!powered) {
-            collectOn();
-        } else {
-            collectOff();
-        }
+        if (!isOn) {
+            turnOn();
+        } else turnOff();
     }
 
-    public void setPower(double power) {
-        this.power = power;
-        if (powered) {
-            intakeLow.setPower(direction * power);
-        }
+    public boolean isOn(){
+        return isOn;
     }
-
-
 }
-
-
-
-
-
-
