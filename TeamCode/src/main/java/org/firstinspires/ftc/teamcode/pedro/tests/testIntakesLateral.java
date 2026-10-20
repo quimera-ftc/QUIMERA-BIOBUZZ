@@ -10,22 +10,42 @@ public class testIntakesLateral extends OpMode {
 
     DcMotor intakeF, intakeL;
     boolean intakeOn = false;
+    boolean reverseOn = false;
 
     @Override
     public void loop() {
 
         if (gamepad1.aWasPressed()) {
 
-            if (!intakeOn) {
-                intakeF.setPower(1);
-                intakeL.setPower(1);
-                intakeOn = true;
-            } else {
-                intakeL.setPower(0);
-                intakeF.setPower(0);
-                intakeOn = false;
+            if (!reverseOn) {
+
+                if (!intakeOn) {
+                    intakeF.setPower(1);
+                    intakeL.setPower(1);
+                    intakeOn = true;
+                } else {
+                    intakeL.setPower(0);
+                    intakeF.setPower(0);
+                    intakeOn = false;
+                }
             }
 
+        }
+
+        if (gamepad1.yWasPressed()) {
+
+            if (!intakeOn) {
+
+                if (!reverseOn) {
+                    intakeF.setPower(-1);
+                    intakeL.setPower(-1);
+                    reverseOn = true;
+                } else {
+                    intakeL.setPower(0);
+                    intakeF.setPower(0);
+                    reverseOn = false;
+                }
+            }
         }
 
     }

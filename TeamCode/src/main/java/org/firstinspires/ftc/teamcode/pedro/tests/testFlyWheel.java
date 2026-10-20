@@ -13,9 +13,10 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 @TeleOp
 public class testFlyWheel extends OpMode{
 
-    DcMotor shooterRight, shooterLeft;
+    DcMotor shooterRight, shooterLeft; //intakeLow;
 
-    double maxPower = 1.0, minPower = 0.0;
+    double maxPower = 1.0, minPower = 0.0, direction = 1.0;
+    boolean on = false, collecting = false;
 
 
 
@@ -25,9 +26,12 @@ public class testFlyWheel extends OpMode{
 
         shooterRight = hardwareMap.get(DcMotor.class, "shooterRight");
         shooterLeft = hardwareMap.get(DcMotor.class, "shooterLeft");
+        //intakeLow = hardwareMap.get(DcMotor.class, "intakeLow");
 
+
+        //intakeLow.setDirection(DcMotor.Direction.REVERSE);
         shooterRight.setDirection(DcMotor.Direction.REVERSE);
-        shooterLeft.setDirection(DcMotor.Direction.FORWARD);
+        shooterLeft.setDirection(DcMotor.Direction.REVERSE);
 
     }
 
@@ -52,7 +56,7 @@ public class testFlyWheel extends OpMode{
         if (gamepad1.left_trigger_pressed) {
 
             shooterRight.setDirection(DcMotor.Direction.FORWARD);
-            shooterLeft.setDirection(DcMotor.Direction.FORWARD);
+            shooterLeft.setDirection(DcMotor.Direction.REVERSE);
             shooterRight.setPower(maxPower);
             shooterLeft.setPower(maxPower);
         } else {
@@ -60,8 +64,29 @@ public class testFlyWheel extends OpMode{
             shooterLeft.setPower(minPower);
         }
 
+//        if (gamepad1.yWasPressed()) {
+//            direction = -direction;
+//
+//            if (collecting) {
+//                intakeLow.setPower(maxPower * direction);
+//            }
+//        }
+//
+//        if (gamepad1.aWasPressed()) {
+//
+//            if (!on) {
+//                intakeLow.setPower(1);
+//                collecting = true;
+//            } else {
+//                intakeLow.setPower(0);
+//                collecting = false;
+//            }
+//
+//            on = !on;
+        }
+
 
     }
 
 
-}
+//}

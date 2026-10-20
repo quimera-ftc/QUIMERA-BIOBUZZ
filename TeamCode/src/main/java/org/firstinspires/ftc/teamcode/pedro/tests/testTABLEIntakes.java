@@ -24,7 +24,6 @@ public class testTABLEIntakes extends OpMode {
     public void loop() {
 
         if (gamepad1.yWasPressed()) {
-
             power = -power;
         }
 
