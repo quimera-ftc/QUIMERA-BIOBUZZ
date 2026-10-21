@@ -9,8 +9,8 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 public class Tower {
-    private final double gearRatio = 50.0 / 15.0;
-    private final double ticksPerRev, ticksPerDegree;
+    double gearRatio = 50.0 / 15.0;
+    double ticksPerRev, ticksPerDegree;
 
     private enum TowerState {
         IDLE,
@@ -31,7 +31,7 @@ public class Tower {
         LEFT
     }
     private final DcMotor tower;
-    private final double towerPower = 0.5;
+    double towerPower = 0.5, maxSpin = 120;
     private final double[] offsets = new double[] {0,3};
     private TowerState state = TowerState.IDLE;
     private final Pose topNestBLUE = new Pose(84,84);
@@ -54,7 +54,7 @@ public class Tower {
 
     public void rotate(Direction direction) {
 
-        if (Math.abs(dislocation()) > 100) {
+        if (Math.abs(dislocation()) >= maxSpin) {
             return;
         }
 
@@ -117,20 +117,16 @@ public class Tower {
 
             case ROTATING:
 
-                if (Math.abs(dislocation()) > 100) {
+                if (Math.abs(dislocation()) >= maxSpin) {
                     state = TowerState.IDLE;
                 }
 
             case TRACKING:
 
                 double correction = calculate_correction();
-                if (Math.abs(correction) > 100) {
 
-                    correction = 100;
-
-                } else if (correction <= 1) {
-                    stop();
-                    break;
+                if (dislocation() + correction > maxSpin) {
+                    correction = maxSpin;
                 }
                 adjust(correction);
         }
