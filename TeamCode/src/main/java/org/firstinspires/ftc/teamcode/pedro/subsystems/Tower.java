@@ -116,7 +116,6 @@ public class Tower {
 
 
             case ROTATING:
-
                 if (Math.abs(dislocation()) >= maxSpin) {
                     state = TowerState.IDLE;
                 }
@@ -134,12 +133,16 @@ public class Tower {
     }
 
     public boolean isBusy() {
-        if (state == TowerState.TRACKING || state == TowerState.LOCKED) {
-        return true;
-        } else {
-            return false;
-        }
+        return state != TowerState.IDLE;
 
+    }
+
+    public boolean isTracking() {
+        return state == TowerState.TRACKING;
+    }
+
+    public boolean isLocked() {
+        return state == TowerState.LOCKED;
     }
 
     public void track(TrackingPoses pose) {
