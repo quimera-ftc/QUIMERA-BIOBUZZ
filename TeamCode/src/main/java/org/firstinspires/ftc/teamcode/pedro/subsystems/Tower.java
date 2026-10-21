@@ -137,6 +137,15 @@ public class Tower {
 
     }
 
+    public boolean isBusy() {
+        if (state == TowerState.TRACKING || state == TowerState.LOCKED) {
+        return true;
+        } else {
+            return false;
+        }
+
+    }
+
     public void track(TrackingPoses pose) {
 
         if (state == TowerState.LOCKED) {
