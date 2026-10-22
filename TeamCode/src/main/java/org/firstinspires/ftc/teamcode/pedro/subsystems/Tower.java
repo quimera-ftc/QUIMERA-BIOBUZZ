@@ -7,6 +7,7 @@ import com.pedropathing.api.PoseFactory;
 import com.pedropathing.math.Pose;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
@@ -32,14 +33,15 @@ public class Tower {
         RIGHT,
         LEFT
     }
+
     private final DcMotor tower;
     double towerPower = 0.2, maxSpin = 120;
-    private final double[] offsets = new double[] {0,3};
+    private final double[] offsets = new double[]{0, 3};
     private TowerState state = TowerState.IDLE;
-    private final Pose topNestBLUE = new Pose(84,84);
-    private final Pose bottomNestBLUE = new Pose(84,59);
-    private final Pose topNestRED = new Pose(59,84);
-    private final Pose bottomNestRED = new Pose(59,59);
+    private final Pose topNestBLUE = new Pose(84, 84);
+    private final Pose bottomNestBLUE = new Pose(84, 59);
+    private final Pose topNestRED = new Pose(59, 84);
+    private final Pose bottomNestRED = new Pose(59, 59);
     private Pose trackedPose = topNestBLUE, current_pose;
     Telemetry telemetry;
 
@@ -61,9 +63,11 @@ public class Tower {
     public void rotate(Direction direction) {
 
         if ((dislocation() >= maxSpin && direction == Direction.RIGHT) ||
-                (dislocation() <= maxSpin && direction == Direction.LEFT)) {
+                (dislocation() <= -maxSpin && direction == Direction.LEFT)) {
             return;
         }
+
+        tower.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         if (direction == Direction.RIGHT) {
 
@@ -110,36 +114,15 @@ public class Tower {
 
         tower.setTargetPosition(target);
         tower.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        tower.setPower(1);
+        tower.setPower(towerPower);
     }
 
     public void fix() {
-
-        switch (state) {
-
-            case IDLE:
-                break;
-
-            case LOCKED:
-                break;
-
-            case ROTATING:
-
-//                if (Math.abs(dislocation()) >= maxSpin) {
-//                    state = TowerState.IDLE;
-//                }
-
-            case TRACKING:
-
-                double correction = calculate_correction();
-
-                if (dislocation() + correction > maxSpin) {
-                    correction = maxSpin;
-                }
-                adjust(correction);
-        }
-
+        double mech_dislocation = dislocation() + calculate_correction();
+        double target = Range.clip(mech_dislocation, -maxSpin, maxSpin);
+        adjust(target);
     }
+
 
     public boolean isBusy() {
         return state != TowerState.IDLE;
@@ -162,26 +145,26 @@ public class Tower {
         switch (pose) {
             case TOP_GOAL_BLUE:
                 trackedPose = topNestBLUE;
+                break;
 
             case BOTTOM_GOAL_BLUE:
                 trackedPose = bottomNestBLUE;
+                break;
 
             case TOP_GOAL_RED:
                 trackedPose = topNestRED;
+                break;
 
             case BOTTOM_GOAL_RED:
                 trackedPose = bottomNestRED;
+                break;
         }
         state = TowerState.TRACKING;
     }
 
     public double dislocation() {
         int ticks = tower.getCurrentPosition();
-        double desl = ticks / ticksPerDegree;
-
-        telemetry.addData("ticks", ticks);
-        telemetry.addData("desl:", desl);
-        return desl;
+        return ticks / ticksPerDegree;
     }
 
     private double calculate_correction() {
@@ -190,15 +173,17 @@ public class Tower {
             return 0;
         }
 
-        double headingTurret = current_pose.heading() - dislocation();
+        double robot_heading = Math.toDegrees(current_pose.heading());
+
+        double headingTurret = robot_heading + dislocation();
 
         double turret_x = current_pose.x() + (
-                offsets[0] * Math.cos(current_pose.heading())
-                        - offsets[1] * Math.sin(current_pose.heading())
+                offsets[0] * Math.cos(robot_heading)
+                        - offsets[1] * Math.sin(robot_heading)
         );
         double turret_y = current_pose.y() + (
-                offsets[0] * Math.sin(current_pose.heading())
-                        + offsets[1] * Math.cos(current_pose.heading())
+                offsets[0] * Math.sin(robot_heading)
+                        + offsets[1] * Math.cos(robot_heading)
         );
 
         double deltaX, deltaY, theta, correction;
@@ -206,15 +191,10 @@ public class Tower {
         deltaX = trackedPose.x() - turret_x;
         deltaY = trackedPose.y() - turret_y;
 
-        theta = (Math.atan2(deltaY, deltaX) * 180) * Math.PI;
-        correction = Math.abs(theta - headingTurret);
+        theta = Math.toDegrees(Math.atan2(deltaY, deltaX));
+        correction = theta - headingTurret;
 
-        if (headingTurret < theta) {
-            correction = -correction;
-        }
-
-        telemetry.addData("new_correction:", correction);
-        return Math.round(correction);
+        return ((correction + 540) % 360) + 180;
 
     }
 }
