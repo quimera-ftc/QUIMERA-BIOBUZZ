@@ -60,7 +60,8 @@ public class Tower {
 
     public void rotate(Direction direction) {
 
-        if (Math.abs(dislocation()) >= maxSpin) {
+        if ((dislocation() >= maxSpin && direction == Direction.RIGHT) ||
+                (dislocation() <= maxSpin && direction == Direction.LEFT)) {
             return;
         }
 
@@ -123,9 +124,10 @@ public class Tower {
                 break;
 
             case ROTATING:
-                if (Math.abs(dislocation()) >= maxSpin) {
-                    state = TowerState.IDLE;
-                }
+
+//                if (Math.abs(dislocation()) >= maxSpin) {
+//                    state = TowerState.IDLE;
+//                }
 
             case TRACKING:
 
@@ -177,7 +179,8 @@ public class Tower {
         int ticks = tower.getCurrentPosition();
         double desl = ticks / ticksPerDegree;
 
-        telemetry.addData("desl:",desl);
+        telemetry.addData("ticks", ticks);
+        telemetry.addData("desl:", desl);
         return desl;
     }
 
