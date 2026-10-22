@@ -8,6 +8,8 @@ import com.pedropathing.math.Pose;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+
 public class Tower {
     double gearRatio = 50.0 / 15.0;
     double ticksPerRev, ticksPerDegree;
@@ -31,22 +33,26 @@ public class Tower {
         LEFT
     }
     private final DcMotor tower;
-    double towerPower = 0.5, maxSpin = 120;
+    double towerPower = 0.2, maxSpin = 120;
     private final double[] offsets = new double[] {0,3};
     private TowerState state = TowerState.IDLE;
     private final Pose topNestBLUE = new Pose(84,84);
     private final Pose bottomNestBLUE = new Pose(84,59);
     private final Pose topNestRED = new Pose(59,84);
     private final Pose bottomNestRED = new Pose(59,59);
-    private int lockedTicks = 0;
-    private Pose trackedPose, current_pose;
+    private Pose trackedPose = topNestBLUE, current_pose;
+    Telemetry telemetry;
 
 
-    public Tower(@NonNull HardwareMap hardwareMap) {
+    public Tower(HardwareMap hardwareMap, Telemetry telemetry) {
         tower = hardwareMap.get(DcMotor.class, "tower");
+
+        this.telemetry = telemetry;
 
         tower.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         tower.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        tower.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         ticksPerRev = tower.getMotorType().getTicksPerRev();
         ticksPerDegree = (ticksPerRev * gearRatio) / 360.0;
@@ -59,7 +65,9 @@ public class Tower {
         }
 
         if (direction == Direction.RIGHT) {
+
             tower.setPower(towerPower);
+
         } else {
             tower.setPower(-towerPower);
         }
@@ -68,10 +76,9 @@ public class Tower {
     }
 
     public void lock() {
-        lockedTicks = tower.getCurrentPosition();
         state = TowerState.LOCKED;
 
-        tower.setTargetPosition(lockedTicks);
+        tower.setTargetPosition(tower.getCurrentPosition());
         tower.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         tower.setPower(1);
     }
@@ -110,10 +117,10 @@ public class Tower {
         switch (state) {
 
             case IDLE:
-
+                break;
 
             case LOCKED:
-
+                break;
 
             case ROTATING:
                 if (Math.abs(dislocation()) >= maxSpin) {
@@ -134,7 +141,6 @@ public class Tower {
 
     public boolean isBusy() {
         return state != TowerState.IDLE;
-
     }
 
     public boolean isTracking() {
@@ -169,10 +175,17 @@ public class Tower {
 
     public double dislocation() {
         int ticks = tower.getCurrentPosition();
-        return ticks / ticksPerDegree;
+        double desl = ticks / ticksPerDegree;
+
+        telemetry.addData("desl:",desl);
+        return desl;
     }
 
     private double calculate_correction() {
+
+        if (current_pose == null) {
+            return 0;
+        }
 
         double headingTurret = current_pose.heading() - dislocation();
 
@@ -197,6 +210,7 @@ public class Tower {
             correction = -correction;
         }
 
+        telemetry.addData("new_correction:", correction);
         return Math.round(correction);
 
     }

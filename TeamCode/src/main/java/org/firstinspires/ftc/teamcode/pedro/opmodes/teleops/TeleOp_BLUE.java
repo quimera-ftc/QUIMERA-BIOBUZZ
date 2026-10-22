@@ -12,17 +12,19 @@ import org.firstinspires.ftc.teamcode.pedro.subsystems.Tower;
 
 @TeleOp
 public class TeleOp_BLUE extends OpMode {
-
     Intake intake;
     DriveTrain driveTrain;
     Tower tower;
 
-    Follower follower = Constants.create(hardwareMap);
+    Follower follower;
 
     @Override
     public void init() {
-        tower = new Tower(hardwareMap);
+        follower = Constants.create(hardwareMap);
+        tower = new Tower(hardwareMap, telemetry);
         driveTrain = new DriveTrain(hardwareMap, gamepad1);
+
+        follower.setPose(new Pose(132.6505617977528, 133.92247191011242, 270));
     }
 
     @Override
@@ -38,15 +40,19 @@ public class TeleOp_BLUE extends OpMode {
 
         tower.update(currentPose);
 
-        if (gamepad1.right_bumper) {
+        if (gamepad1.right_bumper && !tower.isLocked()) {
+
             tower.rotate(Tower.Direction.RIGHT);
-        } else if (gamepad1.left_bumper) {
+
+        } else if (gamepad1.left_bumper && !tower.isLocked()) {
+
             tower.rotate(Tower.Direction.LEFT);
+
         } else if (!tower.isTracking()) {
             tower.stop();
         }
 
-        if (gamepad1.dpadRightWasPressed()) {
+        if (gamepad1.dpadRightWasPressed() && !tower.isLocked()) {
 
             if (!tower.isTracking()) {
 
@@ -61,6 +67,7 @@ public class TeleOp_BLUE extends OpMode {
         }
 
         driveTrain.driveStick();
+        telemetry.update();
     }
 
 
