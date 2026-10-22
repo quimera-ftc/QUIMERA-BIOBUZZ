@@ -11,20 +11,25 @@ public class Intake {
         intake = hardwareMap.get(DcMotor.class, "intake");
     }
 
-    public void turnOn() {
+    public void in() {
         isOn = true;
         intake.setPower(1);
     }
 
-    public void turnOff() {
+    public void out() {
+        isOn = true;
+        intake.setPower(-1);
+    }
+
+    public void stop() {
         isOn = false;
         intake.setPower(0);
     }
 
     public void toggle() {
         if (!isOn) {
-            turnOn();
-        } else turnOff();
+            in();
+        } else stop();
     }
 
     public boolean isOn(){
