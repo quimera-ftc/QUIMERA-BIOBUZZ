@@ -15,34 +15,22 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 public class Constants {
-
-    // ------------------------------------------------------------------
-    // DRIVETRAIN (Mecanum)
-    // TODO: rode o "mecanumTuner" (AutoTune) e cole aqui o resultado.
-    // Os valores abaixo são apenas placeholders de exemplo.
-    // ------------------------------------------------------------------
     public static MecanumConfig drivetrainConfig = new MecanumConfig(
             c -> {
-                c.frontLeftName.set("fl");
-                c.backLeftName.set("bl");
-                c.frontRightName.set("fr");
-                c.backRightName.set("br");
+                c.frontLeftName.set("lf");
+                c.backLeftName.set("lr");
+                c.frontRightName.set("rf");
+                c.backRightName.set("rr");
 
-                c.frontLeftDirection.set(DcMotorSimple.Direction.FORWARD);
-                c.backLeftDirection.set(DcMotorSimple.Direction.FORWARD);
-                c.frontRightDirection.set(DcMotorSimple.Direction.REVERSE);
-                c.backRightDirection.set(DcMotorSimple.Direction.REVERSE);
+                c.frontLeftDirection.set(DcMotorSimple.Direction.REVERSE);
+                c.backLeftDirection.set(DcMotorSimple.Direction.REVERSE);
+                c.frontRightDirection.set(DcMotorSimple.Direction.FORWARD);
+                c.backRightDirection.set(DcMotorSimple.Direction.FORWARD);
 
-                // Freio manual (útil pro TeleOp)
                 c.manualBrakeMode.set(true);
             }
     );
 
-    // ------------------------------------------------------------------
-    // LOCALIZADOR (Pinpoint)
-    // TODO: rode o "pinpointTuner" (AutoTune) e cole aqui o resultado.
-    // Os valores abaixo são apenas placeholders de exemplo.
-    // ------------------------------------------------------------------
     public static PinpointConfig localizerConfig = new PinpointConfig(
             c -> {
                 c.name.set("pinpoint");
@@ -53,11 +41,6 @@ public class Constants {
             }
     );
 
-    // ------------------------------------------------------------------
-    // FORESIGHT (algoritmo de path following)
-    // TODO: rode o "foresightTuner" (AutoTune) e cole aqui o resultado.
-    // Os valores abaixo são apenas placeholders de exemplo.
-    // ------------------------------------------------------------------
     public static ForesightConfig foresightConfig = new ForesightConfig(
             c -> {
                 Controller primaryTranslationalForward = Controller.proportional(0.3);
@@ -84,9 +67,6 @@ public class Constants {
             }
     );
 
-    // ------------------------------------------------------------------
-    // Cria o Follower já com o seu Drivetrain, Localizer e Algoritmo
-    // ------------------------------------------------------------------
     public static Follower create(HardwareMap h) {
         return new Follower(
                 new PinpointLocalizer(h, localizerConfig),

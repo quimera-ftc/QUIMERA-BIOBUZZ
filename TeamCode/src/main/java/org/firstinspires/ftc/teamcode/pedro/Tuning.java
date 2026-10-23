@@ -12,8 +12,6 @@ import org.firstinspires.ftc.teamcode.pedro.procedures.PinpointTuner;
 import org.firstinspires.ftc.teamcode.pedro.procedures.Tests;
 
 public final class Tuning {
-    // Tuners go here
-
 
     @Tuner
     public static Procedure mecanumTuner() {
