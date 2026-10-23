@@ -24,7 +24,7 @@ public class TeleOp_BLUE extends OpMode {
         tower = new Tower(hardwareMap, telemetry);
         driveTrain = new DriveTrain(hardwareMap, gamepad1);
 
-        follower.setPose(new Pose(132.6505617977528, 133.92247191011242, 270));
+        follower.setPose(new Pose(132.6505617977528, 133.92247191011242, Math.toRadians(270)));
     }
 
     @Override
@@ -48,7 +48,7 @@ public class TeleOp_BLUE extends OpMode {
 
             tower.rotate(Tower.Direction.LEFT);
 
-        } else if (!tower.isTracking()) {
+        } else if (!tower.isTracking() && !tower.isLocked()) {
             tower.stop();
         }
 

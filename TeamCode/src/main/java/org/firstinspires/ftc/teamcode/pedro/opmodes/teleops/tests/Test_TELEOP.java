@@ -1,11 +1,12 @@
 package org.firstinspires.ftc.teamcode.pedro.opmodes.teleops.tests;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.pedro.subsystems.DriveTrain;
 import org.firstinspires.ftc.teamcode.pedro.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.pedro.subsystems.Shooter;
-
+@TeleOp
 public class Test_TELEOP extends OpMode {
 
     Intake intake;
@@ -23,7 +24,20 @@ public class Test_TELEOP extends OpMode {
     public void loop() {
 
         if (gamepad1.aWasPressed()) {
-            intake.toggle();
+
+            if (intake.isOn()) {
+                intake.stop();
+            } else {
+                intake.in();
+            }
+        }
+
+        if (gamepad1.yWasPressed()) {
+            if (intake.isOn()) {
+                intake.stop();
+            } else {
+                intake.out();
+            }
         }
 
         if (gamepad1.right_trigger_pressed) {
