@@ -1,9 +1,6 @@
 package org.firstinspires.ftc.teamcode.pedro.subsystems;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-
-import com.pedropathing.api.PoseFactory;
 import com.pedropathing.math.Pose;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -35,7 +32,7 @@ public class Tower {
     }
 
     private final DcMotor tower;
-    double towerPower = 0.2, maxSpin = 120;
+    double towerPower = 0.7, maxSpin = 120;
     private final double[] offsets = new double[]{0, 3};
     private TowerState state = TowerState.IDLE;
     private final Pose topNestBLUE = new Pose(84, 84);
@@ -64,6 +61,7 @@ public class Tower {
 
         if ((dislocation() >= maxSpin && direction == Direction.RIGHT) ||
                 (dislocation() <= -maxSpin && direction == Direction.LEFT)) {
+            stop();
             return;
         }
 
@@ -118,9 +116,10 @@ public class Tower {
     }
 
     public void fix() {
-        double mech_dislocation = dislocation() + calculate_correction();
-        double target = Range.clip(mech_dislocation, -maxSpin, maxSpin);
-        adjust(target);
+        if (state != TowerState.TRACKING) return;
+        double current = dislocation();
+        double desired = Range.clip(current - calculate_correction(), -maxSpin, maxSpin);
+        adjust(desired - current);
     }
 
 
@@ -173,18 +172,12 @@ public class Tower {
             return 0;
         }
 
-        double robot_heading = Math.toDegrees(current_pose.heading());
+        double headingRad = current_pose.heading();
 
-        double headingTurret = robot_heading + dislocation();
+        double headingTurret = Math.toDegrees(headingRad) - dislocation();
 
-        double turret_x = current_pose.x() + (
-                offsets[0] * Math.cos(robot_heading)
-                        - offsets[1] * Math.sin(robot_heading)
-        );
-        double turret_y = current_pose.y() + (
-                offsets[0] * Math.sin(robot_heading)
-                        + offsets[1] * Math.cos(robot_heading)
-        );
+        double turret_x = current_pose.x() + (offsets[0] * Math.cos(headingRad) - offsets[1] * Math.sin(headingRad));
+        double turret_y = current_pose.y() + (offsets[0] * Math.sin(headingRad) + offsets[1] * Math.cos(headingRad));
 
         double deltaX, deltaY, theta, correction;
 
@@ -194,7 +187,7 @@ public class Tower {
         theta = Math.toDegrees(Math.atan2(deltaY, deltaX));
         correction = theta - headingTurret;
 
-        return ((correction + 540) % 360) + 180;
+        return ((correction % 360) + 540) % 360 - 180;
 
     }
 }

@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.pedro.subsystems;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 public class Shooter {
@@ -10,6 +11,9 @@ public class Shooter {
         ls = hardwareMap.get(DcMotor.class, "ls");
         rs = hardwareMap.get(DcMotor.class, "rs");
 
+        ls.setDirection(DcMotorSimple.Direction.FORWARD);
+        rs.setDirection(DcMotorSimple.Direction.REVERSE);
+
         ls.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         rs.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
@@ -18,7 +22,6 @@ public class Shooter {
     }
 
     public void shoot() {
-
         rs.setPower(1);
         ls.setPower(1);
     }
