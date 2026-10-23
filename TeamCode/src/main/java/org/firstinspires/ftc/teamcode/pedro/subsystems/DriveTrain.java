@@ -37,8 +37,8 @@ public class DriveTrain {
 
     double spin, strafe, drive;
     public void driveStick() {
-        spin = gamepad1.right_stick_x;
-        strafe = gamepad1.left_stick_x;
+        spin = -gamepad1.right_stick_x;
+        strafe = -gamepad1.left_stick_x;
         drive = gamepad1.left_stick_y;
 
         if (Math.abs(drive) < 0.1) {
@@ -51,10 +51,10 @@ public class DriveTrain {
             spin = 0.0;
         }
 
-        double frontRightPower = drive + strafe + spin;
-        double frontLeftPower = drive - strafe - spin;
-        double backRightPower = drive - strafe + spin;
-        double backLeftPower = drive + strafe - spin;
+        double frontRightPower = drive - strafe - spin;
+        double frontLeftPower = drive + strafe + spin;
+        double backRightPower = drive + strafe - spin;
+        double backLeftPower = drive - strafe + spin;
 
         frontLeft.setPower(frontLeftPower);
         frontRight.setPower(frontRightPower);
