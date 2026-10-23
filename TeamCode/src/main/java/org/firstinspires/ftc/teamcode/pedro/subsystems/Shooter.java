@@ -8,6 +8,7 @@ public class Shooter {
 
     DcMotor rs, ls;
     public double maxpower = 1, minpower = 0;
+    //COMENTARIOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO
     public Shooter(HardwareMap hardwareMap) {
         ls = hardwareMap.get(DcMotor.class, "ls");
         rs = hardwareMap.get(DcMotor.class, "rs");
