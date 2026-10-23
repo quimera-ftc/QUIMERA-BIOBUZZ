@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 public class Shooter {
 
     DcMotor rs, ls;
+    public double maxpower = 1, minpower = 0;
     public Shooter(HardwareMap hardwareMap) {
         ls = hardwareMap.get(DcMotor.class, "ls");
         rs = hardwareMap.get(DcMotor.class, "rs");
@@ -21,13 +22,15 @@ public class Shooter {
         rs.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
     }
 
+
+    //
     public void shoot() {
-        rs.setPower(1);
-        ls.setPower(1);
+        rs.setPower(maxpower);
+        ls.setPower(maxpower);
     }
 
     public void stop() {
-        rs.setPower(0);
-        ls.setPower(0);
+        rs.setPower(minpower);
+        ls.setPower(minpower);
     }
 }
