@@ -7,13 +7,13 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 public class Shooter {
 
     DcMotor rs, ls;
-    public double maxpower = 1, minpower = 0;
-    //COMENTARIOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO
+    public double maxpower = 0.84, minpower = 0;
+    //-- GnHk28 has left the Commits
     public Shooter(HardwareMap hardwareMap) {
         ls = hardwareMap.get(DcMotor.class, "ls");
         rs = hardwareMap.get(DcMotor.class, "rs");
 
-        ls.setDirection(DcMotorSimple.Direction.FORWARD);
+        ls.setDirection(DcMotorSimple.Direction.REVERSE);
         rs.setDirection(DcMotorSimple.Direction.REVERSE);
 
         ls.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
