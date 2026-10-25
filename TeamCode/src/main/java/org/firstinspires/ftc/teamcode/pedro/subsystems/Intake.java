@@ -1,5 +1,9 @@
 package org.firstinspires.ftc.teamcode.pedro.subsystems;
 
+import static com.pedropathing.ivy.commands.Commands.instant;
+import static com.pedropathing.ivy.groups.Groups.sequential;
+
+import com.pedropathing.ivy.Command;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
@@ -34,5 +38,14 @@ public class Intake {
 
     public boolean isOn(){
         return isOn;
+    }
+
+    //metodo p intake no autoooo
+    public Command intakePP() {
+        return sequential(
+                instant(() -> in())
+
+        );
+
     }
 }
