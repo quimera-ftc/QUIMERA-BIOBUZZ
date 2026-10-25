@@ -19,6 +19,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.pedro.Constants;
+import org.firstinspires.ftc.teamcode.pedro.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.pedro.subsystems.Shooter;
 
 import com.pedropathing.utils.Timer;
@@ -28,6 +29,7 @@ import com.pedropathing.utils.Timer;
 @Autonomous
 public class autoBlueTest extends OpMode {
     Shooter shooter;
+    Intake intake;
 
 
     PoseFactory poseFactory = PoseFactory.degrees();
@@ -40,13 +42,14 @@ public class autoBlueTest extends OpMode {
     Pose shoot2 = poseFactory.of(81.96651270207855,16.393764434180113,45);
     Pose collect2 = poseFactory.of(92.53464203233256,8.706697459584301,280);
     Pose shoot3 = poseFactory.of(80.1431870669746,8.654734411085453,90);
+    Pose park = poseFactory.of(132.4109489051095, 19.869388686131376, 0);
 
 
     public Path START_TO_COLLECT1() {
         return curve(startingPoint, poseFactory.of(96.2482678983834, 103.30023094688222, 270) ,collect1).linear(startingPoint, collect1);
     }
     public Path COLLECT1_TO_SHOOT2() {
-        return curve(collect1, poseFactory.of(112.70438799076214, 39.215935334872974, 0),shoot2).linear(collect1, shoot2);
+        return curve(collect1, poseFactory.of(106.92044638492273, 44.17359956844962, 0),shoot2).linear(collect1, shoot2);
     }
     public Path SHOOT2_TO_COLLECT2() {
         return line(shoot2, collect2).linear(shoot2, collect2);
@@ -54,6 +57,10 @@ public class autoBlueTest extends OpMode {
     public Path COLLECT2_TO_SHOOT3() {
         return curve(collect2, poseFactory.of(85.93418013856814, 34.46535796766743, 280),shoot3).linear(collect2, shoot3);
     }
+    public Path SHOOT3_TO_PARK() {
+        return curve(shoot3, poseFactory.of(88.94791666666669, 21.488425925925924, 90),park).linear(shoot3, park);
+    }
+
 
     @Override
     public void init() {
@@ -62,6 +69,7 @@ public class autoBlueTest extends OpMode {
         follower.setPose(startingPoint);
 
         shooter = new Shooter(hardwareMap);
+        intake = new Intake(hardwareMap);
 
     }
 
@@ -74,20 +82,24 @@ public class autoBlueTest extends OpMode {
     public void loop() {
         follower.update();
         Scheduler.execute();
+
     }
 
     public Command routine() {
         return sequential(
                 shooter.shootPP(),
-                follow(follower, START_TO_COLLECT1()),
-                //intake
+                parallel(
+                        follow(follower, START_TO_COLLECT1()),
+                        intake.intakePP()
+                ),
                 follow(follower, COLLECT1_TO_SHOOT2()),
+                shooter.shootPP(),
+                parallel(
+                        follow(follower, SHOOT2_TO_COLLECT2()),
+                        intake.intakePP()
+                ),
+                follow(follower, COLLECT2_TO_SHOOT3()),
                 shooter.shootPP()
-
-
-
-
         );
     }
-
 }
