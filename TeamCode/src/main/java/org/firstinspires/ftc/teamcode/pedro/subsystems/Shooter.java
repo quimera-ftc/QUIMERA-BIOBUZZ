@@ -47,7 +47,7 @@ public class Shooter {
     public Command shootPP() {
         return sequential(
                 instant(() -> powerUp()),
-                waitMs(2000),
+                waitMs(3000),
                 instant(() -> intake.in()),
                 waitMs(2000),
                 instant(() -> {
