@@ -49,7 +49,7 @@ public class Shooter {
                 instant(() -> powerUp()),
                 waitMs(2000),
                 instant(() -> intake.in()),
-                waitMs(1000),
+                waitMs(2000),
                 instant(() -> {
                     intake.stop();
                     stop();
@@ -59,12 +59,12 @@ public class Shooter {
 
     //metodo p shootar no telop
     public void shoot() {
-        start = runtime.seconds();
+        start = runtime.milliseconds();
 
-        while (runtime.seconds() - start < 3) {
-            now = runtime.seconds() - start;
+        while (runtime.seconds() - start < 3000) {
+            now = runtime.milliseconds() - start;
 
-            if (now <= 2) {
+            if (now <= 2000) {
                 powerUp();
                 continue;
             }
