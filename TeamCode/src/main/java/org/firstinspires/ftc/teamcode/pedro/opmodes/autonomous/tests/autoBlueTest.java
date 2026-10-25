@@ -99,7 +99,8 @@ public class autoBlueTest extends OpMode {
                         intake.intakePP()
                 ),
                 follow(follower, COLLECT2_TO_SHOOT3()),
-                shooter.shootPP()
+                shooter.shootPP(),
+                follow(follower, SHOOT3_TO_PARK())
         );
     }
 }
