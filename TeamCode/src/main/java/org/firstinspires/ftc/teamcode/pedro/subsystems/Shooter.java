@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import static com.pedropathing.ivy.commands.Commands.*;
 import static com.pedropathing.ivy.groups.Groups.*;
@@ -16,19 +17,23 @@ public class Shooter {
 
     Intake intake;
 
+    Servo flowServo;
     DcMotorEx rs, ls;
-    public double maxpower = 0.80, minpower = 0;
+    public double maxpower = 1.0, minpower = 0;
+    public double FLOWING = 1.0, NOT_FLOWING = 0.0;
     public double start, now;
-    public ElapsedTime runtime = new ElapsedTime();
+    public ElapsedTime runtime = new ElapsedTime(), flowTimer = new ElapsedTime();
     PIDFCoefficients controller=  new PIDFCoefficients(0.5,0,0,0.5);
     //-- GnHk28 has left the Commits
 
     public Shooter(HardwareMap hardwareMap) {
         ls = hardwareMap.get(DcMotorEx.class, "ls");
         rs = hardwareMap.get(DcMotorEx.class, "rs");
+        flowServo = hardwareMap.get(Servo.class, "flow");
 
         ls.setDirection(DcMotorSimple.Direction.REVERSE);
-        rs.setDirection(DcMotorSimple.Direction.REVERSE);
+        rs.setDirection(DcMotorSimple.Direction.FORWARD);
+        flowServo.setDirection(Servo.Direction.FORWARD);
 
         ls.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, controller);
         rs.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, controller);
@@ -77,5 +82,16 @@ public class Shooter {
     public void stop() {
         rs.setPower(minpower);
         ls.setPower(minpower);
+    }
+
+
+    public void openFlow() {
+        flowServo.setPosition(FLOWING);
+
+    }
+
+    public void closedFlow() {
+        flowServo.setPosition(NOT_FLOWING);
+
     }
 }
