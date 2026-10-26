@@ -57,9 +57,9 @@ public class TeleOp_BLUE extends OpMode {
             if (!tower.isTracking()) {
 
                 if (currentPose.y() >= 70.5) {
-                    tower.track(Tower.TrackingPoses.TOP_GOAL_BLUE);
+                    tower.track(Tower.TrackingPose.TOP_GOAL_BLUE);
                 } else {
-                    tower.track(Tower.TrackingPoses.BOTTOM_GOAL_BLUE);
+                    tower.track(Tower.TrackingPose.BOTTOM_GOAL_BLUE);
                 }
             } else {
                 tower.stop();
