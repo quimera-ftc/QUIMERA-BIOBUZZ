@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.pedro.opmodes.autonomous.tests;
 import static com.pedropathing.api.Paths.curve;
 import static com.pedropathing.api.Paths.line;
 import static com.pedropathing.ivy.commands.Commands.instant;
+import static com.pedropathing.ivy.commands.Commands.waitMs;
 import static com.pedropathing.ivy.groups.Groups.parallel;
 import static com.pedropathing.ivy.groups.Groups.sequential;
 import static com.pedropathing.ivy.pedro.PedroCommands.follow;
@@ -16,13 +17,11 @@ import com.pedropathing.paths.Path;
 import com.pedropathing.api.Paths.*;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.pedro.Constants;
 import org.firstinspires.ftc.teamcode.pedro.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.pedro.subsystems.Shooter;
 
-import com.pedropathing.utils.Timer;
 
 
 
@@ -35,7 +34,6 @@ public class autoBlueTest extends OpMode {
     PoseFactory poseFactory = PoseFactory.degrees();
     Scheduler scheduler;
     private Follower follower;
-    private ElapsedTime runtime = new ElapsedTime();
 
     Pose startingPoint = poseFactory.of(86.06466512702079,133.1605080831409,270);
     Pose collect1 = poseFactory.of(132.4805984673269,94.36056581986145,0);
@@ -75,6 +73,7 @@ public class autoBlueTest extends OpMode {
 
     @Override
     public void start() {
+        shooter.powerUp();
         Scheduler.schedule(routine());
     }
 
@@ -87,17 +86,20 @@ public class autoBlueTest extends OpMode {
 
     public Command routine() {
         return sequential(
+                waitMs(2000),
                 shooter.shootPP(),
                 parallel(
                         follow(follower, START_TO_COLLECT1()),
                         intake.intakePP()
                 ),
+                instant(() -> intake.stop()),
                 follow(follower, COLLECT1_TO_SHOOT2()),
                 shooter.shootPP(),
                 parallel(
                         follow(follower, SHOOT2_TO_COLLECT2()),
                         intake.intakePP()
                 ),
+                instant(() -> intake.stop()),
                 follow(follower, COLLECT2_TO_SHOOT3()),
                 shooter.shootPP(),
                 follow(follower, SHOOT3_TO_PARK())
