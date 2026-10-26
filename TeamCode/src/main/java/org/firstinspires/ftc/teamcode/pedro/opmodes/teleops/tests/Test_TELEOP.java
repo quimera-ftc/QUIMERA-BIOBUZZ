@@ -40,10 +40,26 @@ public class Test_TELEOP extends OpMode {
             }
         }
 
+        if (gamepad1.xWasPressed()) {
+            intake.toggle();
+        }
+
         if (gamepad1.right_trigger_pressed) {
-            shooter.shoot();
+            shooter.powerUp();
         } else {
             shooter.stop();
+        }
+
+        if (gamepad1.dpadUpWasPressed()) {
+            shooter.openFlow();
+        }
+
+        if (gamepad1.dpadDownWasPressed()) {
+            shooter.closedFlow();
+        }
+
+        if (gamepad1.dpadLeftWasPressed()) {
+            intake.toggleAgro();
         }
 
 
