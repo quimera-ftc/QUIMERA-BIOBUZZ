@@ -36,6 +36,8 @@ public class Shooter {
 
         ls.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         rs.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+
+        intake = new Intake(hardwareMap);
     }
 
     public void powerUp() {
@@ -47,12 +49,10 @@ public class Shooter {
     public Command shootPP() {
         return sequential(
                 instant(() -> powerUp()),
-                waitMs(3000),
                 instant(() -> intake.in()),
                 waitMs(2000),
                 instant(() -> {
                     intake.stop();
-                    stop();
                 })
         );
     }
