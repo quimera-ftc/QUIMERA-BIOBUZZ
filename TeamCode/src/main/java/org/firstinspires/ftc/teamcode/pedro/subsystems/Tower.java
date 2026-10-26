@@ -1,6 +1,10 @@
 package org.firstinspires.ftc.teamcode.pedro.subsystems;
 
+import static com.pedropathing.ivy.commands.Commands.instant;
+
 import androidx.annotation.NonNull;
+
+import com.pedropathing.ivy.Command;
 import com.pedropathing.math.Pose;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -19,7 +23,7 @@ public class Tower {
         ROTATING
     }
 
-    public enum TrackingPoses {
+    public enum TrackingPose {
         TOP_GOAL_BLUE,
         BOTTOM_GOAL_BLUE,
         TOP_GOAL_RED,
@@ -33,7 +37,7 @@ public class Tower {
 
     private final DcMotor tower;
     double towerPower = 0.7, maxSpin = 120;
-    private final double[] offsets = new double[]{0, 3};
+    private final double[] offsets = new double[] {0, 3};
     private TowerState state = TowerState.IDLE;
     private final Pose topNestBLUE = new Pose(84, 84);
     private final Pose bottomNestBLUE = new Pose(84, 59);
@@ -57,7 +61,7 @@ public class Tower {
         ticksPerDegree = (ticksPerRev * gearRatio) / 360.0;
     }
 
-    public void rotate(Direction direction) {
+    private void rotateInternal(@NonNull Direction direction) {
 
         if ((dislocation() >= maxSpin && direction == Direction.RIGHT) ||
                 (dislocation() <= -maxSpin && direction == Direction.LEFT)) {
@@ -78,32 +82,52 @@ public class Tower {
         state = TowerState.ROTATING;
     }
 
-    public void lock() {
-        state = TowerState.LOCKED;
+    public Command rotate(@NonNull Direction direction) {
+        return instant(() -> rotateInternal(direction));
+    }
 
+    private void lockInternal() {
+        state = TowerState.LOCKED;
         tower.setTargetPosition(tower.getCurrentPosition());
         tower.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         tower.setPower(1);
     }
 
-    public void unlock() {
+    public Command lock() {
+        return instant(this::lockInternal);
+    }
+
+    private void unlockInternal() {
         state = TowerState.IDLE;
         tower.setPower(0);
         tower.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
-    public void update(@NonNull Pose pose) {
+    public Command unlock() {
+        return instant(this::unlockInternal);
+    }
+
+    private void updateInternal(@NonNull Pose pose) {
         current_pose = pose;
         fix();
     }
 
-    public void stop() {
+    public Command update(@NonNull Pose pose) {
+        return instant(() -> updateInternal(pose));
+    }
+
+
+    private void stopInternal() {
         state = TowerState.IDLE;
         tower.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         tower.setPower(0);
     }
 
-    public void adjust(double degrees) {
+    public Command stop() {
+        return instant(this::stopInternal);
+    }
+
+    private void adjustInternal(double degrees) {
         if (state == TowerState.LOCKED) {
             return;
         }
@@ -115,11 +139,15 @@ public class Tower {
         tower.setPower(towerPower);
     }
 
-    public void fix() {
+    public Command adjust(double degrees) {
+        return instant(() -> adjustInternal(degrees));
+    }
+
+    private void fix() {
         if (state != TowerState.TRACKING) return;
         double current = dislocation();
         double desired = Range.clip(current - calculate_correction(), -maxSpin, maxSpin);
-        adjust(desired - current);
+        adjustInternal(desired - current);
     }
 
 
@@ -135,11 +163,7 @@ public class Tower {
         return state == TowerState.LOCKED;
     }
 
-    public void track(TrackingPoses pose) {
-
-        if (state == TowerState.LOCKED) {
-            return;
-        }
+    private void trackInternal(@NonNull TrackingPose pose) {
 
         switch (pose) {
             case TOP_GOAL_BLUE:
@@ -158,7 +182,16 @@ public class Tower {
                 trackedPose = bottomNestRED;
                 break;
         }
+
+        if (state == TowerState.LOCKED) {
+            return;
+        }
+
         state = TowerState.TRACKING;
+    }
+
+    public Command track(@NonNull TrackingPose trackingPose) {
+        return instant(() -> trackInternal(trackingPose));
     }
 
     public double dislocation() {
@@ -167,10 +200,6 @@ public class Tower {
     }
 
     private double calculate_correction() {
-
-        if (current_pose == null) {
-            return 0;
-        }
 
         double headingRad = current_pose.heading();
 
