@@ -21,7 +21,7 @@ public class TeleOp_BLUE extends OpMode {
     @Override
     public void init() {
         follower = Constants.create(hardwareMap);
-        tower = new Tower(hardwareMap, telemetry);
+        tower = new Tower(hardwareMap);
         driveTrain = new DriveTrain(hardwareMap, gamepad1);
 
         follower.setPose(new Pose(132.6505617977528, 133.92247191011242, Math.toRadians(270)));
