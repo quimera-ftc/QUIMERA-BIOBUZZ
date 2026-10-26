@@ -19,7 +19,7 @@ public class Test_ODOMETRY extends OpMode {
     public void init() {
         follower = Constants.create(hardwareMap);
         driveTrain = new DriveTrain(hardwareMap, gamepad1);
-        follower.setPose(new Pose(134,132,Math.toRadians(180)));
+        follower.setPose(new Pose(133.81725311873922,132.57458675808917, Math.toRadians(180)));
     }
 
     @Override
@@ -30,7 +30,7 @@ public class Test_ODOMETRY extends OpMode {
 
         telemetry.addData("x", currentPose.x());
         telemetry.addData("y", currentPose.y());
-        telemetry.addData("heading", currentPose.heading());
+        telemetry.addData("heading", Math.toDegrees(currentPose.heading()));
 
 
         driveTrain.driveStick();
