@@ -10,8 +10,6 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.Range;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
-
 public class Tower {
     double gearRatio = 50.0 / 15.0;
     double ticksPerRev, ticksPerDegree;
@@ -36,36 +34,42 @@ public class Tower {
     }
 
     private final DcMotor tower;
-    double towerPower = 0.7, maxSpin = 120;
+    private final double towerPower = 0.7, maxSpin = 150;
     private final double[] offsets = new double[] {0, 3};
-    private TowerState state = TowerState.IDLE;
+    private TowerState state = TowerState.IDLE, lastState = TowerState.IDLE;
     private final Pose topNestBLUE = new Pose(84, 84);
     private final Pose bottomNestBLUE = new Pose(84, 59);
-    private final Pose topNestRED = new Pose(59, 84);
-    private final Pose bottomNestRED = new Pose(59, 59);
-    private Pose trackedPose = topNestBLUE, current_pose;
-    Telemetry telemetry;
+    private final Pose topNestRED = new Pose(60, 84);
+    private final Pose bottomNestRED = new Pose(60, 59);
+    private Pose trackedPose = topNestBLUE, currentPose;
 
+    private Direction rotatingTo;
 
-    public Tower(HardwareMap hardwareMap, Telemetry telemetry) {
+    public Tower(HardwareMap hardwareMap) {
         tower = hardwareMap.get(DcMotor.class, "tower");
 
-        this.telemetry = telemetry;
+
 
         tower.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         tower.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         tower.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
+
         ticksPerRev = tower.getMotorType().getTicksPerRev();
+        if (ticksPerRev == 0) ticksPerRev = 28;
         ticksPerDegree = (ticksPerRev * gearRatio) / 360.0;
     }
 
     private void rotateInternal(@NonNull Direction direction) {
 
-        if ((dislocation() >= maxSpin && direction == Direction.RIGHT) ||
-                (dislocation() <= -maxSpin && direction == Direction.LEFT)) {
-            stop();
+        if (state == TowerState.LOCKED) {
+            return;
+        }
+
+        if (dislocation() >= maxSpin && direction == Direction.RIGHT ||
+                dislocation() <= -maxSpin && direction == Direction.LEFT) {
+            stopInternal();
             return;
         }
 
@@ -79,6 +83,7 @@ public class Tower {
             tower.setPower(-towerPower);
         }
 
+        rotatingTo = direction;
         state = TowerState.ROTATING;
     }
 
@@ -87,7 +92,9 @@ public class Tower {
     }
 
     private void lockInternal() {
+        lastState = state;
         state = TowerState.LOCKED;
+
         tower.setTargetPosition(tower.getCurrentPosition());
         tower.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         tower.setPower(1);
@@ -98,7 +105,7 @@ public class Tower {
     }
 
     private void unlockInternal() {
-        state = TowerState.IDLE;
+        state = lastState;
         tower.setPower(0);
         tower.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
@@ -108,8 +115,9 @@ public class Tower {
     }
 
     private void updateInternal(@NonNull Pose pose) {
-        current_pose = pose;
+        currentPose = pose;
         fix();
+
     }
 
     public Command update(@NonNull Pose pose) {
@@ -127,27 +135,42 @@ public class Tower {
         return instant(this::stopInternal);
     }
 
-    private void adjustInternal(double degrees) {
-        if (state == TowerState.LOCKED) {
+    private void adjust(double degrees) {
+        if (state == TowerState.LOCKED || state != TowerState.TRACKING) {
             return;
         }
-
-        int target = tower.getCurrentPosition() + (int) (ticksPerDegree * degrees);
-
+        int target = Math.toIntExact(tower.getCurrentPosition() + Math.round(ticksPerDegree * degrees));
         tower.setTargetPosition(target);
         tower.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         tower.setPower(towerPower);
     }
 
-    public Command adjust(double degrees) {
-        return instant(() -> adjustInternal(degrees));
+    private void enforceLimits() {
+
+        double currentDislocation = dislocation();
+
+        if (state == TowerState.ROTATING || state == TowerState.TRACKING) {
+
+            if (currentDislocation >= maxSpin && rotatingTo == Direction.RIGHT ||
+                    currentDislocation <= -maxSpin && rotatingTo == Direction.LEFT)  {
+                stopInternal();
+            }
+
+        }
     }
 
     private void fix() {
-        if (state != TowerState.TRACKING) return;
-        double current = dislocation();
-        double desired = Range.clip(current - calculate_correction(), -maxSpin, maxSpin);
-        adjustInternal(desired - current);
+
+        enforceLimits();
+
+        if (currentPose == null) return;
+
+        if (state == TowerState.TRACKING) {
+            double current = dislocation();
+            double desired = Range.clip(current - calculate_correction(), -maxSpin, maxSpin);
+            adjust(desired - current);
+        }
+
     }
 
 
@@ -201,12 +224,12 @@ public class Tower {
 
     private double calculate_correction() {
 
-        double headingRad = current_pose.heading();
+        double headingRad = currentPose.heading();
 
         double headingTurret = Math.toDegrees(headingRad) - dislocation();
 
-        double turret_x = current_pose.x() + (offsets[0] * Math.cos(headingRad) - offsets[1] * Math.sin(headingRad));
-        double turret_y = current_pose.y() + (offsets[0] * Math.sin(headingRad) + offsets[1] * Math.cos(headingRad));
+        double turret_x = currentPose.x() + (offsets[0] * Math.cos(headingRad) - offsets[1] * Math.sin(headingRad));
+        double turret_y = currentPose.y() + (offsets[0] * Math.sin(headingRad) + offsets[1] * Math.cos(headingRad));
 
         double deltaX, deltaY, theta, correction;
 
