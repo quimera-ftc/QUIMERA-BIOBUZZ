@@ -23,8 +23,6 @@ import org.firstinspires.ftc.teamcode.pedro.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.pedro.subsystems.Shooter;
 
 
-
-
 @Autonomous
 public class autoBlueTest extends OpMode {
     Shooter shooter;
