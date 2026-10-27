@@ -2,7 +2,11 @@ package org.firstinspires.ftc.teamcode.pedro.opmodes.autonomous.tests;
 
 import static com.pedropathing.api.Paths.curve;
 import static com.pedropathing.api.Paths.line;
+import static com.pedropathing.ivy.commands.Commands.instant;
+import static com.pedropathing.ivy.commands.Commands.waitMs;
+import static com.pedropathing.ivy.groups.Groups.parallel;
 import static com.pedropathing.ivy.groups.Groups.sequential;
+import static com.pedropathing.ivy.pedro.PedroCommands.follow;
 
 import com.pedropathing.api.PoseFactory;
 import com.pedropathing.follower.Follower;
@@ -42,7 +46,7 @@ public class autoTestNataa extends OpMode {
     public Path START_TO_COLLECT1() {
         return curve(startingPoint, poseFactory.of(129.5960648148148, 88.51851851851853, 270),collect1).linear(startingPoint, collect1);
     }
-    public Path COLLECT_TO_SHOOT2() {
+    public Path COLLECT1_TO_SHOOT2() {
         return line(collect1, shoot2).tangent();
     }
     public Path SHOOT2_TO_COLLECT2() {
@@ -84,10 +88,30 @@ public class autoTestNataa extends OpMode {
 
     public Command routine() {
         return sequential(
-
-
+                waitMs(2000),
+                shooter.shootPP(),
+                parallel(
+                        follow(follower, START_TO_COLLECT1()),
+                        intake.intakePP()
+                ),
+                instant(() -> intake.stop()),
+                follow(follower, COLLECT1_TO_SHOOT2()),
+                shooter.shootPP(),
+                parallel(
+                        follow(follower, SHOOT2_TO_COLLECT2()),
+                        intake.intakePP()
+                ),
+                instant(() -> intake.stop()),
+                follow(follower, COLLECT2_TO_SHOOT3()),
+                shooter.shootPP(),
+                parallel(
+                        follow(follower, SHOOT3_TO_COLLECT3()),
+                        intake.intakePP()
+                ),
+                instant(() -> intake.stop()),
+                follow(follower, COLLECT3_TO_SHOOT4()),
+                shooter.shootPP(),
+                follow(follower, SHOOT4_TO_PARK())
         );
     }
-
-
 }
