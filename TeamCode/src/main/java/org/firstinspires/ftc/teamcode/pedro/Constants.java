@@ -29,19 +29,16 @@ public class Constants {
         c.backRightDirection.set(DcMotorSimple.Direction.REVERSE);
     });
 
-    public static PinpointConfig localizerConfig = new PinpointConfig(
-            c -> {
-                c.name.set("pinpoint");
-                c.podType.set(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD);
-                c.xPodOffset.set(-0.07193783606131246);
-                c.yPodOffset.set(-1.4447981166088677);
-                c.xPodDirection.set(GoBildaPinpointDriver.EncoderDirection.FORWARD);
-                c.yPodDirection.set(GoBildaPinpointDriver.EncoderDirection.FORWARD);
-                c.globalDistanceUnit.set(DistanceUnit.INCH);
-                c.offsetUnits.set(DistanceUnit.INCH);
-
-            }
-    );
+    public static PinpointConfig localizerConfig = new PinpointConfig(c -> {
+        c.name.set("pinpoint");
+        c.podType.set(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD);
+        c.xPodOffset.set(0.19194910845418617);
+        c.yPodOffset.set(-0.1009774865127924);
+        c.xPodDirection.set(GoBildaPinpointDriver.EncoderDirection.FORWARD);
+        c.yPodDirection.set(GoBildaPinpointDriver.EncoderDirection.FORWARD);
+        c.globalDistanceUnit.set(DistanceUnit.INCH);
+        c.offsetUnits.set(DistanceUnit.INCH);
+    });
 
     public static ForesightConfig foresightConfig = new ForesightConfig(
             c -> {
