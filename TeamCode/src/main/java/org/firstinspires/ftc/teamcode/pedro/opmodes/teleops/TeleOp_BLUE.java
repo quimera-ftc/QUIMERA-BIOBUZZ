@@ -30,6 +30,7 @@ public class TeleOp_BLUE extends OpMode {
     @Override
     public void start() {
 
+
     }
 
     @Override
@@ -41,15 +42,14 @@ public class TeleOp_BLUE extends OpMode {
         tower.update(currentPose);
 
         if (gamepad1.right_bumper && !tower.isLocked()) {
-
-            tower.rotate(Tower.Direction.RIGHT);
+            tower.motor.setPower(0.5);
 
         } else if (gamepad1.left_bumper && !tower.isLocked()) {
 
-            tower.rotate(Tower.Direction.LEFT);
+            tower.motor.setPower(-0.5);
 
         } else if (!tower.isTracking() && !tower.isLocked()) {
-            tower.stop();
+            tower.motor.setPower(0);
         }
 
         if (gamepad1.dpadRightWasPressed() && !tower.isLocked()) {
