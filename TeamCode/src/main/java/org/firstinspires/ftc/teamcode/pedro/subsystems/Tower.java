@@ -28,12 +28,8 @@ public class Tower {
         BOTTOM_GOAL_RED
     }
 
-    public enum Direction {
-        RIGHT,
-        LEFT
-    }
 
-    private final DcMotor tower;
+    public final DcMotor motor;
     private final double towerPower = 0.7, maxSpin = 150;
     private final double[] offsets = new double[] {0, 3};
     private TowerState state = TowerState.IDLE, lastState = TowerState.IDLE;
@@ -43,106 +39,79 @@ public class Tower {
     private final Pose bottomNestRED = new Pose(60, 59);
     private Pose trackedPose = topNestBLUE, currentPose;
 
-    private Direction rotatingTo;
+    private int rotatingTo;
 
     public Tower(HardwareMap hardwareMap) {
-        tower = hardwareMap.get(DcMotor.class, "tower");
+        motor = hardwareMap.get(DcMotor.class, "tower");
 
 
 
-        tower.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        tower.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        tower.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
 
-        ticksPerRev = tower.getMotorType().getTicksPerRev();
+        ticksPerRev = motor.getMotorType().getTicksPerRev();
         if (ticksPerRev == 0) ticksPerRev = 28;
         ticksPerDegree = (ticksPerRev * gearRatio) / 360.0;
     }
 
-    private void rotateInternal(@NonNull Direction direction) {
+    public void rotate(int direction) {
 
         if (state == TowerState.LOCKED) {
             return;
         }
 
-        if (dislocation() >= maxSpin && direction == Direction.RIGHT ||
-                dislocation() <= -maxSpin && direction == Direction.LEFT) {
-            stopInternal();
+        if (dislocation() >= maxSpin && direction == 1 ||
+                dislocation() <= -maxSpin && direction == 0) {
+            stop();
             return;
         }
 
-        tower.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-        if (direction == Direction.RIGHT) {
-
-            tower.setPower(towerPower);
-
-        } else {
-            tower.setPower(-towerPower);
-        }
+        motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motor.setPower(towerPower * direction);
 
         rotatingTo = direction;
         state = TowerState.ROTATING;
     }
 
-    public Command rotate(@NonNull Direction direction) {
-        return instant(() -> rotateInternal(direction));
-    }
-
-    private void lockInternal() {
+    public void lock() {
         lastState = state;
         state = TowerState.LOCKED;
 
-        tower.setTargetPosition(tower.getCurrentPosition());
-        tower.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        tower.setPower(1);
+        motor.setTargetPosition(motor.getCurrentPosition());
+        motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        motor.setPower(1);
     }
 
-    public Command lock() {
-        return instant(this::lockInternal);
-    }
-
-    private void unlockInternal() {
+    public void unlock() {
         state = lastState;
-        tower.setPower(0);
-        tower.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motor.setPower(0);
+        motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
-    public Command unlock() {
-        return instant(this::unlockInternal);
-    }
-
-    private void updateInternal(@NonNull Pose pose) {
+    public void update(@NonNull Pose pose) {
         currentPose = pose;
         fix();
 
     }
 
-    public Command update(@NonNull Pose pose) {
-        return instant(() -> updateInternal(pose));
-    }
 
-
-    private void stopInternal() {
+    public void stop() {
         state = TowerState.IDLE;
-        tower.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        tower.setPower(0);
-    }
-
-    public Command stop() {
-        return instant(this::stopInternal);
+        motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motor.setPower(0);
     }
 
     private void adjust(double degrees) {
         if (state == TowerState.LOCKED || state != TowerState.TRACKING) {
             return;
         }
-        int target = Math.toIntExact(tower.getCurrentPosition() + Math.round(ticksPerDegree * degrees));
-        tower.setTargetPosition(target);
-        tower.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        tower.setPower(towerPower);
+        int target = Math.toIntExact(motor.getCurrentPosition() + Math.round(ticksPerDegree * degrees));
+        motor.setTargetPosition(target);
+        motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        motor.setPower(towerPower);
     }
 
     private void enforceLimits() {
@@ -151,9 +120,9 @@ public class Tower {
 
         if (state == TowerState.ROTATING || state == TowerState.TRACKING) {
 
-            if (currentDislocation >= maxSpin && rotatingTo == Direction.RIGHT ||
-                    currentDislocation <= -maxSpin && rotatingTo == Direction.LEFT)  {
-                stopInternal();
+            if (currentDislocation >= maxSpin && rotatingTo == 1 ||
+                    currentDislocation <= -maxSpin && rotatingTo == -1)  {
+                stop();
             }
 
         }
@@ -186,7 +155,7 @@ public class Tower {
         return state == TowerState.LOCKED;
     }
 
-    private void trackInternal(@NonNull TrackingPose pose) {
+    public void track(@NonNull TrackingPose pose) {
 
         switch (pose) {
             case TOP_GOAL_BLUE:
@@ -213,12 +182,8 @@ public class Tower {
         state = TowerState.TRACKING;
     }
 
-    public Command track(@NonNull TrackingPose trackingPose) {
-        return instant(() -> trackInternal(trackingPose));
-    }
-
     public double dislocation() {
-        int ticks = tower.getCurrentPosition();
+        int ticks = motor.getCurrentPosition();
         return ticks / ticksPerDegree;
     }
 
