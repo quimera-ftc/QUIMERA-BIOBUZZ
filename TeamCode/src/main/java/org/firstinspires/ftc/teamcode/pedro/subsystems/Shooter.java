@@ -19,7 +19,7 @@ public class Shooter {
 
     Servo flowServo;
     DcMotorEx rs, ls;
-    public double maxpower = 1.0, minpower = 0;
+    public double maxpower = 0.75, minpower = 0;
     public double FLOWING = 1.0, NOT_FLOWING = 0.0;
     public double start, now;
     public ElapsedTime runtime = new ElapsedTime(), flowTimer = new ElapsedTime();
