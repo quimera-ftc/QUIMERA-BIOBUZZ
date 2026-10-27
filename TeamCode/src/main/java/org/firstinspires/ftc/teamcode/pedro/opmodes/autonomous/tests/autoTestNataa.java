@@ -47,7 +47,7 @@ public class autoTestNataa extends OpMode {
         return curve(startingPoint, poseFactory.of(129.5960648148148, 88.51851851851853, 270),collect1).linear(startingPoint, collect1);
     }
     public Path COLLECT1_TO_SHOOT2() {
-        return line(collect1, shoot2).tangent();
+        return line(collect1, shoot2).linear(collect1, shoot2   );
     }
     public Path SHOOT2_TO_COLLECT2() {
         return line(shoot2, collect2).linear(shoot2, collect2);
@@ -83,6 +83,7 @@ public class autoTestNataa extends OpMode {
     }
 
     public void start() {
+        shooter.powerUp();
         Scheduler.schedule(routine());
     }
 
