@@ -11,12 +11,12 @@ public class Test_ServoTaura extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        Servo servo = hardwareMap.get(Servo.class, "servo");
-        AnalogInput potentiometer = hardwareMap.get(AnalogInput.class, "potentiometer");
+        Servo servo = hardwareMap.get(Servo.class, "flow");
+
 
        ServoTaura tauraServo = new ServoTaura(servo);
 
-        tauraServo.setAnalogFeedbackSensor(potentiometer);
+
 
         tauraServo.setPosition(0.0);
 
