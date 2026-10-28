@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.pedro.opmodes.autonomous.tests;
 
 import static com.pedropathing.api.Paths.curve;
 import static com.pedropathing.api.Paths.line;
+import static com.pedropathing.ivy.commands.Commands.instant;
 import static com.pedropathing.ivy.commands.Commands.waitMs;
 import static com.pedropathing.ivy.groups.Groups.parallel;
 import static com.pedropathing.ivy.groups.Groups.sequential;
@@ -28,7 +29,7 @@ public class downTestBlue extends OpMode {
     Intake intake;
 
     PoseFactory poseFactory = PoseFactory.degrees();
-    Scheduler scgedular;
+
 
     private Follower follower;
 
@@ -68,7 +69,7 @@ public class downTestBlue extends OpMode {
     public  Path DIAGONAL_TO_COLLECT3(){
         return line(diagonal,collect3).linear(diagonal,collect3);
     }
-    public Path DIAGONAL_TO_SHOOT2(){
+    public Path COLLECT_TO_SHOOT2(){
         return line(collect3,shoot2).linear(collect3,shoot2);
     }
 
@@ -105,15 +106,26 @@ public class downTestBlue extends OpMode {
                         follow(follower, COLLECT_TO_TURN()),
                         intake.intakePP()
                 ),
-                intake.stop(),
+                instant(() -> intake.stop()),
                 follow(follower,COLLECT_TO_TURN()),
+               shooter.shootPP(),
+               follow(follower,TURN_TO_SHOOT()),
+                follow(follower,SHOOT_TO_FRONT()),
                 parallel(
-                        follow(follower,SHOOT_TO_FRONT()),
-                        shooter.shootPP()
-                )
-
-
-
+                        follow(follower,FRONT_TO_COLLECT2()),
+                        intake.intakePP()
+                ),
+                instant(() -> intake.stop()),
+                shooter.shootPP(),
+                follow(follower,COLLECT2_TO_TURN2()),
+                follow(follower,TURN2_TO_DIAGONAL()),
+                parallel(
+                        follow(follower,DIAGONAL_TO_COLLECT3()),
+                        intake.intakePP()
+                ),
+                instant(() -> intake.stop()),
+                shooter.shootPP(),
+                follow(follower,COLLECT_TO_SHOOT2())
 
         );
     }
