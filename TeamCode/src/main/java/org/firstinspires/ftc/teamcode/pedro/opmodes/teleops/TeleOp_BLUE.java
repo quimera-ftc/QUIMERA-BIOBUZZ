@@ -38,7 +38,6 @@ public class TeleOp_BLUE extends OpMode {
         follower.update();
 
         Pose currentPose = follower.pose();
-
         tower.update(currentPose);
 
         if (gamepad1.right_bumper && !tower.isLocked()) {
@@ -65,6 +64,13 @@ public class TeleOp_BLUE extends OpMode {
             } else {
                 tower.stop();
             }
+        }
+
+        if (gamepad1.leftStickButtonWasPressed() && gamepad1.rightStickButtonWasPressed()) {
+
+            if (tower.isLocked()) {
+                tower.lock();
+            } else tower.unlock();
         }
 
         driveTrain.driveStick();

@@ -8,6 +8,7 @@ import com.pedropathing.ivy.Command;
 import com.pedropathing.math.Pose;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.Range;
 
@@ -15,8 +16,8 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 public class Tower {
     double gearRatio = 50.0 / 15.0;
-    // HD Hex = 28 ticks/volta no eixo do motor; cartucho "4:1" da UltraPlanetary e na real 76/21 (~3.62:1)
-    double ticksPerRev = 28.0 * (76.0 / 21.0);
+    double ticksPerRev = 28.0 * (76.0 / 21.0); // HD Hex = 28 ticks/volta; redução "4:1" é na real 76/21 (~3.62:1)
+
     double ticksPerDegree = (ticksPerRev * gearRatio) / 360.0;
 
     private enum TowerState {
@@ -39,16 +40,16 @@ public class Tower {
     }
 
     private final DcMotorEx tower;
-    private final double towerPower = 0.7, maxSpin = 150;
-    private final int toleranceTicks = 1;
-    private final double[] offsets = new double[] {0, 3};
+    private final double towerPower = 0.6, maxSpin = 150;
+    int toleranceTicks = 1;
+    private final double[] offsets = new double[] {0, 1,772};
     private TowerState state = TowerState.IDLE, lastState = TowerState.IDLE;
     private final Pose topNestBLUE = new Pose(84, 84);
     private final Pose bottomNestBLUE = new Pose(84, 59);
     private final Pose topNestRED = new Pose(60, 84);
     private final Pose bottomNestRED = new Pose(60, 59);
     private Pose trackedPose = topNestBLUE, currentPose;
-    private Telemetry telemetry;
+    private final Telemetry telemetry;
     private int rotatingTo;
     private double lastCorrection;
 
@@ -59,7 +60,7 @@ public class Tower {
 
         tower.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         tower.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
+        tower.setDirection(DcMotor.Direction.REVERSE);
         tower.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         tower.setTargetPositionTolerance(2);
@@ -100,7 +101,7 @@ public class Tower {
 
         tower.setTargetPosition(tower.getCurrentPosition());
         setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        tower.setPower(1);
+        tower.setPower(towerPower);
     }
 
     public void unlock() {
@@ -144,6 +145,10 @@ public class Tower {
         if (state != TowerState.TRACKING) {
             return;
         }
+//
+//        if (degrees <= 2.5) {
+//            return;
+//        }
 
         double clipped = Range.clip(degrees, -maxSpin, maxSpin);
         int target = (int) Math.round(ticksPerDegree * clipped);
@@ -159,17 +164,14 @@ public class Tower {
     }
 
     private void enforceLimits() {
-
         double currentDislocation = dislocation();
 
-        // TRACKING ja e limitado no adjust, e rotatingTo nao vale nesse estado
         if (state == TowerState.ROTATING) {
 
             if (currentDislocation >= maxSpin && rotatingTo == 1 ||
                     currentDislocation <= -maxSpin && rotatingTo == -1)  {
                 stop();
             }
-
         }
     }
 
@@ -182,7 +184,6 @@ public class Tower {
             lastCorrection = calculate_correction();
             double desired = current + lastCorrection;
 
-            // escolhe o angulo equivalente (+-360) que cabe nos limites e fica mais perto da posicao atual
             double best = Double.NaN;
             for (double candidate : new double[] {desired, desired - 360, desired + 360}) {
                 if (Math.abs(candidate) <= maxSpin &&
@@ -192,6 +193,9 @@ public class Tower {
             }
 
             adjust(Double.isNaN(best) ? desired : best);
+            telemetry.addData("turret dislocation", current);
+            telemetry.addData("desired", desired);
+            telemetry.addData("best", !Double.isNaN(best) ? best : "x.x");
         }
 
     }
