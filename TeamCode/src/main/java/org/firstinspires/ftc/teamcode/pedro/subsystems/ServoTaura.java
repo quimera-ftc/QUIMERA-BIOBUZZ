@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.pedro.subsystems;
 import androidx.annotation.NonNull;
 
 import com.qualcomm.robotcore.hardware.AnalogInput;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
 
@@ -28,7 +29,8 @@ public class ServoTaura {
     private Servo baseServo = null;
 
 
-    public ServoTaura(@NonNull Servo base) {
+    public ServoTaura(@NonNull HardwareMap hardwareMap) {
+        Servo base = hardwareMap.get(Servo.class,"flow");
         baseServo = base;
     }
 
@@ -85,5 +87,13 @@ public class ServoTaura {
             return Double.NaN;
         }
     }
+
+    public void up(){
+        setPosition(0);
+    }
+    public void down(){
+        setPosition(1);
+    }
+
 
 }
