@@ -2,9 +2,14 @@ package org.firstinspires.ftc.teamcode.pedro.opmodes.autonomous.tests;
 
 import static com.pedropathing.api.Paths.curve;
 import static com.pedropathing.api.Paths.line;
+import static com.pedropathing.ivy.commands.Commands.waitMs;
+import static com.pedropathing.ivy.groups.Groups.parallel;
+import static com.pedropathing.ivy.groups.Groups.sequential;
+import static com.pedropathing.ivy.pedro.PedroCommands.follow;
 
 import com.pedropathing.api.PoseFactory;
 import com.pedropathing.follower.Follower;
+import com.pedropathing.ivy.Command;
 import com.pedropathing.ivy.Scheduler;
 import com.pedropathing.math.Pose;
 import com.pedropathing.paths.Path;
@@ -42,7 +47,7 @@ public class downTestBlue extends OpMode {
     public Path START_TO_COLLECT(){
         return curve(start, poseFactory.of(53.16,80.15,90),collect).linear(start,collect);
     }
-    public Path COLLEct_TO_TURN(){
+    public Path COLLECT_TO_TURN(){
         return line(collect,turn).linear(collect,turn);
     }
     public  Path TURN_TO_SHOOT(){
@@ -71,7 +76,7 @@ public class downTestBlue extends OpMode {
     public void init(){
         Scheduler.reset();
         follower = Constants.create(hardwareMap);
-        follower.setPose(StartPose);
+        follower.setPose(start);
 
         shooter = new Shooter(hardwareMap);
         intake = new Intake(hardwareMap);
@@ -80,7 +85,7 @@ public class downTestBlue extends OpMode {
 
     public void start(){
         shooter.powerUp();
-        Scheduler.schedule(rotine);
+        Scheduler.schedule(routine());
     }
 
 
@@ -89,6 +94,28 @@ public class downTestBlue extends OpMode {
         follower.update();
         Scheduler.execute();
 
+    }
+
+    public Command routine() {
+        return sequential(
+                waitMs(2000),
+                shooter.shootPP(),
+                follow(follower, START_TO_COLLECT()),
+                parallel(
+                        follow(follower, COLLECT_TO_TURN()),
+                        intake.intakePP()
+                ),
+                intake.stop(),
+                follow(follower,COLLECT_TO_TURN()),
+                parallel(
+                        follow(follower,SHOOT_TO_FRONT()),
+                        shooter.shootPP()
+                )
+
+
+
+
+        );
     }
 
 }
