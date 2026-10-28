@@ -2,9 +2,15 @@ package org.firstinspires.ftc.teamcode.pedro.opmodes.autonomous.tests;
 
 import static com.pedropathing.api.Paths.curve;
 import static com.pedropathing.api.Paths.line;
+import static com.pedropathing.ivy.commands.Commands.instant;
+import static com.pedropathing.ivy.commands.Commands.waitMs;
+import static com.pedropathing.ivy.groups.Groups.parallel;
+import static com.pedropathing.ivy.groups.Groups.sequential;
+import static com.pedropathing.ivy.pedro.PedroCommands.follow;
 
 import com.pedropathing.api.PoseFactory;
 import com.pedropathing.follower.Follower;
+import com.pedropathing.ivy.Command;
 import com.pedropathing.ivy.Scheduler;
 import com.pedropathing.math.Pose;
 import com.pedropathing.paths.Path;
@@ -23,7 +29,7 @@ public class downTestBlue extends OpMode {
     Intake intake;
 
     PoseFactory poseFactory = PoseFactory.degrees();
-    Scheduler scgedular;
+
 
     private Follower follower;
 
@@ -42,7 +48,7 @@ public class downTestBlue extends OpMode {
     public Path START_TO_COLLECT(){
         return curve(start, poseFactory.of(53.16,80.15,90),collect).linear(start,collect);
     }
-    public Path COLLEct_TO_TURN(){
+    public Path COLLECT_TO_TURN(){
         return line(collect,turn).linear(collect,turn);
     }
     public  Path TURN_TO_SHOOT(){
@@ -63,7 +69,7 @@ public class downTestBlue extends OpMode {
     public  Path DIAGONAL_TO_COLLECT3(){
         return line(diagonal,collect3).linear(diagonal,collect3);
     }
-    public Path DIAGONAL_TO_SHOOT2(){
+    public Path COLLECT_TO_SHOOT2(){
         return line(collect3,shoot2).linear(collect3,shoot2);
     }
 
@@ -71,7 +77,7 @@ public class downTestBlue extends OpMode {
     public void init(){
         Scheduler.reset();
         follower = Constants.create(hardwareMap);
-        follower.setPose(StartPose);
+        follower.setPose(start);
 
         shooter = new Shooter(hardwareMap);
         intake = new Intake(hardwareMap);
@@ -80,7 +86,7 @@ public class downTestBlue extends OpMode {
 
     public void start(){
         shooter.powerUp();
-        Scheduler.schedule(rotine);
+        Scheduler.schedule(routine());
     }
 
 
@@ -89,6 +95,39 @@ public class downTestBlue extends OpMode {
         follower.update();
         Scheduler.execute();
 
+    }
+
+    public Command routine() {
+        return sequential(
+                waitMs(2000),
+                shooter.shootPP(),
+                follow(follower, START_TO_COLLECT()),
+                parallel(
+                        follow(follower, COLLECT_TO_TURN()),
+                        intake.intakePP()
+                ),
+                instant(() -> intake.stop()),
+                follow(follower,COLLECT_TO_TURN()),
+               shooter.shootPP(),
+               follow(follower,TURN_TO_SHOOT()),
+                follow(follower,SHOOT_TO_FRONT()),
+                parallel(
+                        follow(follower,FRONT_TO_COLLECT2()),
+                        intake.intakePP()
+                ),
+                instant(() -> intake.stop()),
+                shooter.shootPP(),
+                follow(follower,COLLECT2_TO_TURN2()),
+                follow(follower,TURN2_TO_DIAGONAL()),
+                parallel(
+                        follow(follower,DIAGONAL_TO_COLLECT3()),
+                        intake.intakePP()
+                ),
+                instant(() -> intake.stop()),
+                shooter.shootPP(),
+                follow(follower,COLLECT_TO_SHOOT2())
+
+        );
     }
 
 }
