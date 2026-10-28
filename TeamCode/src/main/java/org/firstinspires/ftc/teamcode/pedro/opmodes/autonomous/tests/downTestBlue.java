@@ -11,6 +11,7 @@ import com.pedropathing.paths.Path;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
+import org.firstinspires.ftc.teamcode.pedro.Constants;
 import org.firstinspires.ftc.teamcode.pedro.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.pedro.subsystems.Shooter;
 
@@ -68,11 +69,25 @@ public class downTestBlue extends OpMode {
 
 
     public void init(){
+        Scheduler.reset();
+        follower = Constants.create(hardwareMap);
+        follower.setPose(StartPose);
+
+        shooter = new Shooter(hardwareMap);
+        intake = new Intake(hardwareMap);
 
     }
 
+    public void start(){
+        shooter.powerUp();
+        Scheduler.schedule(rotine);
+    }
+
+
     @Override
     public void loop() {
+        follower.update();
+        Scheduler.execute();
 
     }
 
