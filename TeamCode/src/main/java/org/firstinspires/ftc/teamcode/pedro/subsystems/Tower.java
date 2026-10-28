@@ -7,6 +7,7 @@ import androidx.annotation.NonNull;
 import com.pedropathing.ivy.Command;
 import com.pedropathing.math.Pose;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.Range;
 
@@ -14,7 +15,8 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 public class Tower {
     double gearRatio = 50.0 / 15.0;
-    double ticksPerRev = 112.0;
+    // HD Hex = 28 ticks/volta no eixo do motor; cartucho "4:1" da UltraPlanetary e na real 76/21 (~3.62:1)
+    double ticksPerRev = 28.0 * (76.0 / 21.0);
     double ticksPerDegree = (ticksPerRev * gearRatio) / 360.0;
 
     private enum TowerState {
@@ -36,8 +38,9 @@ public class Tower {
         LEFT
     }
 
-    private final DcMotor tower;
+    private final DcMotorEx tower;
     private final double towerPower = 0.7, maxSpin = 150;
+    private final int toleranceTicks = 1;
     private final double[] offsets = new double[] {0, 3};
     private TowerState state = TowerState.IDLE, lastState = TowerState.IDLE;
     private final Pose topNestBLUE = new Pose(84, 84);
@@ -47,9 +50,10 @@ public class Tower {
     private Pose trackedPose = topNestBLUE, currentPose;
     private Telemetry telemetry;
     private int rotatingTo;
+    private double lastCorrection;
 
     public Tower(HardwareMap hardwareMap, Telemetry telemetry) {
-        tower = hardwareMap.get(DcMotor.class, "tower");
+        tower = hardwareMap.get(DcMotorEx.class, "tower");
 
         this.telemetry = telemetry;
 
@@ -57,6 +61,8 @@ public class Tower {
         tower.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         tower.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        tower.setTargetPositionTolerance(2);
     }
 
     public void rotate(int direction) {
@@ -71,7 +77,7 @@ public class Tower {
             return;
         }
 
-        tower.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         tower.setPower(towerPower * direction);
 
@@ -79,26 +85,43 @@ public class Tower {
         state = TowerState.ROTATING;
     }
 
+    // LEFT = anti-horario, RIGHT = horario
+    public void rotate(@NonNull Direction direction) {
+        rotate(direction == Direction.LEFT ? 1 : -1);
+    }
+
 
     public void lock() {
-        lastState = state;
+        if (state == TowerState.LOCKED) {
+            return;
+        }
+        lastState = state == TowerState.TRACKING ? TowerState.TRACKING : TowerState.IDLE;
         state = TowerState.LOCKED;
 
         tower.setTargetPosition(tower.getCurrentPosition());
-        tower.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        setMode(DcMotor.RunMode.RUN_TO_POSITION);
         tower.setPower(1);
     }
 
     public void unlock() {
+        if (state != TowerState.LOCKED) {
+            return;
+        }
+
         state = lastState;
         tower.setPower(0);
-        tower.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
 
     public void update(@NonNull Pose pose) {
         currentPose = pose;
+        enforceLimits();
         fix();
+
+        telemetry.addData("Tower state", state);
+        telemetry.addData("Tower angle", dislocation());
+        telemetry.addData("Tower correction", lastCorrection);
     }
 
 
@@ -106,18 +129,32 @@ public class Tower {
 
     public void stop() {
         state = TowerState.IDLE;
-        tower.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         tower.setPower(0);
+    }
+
+    private void setMode(DcMotor.RunMode mode) {
+        if (tower.getMode() != mode) {
+            tower.setMode(mode);
+        }
     }
 
 
     private void adjust(double degrees) {
-        if (state == TowerState.LOCKED || state != TowerState.TRACKING) {
+        if (state != TowerState.TRACKING) {
             return;
         }
-        int target = (int) Math.round(ticksPerDegree * degrees);
+
+        double clipped = Range.clip(degrees, -maxSpin, maxSpin);
+        int target = (int) Math.round(ticksPerDegree * clipped);
+
+        if (tower.getMode() == DcMotor.RunMode.RUN_TO_POSITION &&
+                Math.abs(target - tower.getTargetPosition()) <= toleranceTicks) {
+            return;
+        }
+
         tower.setTargetPosition(target);
-        tower.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        setMode(DcMotor.RunMode.RUN_TO_POSITION);
         tower.setPower(towerPower);
     }
 
@@ -125,7 +162,8 @@ public class Tower {
 
         double currentDislocation = dislocation();
 
-        if (state == TowerState.ROTATING || state == TowerState.TRACKING) {
+        // TRACKING ja e limitado no adjust, e rotatingTo nao vale nesse estado
+        if (state == TowerState.ROTATING) {
 
             if (currentDislocation >= maxSpin && rotatingTo == 1 ||
                     currentDislocation <= -maxSpin && rotatingTo == -1)  {
@@ -141,8 +179,19 @@ public class Tower {
 
         if (state == TowerState.TRACKING) {
             double current = dislocation();
-            double desired = Range.clip(current - calculate_correction(), -maxSpin, maxSpin);
-            adjust(desired - current);
+            lastCorrection = calculate_correction();
+            double desired = current + lastCorrection;
+
+            // escolhe o angulo equivalente (+-360) que cabe nos limites e fica mais perto da posicao atual
+            double best = Double.NaN;
+            for (double candidate : new double[] {desired, desired - 360, desired + 360}) {
+                if (Math.abs(candidate) <= maxSpin &&
+                        (Double.isNaN(best) || Math.abs(candidate - current) < Math.abs(best - current))) {
+                    best = candidate;
+                }
+            }
+
+            adjust(Double.isNaN(best) ? desired : best);
         }
 
     }
@@ -209,9 +258,16 @@ public class Tower {
         deltaY = trackedPose.y() - turret_y;
 
         theta = Math.toDegrees(Math.atan2(deltaY, deltaX));
-        correction = (theta - headingTurret) + 360;
+        correction = normalize(theta - headingTurret);
 
-        return -correction;
+        return correction;
 
+    }
+
+    private static double normalize(double degrees) {
+        degrees %= 360;
+        if (degrees > 180) degrees -= 360;
+        if (degrees <= -180) degrees += 360;
+        return degrees;
     }
 }
