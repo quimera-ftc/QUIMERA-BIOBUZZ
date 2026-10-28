@@ -14,7 +14,7 @@ public class Test_ServoTaura extends LinearOpMode {
         Servo servo = hardwareMap.get(Servo.class, "flow");
 
 
-       ServoTaura tauraServo = new ServoTaura(servo);
+       ServoTaura tauraServo = new ServoTaura(hardwareMap);
 
 
 
@@ -27,7 +27,7 @@ public class Test_ServoTaura extends LinearOpMode {
             if(gamepad1.a)
                 tauraServo.setPosition(1.0);
             else if(gamepad1.b)
-                tauraServo.setPosition(0.5);
+                tauraServo.setPosition(-1.0);
             else
                 tauraServo.setPosition(0.0);
             telemetry.addData("Pos comandada", "%.3f", tauraServo.getPosition());
