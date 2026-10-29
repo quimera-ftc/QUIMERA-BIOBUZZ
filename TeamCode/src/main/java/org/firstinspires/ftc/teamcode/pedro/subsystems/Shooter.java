@@ -19,6 +19,7 @@ public class Shooter {
     DcMotorEx rs, ls;
     public double maxpower = 1, minpower = 0;
     public double start, now;
+    boolean isOn = false;
     public ElapsedTime runtime = new ElapsedTime();
     PIDFCoefficients controller=  new PIDFCoefficients(0.5,0,0,0.5);
     //-- GnHk28 has left the Commits
@@ -43,6 +44,8 @@ public class Shooter {
     public void powerUp() {
         rs.setPower(maxpower);
         ls.setPower(maxpower);
+
+        isOn = true;
     }
 
     //metodo p shootar no autooooo
@@ -77,5 +80,6 @@ public class Shooter {
     public void stop() {
         rs.setPower(0);
         ls.setPower(0);
+        isOn = false;
     }
 }
