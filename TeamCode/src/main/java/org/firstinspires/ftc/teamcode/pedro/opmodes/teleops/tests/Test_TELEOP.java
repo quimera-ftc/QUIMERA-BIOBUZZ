@@ -3,8 +3,10 @@ package org.firstinspires.ftc.teamcode.pedro.opmodes.teleops.tests;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.teamcode.pedro.subsystems.Agropecuaria;
 import org.firstinspires.ftc.teamcode.pedro.subsystems.DriveTrain;
 import org.firstinspires.ftc.teamcode.pedro.subsystems.Intake;
+import org.firstinspires.ftc.teamcode.pedro.subsystems.ServoTaura;
 import org.firstinspires.ftc.teamcode.pedro.subsystems.Shooter;
 @TeleOp
 public class Test_TELEOP extends OpMode {
@@ -12,12 +14,20 @@ public class Test_TELEOP extends OpMode {
     Intake intake;
     DriveTrain driveTrain;
     Shooter shooter;
+    Agropecuaria servoTaura;
 
     @Override
     public void init() {
         intake = new Intake(hardwareMap);
         driveTrain = new DriveTrain(hardwareMap, gamepad1);
         shooter = new Shooter(hardwareMap);
+        servoTaura = new Agropecuaria(hardwareMap);
+
+
+
+
+
+
     }
 
     @Override
@@ -41,13 +51,22 @@ public class Test_TELEOP extends OpMode {
         }
 
         if (gamepad1.right_trigger_pressed) {
-            shooter.shoot();
+            shooter.powerUp();
         } else {
             shooter.stop();
         }
 
+        if (gamepad1.xWasPressed()) {
+            servoTaura.down();
+        }else{
+            servoTaura.up();
+        }
+
+
 
         driveTrain.driveStick();
+
+
 
     }
 }

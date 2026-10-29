@@ -10,13 +10,15 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 public class Intake {
 
     private final DcMotor intake;
-    public ServoTaura servo;
+    public Agropecuaria agro;
     private boolean isOn = false;
     public Intake(HardwareMap hardwareMap) {
         intake = hardwareMap.get(DcMotor.class, "intake");
+        agro = new Agropecuaria(hardwareMap);
 
-        servo = new ServoTaura(hardwareMap);
     }
+
+
 
 
 
@@ -34,7 +36,7 @@ public class Intake {
     public void stop() {
         isOn = false;
         intake.setPower(0);
-        servo.up();
+
     }
 
     public void toggle() {
@@ -51,7 +53,7 @@ public class Intake {
     public Command intakePP() {
         return sequential(
                 instant(() -> in()),
-                instant(() -> servo.down())
+                instant(() -> agro.down())
         );
 
     }
