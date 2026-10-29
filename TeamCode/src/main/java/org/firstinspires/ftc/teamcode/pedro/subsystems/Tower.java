@@ -12,17 +12,14 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 public class Tower {
     double gearRatio = 50.0 / 15.0;
-    double ticksPerRev = 28.0 * (76.0 / 21.0); // HD Hex = 28 ticks/volta; redução "4:1" é na real 76/21 (~3.62:1)
-
-    double ticksPerDegree = (ticksPerRev * gearRatio) / 360.0;
-
+    double ticksPerRev = 28.0 * (76.0 / 21.0) * gearRatio; // HD Hex = 28 ticks/volta; redução "4:1" é na real 76/21 (~3.62:1)
+    double ticksPerDegree = ticksPerRev / 360.0;
     private enum TowerState {
         IDLE,
         TRACKING,
         LOCKED,
         ROTATING
     }
-
     public enum TrackingPose {
         TOP_GOAL_BLUE,
         BOTTOM_GOAL_BLUE,
@@ -49,10 +46,23 @@ public class Tower {
     private int rotatingTo;
     private double lastCorrection;
 
-    public Tower(HardwareMap hardwareMap, Telemetry telemetry) {
+    public Tower(@NonNull HardwareMap hardwareMap, Telemetry telemetry) {
         tower = hardwareMap.get(DcMotorEx.class, "tower");
 
         this.telemetry = telemetry;
+
+        tower.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        tower.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        tower.setDirection(DcMotor.Direction.REVERSE);
+        tower.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        tower.setTargetPositionTolerance(2);
+    }
+
+    public Tower(@NonNull HardwareMap hardwareMap) {
+        tower = hardwareMap.get(DcMotorEx.class, "tower");
+
+        telemetry = null;
 
         tower.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         tower.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -82,11 +92,10 @@ public class Tower {
         state = TowerState.ROTATING;
     }
 
-    // LEFT = anti-horario, RIGHT = horario
+    // LEFT = anti-horário, RIGHT = horário
     public void rotate(@NonNull Direction direction) {
         rotate(direction == Direction.LEFT ? 1 : -1);
     }
-
 
     public void lock() {
         if (state == TowerState.LOCKED) {
@@ -115,14 +124,15 @@ public class Tower {
         currentPose = pose;
         enforceLimits();
         fix();
-
-        telemetry.addData("Tower state", state);
-        telemetry.addData("Tower angle", dislocation());
-        telemetry.addData("Tower correction", lastCorrection);
     }
 
-
-
+    public void printTelemetry() {
+        if (telemetry != null) {
+            telemetry.addData("estado torre", state);
+            telemetry.addData("ang. torre", dislocation());
+            telemetry.addData("correção torre", lastCorrection);
+        }
+    }
 
     public void stop() {
         state = TowerState.IDLE;
@@ -135,7 +145,6 @@ public class Tower {
             tower.setMode(mode);
         }
     }
-
 
     private void adjust(double degrees) {
         if (state != TowerState.TRACKING) {
@@ -177,7 +186,7 @@ public class Tower {
 
         if (state == TowerState.TRACKING) {
             double current = dislocation();
-            lastCorrection = calculate_correction();
+            lastCorrection = calculateCorrection();
             double desired = current + lastCorrection;
 
             double best = Double.NaN;
@@ -189,22 +198,21 @@ public class Tower {
             }
 
             adjust(Double.isNaN(best) ? desired : best);
-            telemetry.addData("turret dislocation", current);
-            telemetry.addData("desired", desired);
-            telemetry.addData("best", !Double.isNaN(best) ? best : "x.x");
+
+            if (telemetry != null) {
+                telemetry.addData("turret dislocation", current);
+                telemetry.addData("desired", desired);
+                telemetry.addData("best", !Double.isNaN(best) ? best : "x.x");
+            }
         }
-
     }
-
 
     public boolean isBusy() {
         return state != TowerState.IDLE;
     }
-
     public boolean isTracking() {
         return state == TowerState.TRACKING;
     }
-
     public boolean isLocked() {
         return state == TowerState.LOCKED;
     }
@@ -235,15 +243,11 @@ public class Tower {
 
         state = TowerState.TRACKING;
     }
-
-
-
     public double dislocation() {
         int ticks = tower.getCurrentPosition();
         return ticks / ticksPerDegree;
     }
-
-    public double calculate_correction() {
+    public double calculateCorrection() {
 
         double headingRad = currentPose.heading();
 
@@ -261,9 +265,7 @@ public class Tower {
         correction = normalize(theta - headingTurret);
 
         return correction;
-
     }
-
     private static double normalize(double degrees) {
         degrees %= 360;
         if (degrees > 180) degrees -= 360;
