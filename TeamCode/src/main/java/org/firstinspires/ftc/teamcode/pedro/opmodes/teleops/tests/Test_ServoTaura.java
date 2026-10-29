@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.teamcode.pedro.subsystems.ServoTaura;
 
-@TeleOp
+@TeleOp(name="AGRO", group="Tests")
 public class Test_ServoTaura extends LinearOpMode {
 
     @Override

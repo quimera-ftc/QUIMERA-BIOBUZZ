@@ -1,37 +1,44 @@
 package org.firstinspires.ftc.teamcode.pedro.opmodes.teleops.tests;
 
+import com.pedropathing.follower.Follower;
+import com.pedropathing.math.Pose;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.teamcode.pedro.Constants;
 import org.firstinspires.ftc.teamcode.pedro.subsystems.Agropecuaria;
 import org.firstinspires.ftc.teamcode.pedro.subsystems.DriveTrain;
 import org.firstinspires.ftc.teamcode.pedro.subsystems.Intake;
-import org.firstinspires.ftc.teamcode.pedro.subsystems.ServoTaura;
 import org.firstinspires.ftc.teamcode.pedro.subsystems.Shooter;
-@TeleOp
-public class Test_TELEOP extends OpMode {
+import org.firstinspires.ftc.teamcode.pedro.subsystems.Tower;
 
+@TeleOp(name="TELEOP", group="Tests")
+public class Test_TELEOP extends OpMode {
     Intake intake;
     DriveTrain driveTrain;
+    Tower tower;
     Shooter shooter;
-    Agropecuaria servoTaura;
+    Agropecuaria agro;
+    Follower follower;
 
     @Override
     public void init() {
+        follower = Constants.create(hardwareMap);
+
         intake = new Intake(hardwareMap);
         driveTrain = new DriveTrain(hardwareMap, gamepad1);
         shooter = new Shooter(hardwareMap);
-        servoTaura = new Agropecuaria(hardwareMap);
+        tower = new Tower(hardwareMap, telemetry);
+        agro = new Agropecuaria(hardwareMap);
 
-
-
-
-
-
+        follower.setPose(new Pose(132.6505617977528, 133.92247191011242, Math.toRadians(270)));
     }
 
     @Override
     public void loop() {
+        follower.update();
+
+        Pose currentPose = follower.pose();
 
         if (gamepad1.aWasPressed()) {
 
@@ -57,16 +64,23 @@ public class Test_TELEOP extends OpMode {
         }
 
         if (gamepad1.xWasPressed()) {
-            servoTaura.down();
+            agro.down();
         }else{
-            servoTaura.up();
+            agro.up();
         }
-
-
 
         driveTrain.driveStick();
 
 
+        telemetry.addData("intake", intake.isOn() ? "LIGADO" : "DESLIGADO");
+        telemetry.addData("shooter", shooter.isOn() ? "LIGADO" : "DESLIGADO");
+        telemetry.addLine("--ODOMETRIA--");
+        telemetry.addData("x", currentPose.x());
+        telemetry.addData("y", currentPose.y());
+        telemetry.addData("heading", Math.toDegrees(currentPose.heading()));
+        telemetry.addLine("--TORRETA--");
+        tower.printTelemetry();
 
+        telemetry.update();
     }
 }
