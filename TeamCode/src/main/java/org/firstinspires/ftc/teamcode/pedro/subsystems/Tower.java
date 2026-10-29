@@ -1,14 +1,10 @@
 package org.firstinspires.ftc.teamcode.pedro.subsystems;
 
-import static com.pedropathing.ivy.commands.Commands.instant;
-
 import androidx.annotation.NonNull;
 
-import com.pedropathing.ivy.Command;
 import com.pedropathing.math.Pose;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.Range;
 
@@ -42,7 +38,7 @@ public class Tower {
     private final DcMotorEx tower;
     private final double towerPower = 0.6, maxSpin = 150;
     int toleranceTicks = 1;
-    private final double[] offsets = new double[] {0, 1,772};
+    private final double[] offsets = new double[] {0, -1,772};
     private TowerState state = TowerState.IDLE, lastState = TowerState.IDLE;
     private final Pose topNestBLUE = new Pose(84, 84);
     private final Pose bottomNestBLUE = new Pose(84, 59);
