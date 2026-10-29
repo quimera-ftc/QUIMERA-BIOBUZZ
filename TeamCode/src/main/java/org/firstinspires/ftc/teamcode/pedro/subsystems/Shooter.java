@@ -41,6 +41,10 @@ public class Shooter {
         intake = new Intake(hardwareMap);
     }
 
+    public boolean isOn() {
+        return isOn;
+    }
+
     public void powerUp() {
         rs.setPower(maxpower);
         ls.setPower(maxpower);
