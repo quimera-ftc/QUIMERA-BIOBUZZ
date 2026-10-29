@@ -29,8 +29,7 @@ public class ServoTaura {
     private Servo baseServo = null;
 
 
-    public ServoTaura(@NonNull HardwareMap hardwareMap) {
-        Servo base = hardwareMap.get(Servo.class,"flow");
+    public ServoTaura(@NonNull Servo base) {
         baseServo = base;
     }
 
@@ -92,7 +91,7 @@ public class ServoTaura {
         setPosition(0);
     }
     public void down(){
-        setPosition(1);
+        setPosition(0.5);
     }
 
 

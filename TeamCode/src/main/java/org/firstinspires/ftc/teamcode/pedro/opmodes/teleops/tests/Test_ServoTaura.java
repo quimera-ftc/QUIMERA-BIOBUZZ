@@ -1,11 +1,7 @@
 package org.firstinspires.ftc.teamcode.pedro.opmodes.teleops.tests;
 
-import com.pedropathing.follower.Follower;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.AnalogInput;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.teamcode.pedro.subsystems.ServoTaura;
 
@@ -15,28 +11,35 @@ public class Test_ServoTaura extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         Servo servo = hardwareMap.get(Servo.class, "flow");
+        Servo servo1 = hardwareMap.get(Servo.class, "flow1");
 
 
-       ServoTaura tauraServo = new ServoTaura(hardwareMap);
+       ServoTaura leftServo = new ServoTaura(servo);
+       ServoTaura rightServo = new ServoTaura(servo1);
 
-       tauraServo.setDirection(Servo.Direction.FORWARD );
+       leftServo.setDirection(Servo.Direction.FORWARD );
+       rightServo.setDirection(Servo.Direction.REVERSE);
 
 
 
-        tauraServo.setPosition(0.0);
+        leftServo.setPosition(0.0);
 
         waitForStart();
         if (isStopRequested()) return;
 
         while(opModeIsActive()) {
-            if(gamepad1.a)
-                tauraServo.setPosition(0.50);
-            else
-                tauraServo.setPosition(0.0);
-            telemetry.addData("Pos comandada", "%.3f", tauraServo.getPosition());
-            telemetry.addData("Pos lida", "%.3f", tauraServo.getUniversalPosition());
-            telemetry.addData("Pos graus absoluto", "%.3f", tauraServo.getRawPositionInDegrees());
-            telemetry.addData("Pos graus incremental", "%.3f", tauraServo.getIncrementalPositionInDegrees());
+            if(gamepad1.a) {
+                leftServo.setPosition(0.47);
+                rightServo.setPosition(0.46);
+            } else {
+                leftServo.setPosition(0.0);
+                rightServo.setPosition(0.0);
+            }
+
+            telemetry.addData("Pos comandada", "%.3f", leftServo.getPosition());
+            telemetry.addData("Pos lida", "%.3f", leftServo.getUniversalPosition());
+            telemetry.addData("Pos graus absoluto", "%.3f", leftServo.getRawPositionInDegrees());
+            telemetry.addData("Pos graus incremental", "%.3f", leftServo.getIncrementalPositionInDegrees());
 
             telemetry.update();
         }
