@@ -12,13 +12,12 @@ import org.firstinspires.ftc.teamcode.pedro.subsystems.DriveTrain;
 import org.firstinspires.ftc.teamcode.pedro.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.pedro.subsystems.Tower;
 
-@TeleOp
+@TeleOp(name="BLUE_TOP", group="Blue")
 public class TeleOp_BLUE extends OpMode {
     Intake intake;
     Agropecuaria agro;
     DriveTrain driveTrain;
     Tower tower;
-
     boolean flower = false;
 
     Follower follower;
