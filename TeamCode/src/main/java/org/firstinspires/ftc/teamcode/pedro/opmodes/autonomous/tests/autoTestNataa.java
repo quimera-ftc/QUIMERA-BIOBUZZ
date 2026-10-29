@@ -18,6 +18,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.teamcode.pedro.Constants;
+import org.firstinspires.ftc.teamcode.pedro.subsystems.Agropecuaria;
 import org.firstinspires.ftc.teamcode.pedro.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.pedro.subsystems.Shooter;
 
@@ -26,10 +27,10 @@ public class autoTestNataa extends OpMode {
 
     Shooter shooter;
     Intake intake;
+    Agropecuaria agro;
 
 
     PoseFactory poseFactory = PoseFactory.degrees();
-    Scheduler scheduler;
     private Follower follower;
 
 
@@ -73,6 +74,7 @@ public class autoTestNataa extends OpMode {
 
         shooter = new Shooter(hardwareMap);
         intake = new Intake(hardwareMap);
+        agro = new Agropecuaria(hardwareMap);
 
     }
 
@@ -96,6 +98,7 @@ public class autoTestNataa extends OpMode {
                         intake.intakePP()
                 ),
                 instant(() -> intake.stop()),
+                instant(() -> agro.up()),
                 follow(follower, COLLECT1_TO_SHOOT2()),
                 shooter.shootPP(),
                 parallel(
@@ -103,6 +106,7 @@ public class autoTestNataa extends OpMode {
                         intake.intakePP()
                 ),
                 instant(() -> intake.stop()),
+                instant(() -> agro.up()),
                 follow(follower, COLLECT2_TO_SHOOT3()),
                 shooter.shootPP(),
                 parallel(
@@ -110,6 +114,7 @@ public class autoTestNataa extends OpMode {
                         intake.intakePP()
                 ),
                 instant(() -> intake.stop()),
+                instant(() -> agro.up()),
                 follow(follower, COLLECT3_TO_SHOOT4()),
                 shooter.shootPP(),
                 follow(follower, SHOOT4_TO_PARK())
