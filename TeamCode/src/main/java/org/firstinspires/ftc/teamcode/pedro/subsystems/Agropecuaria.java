@@ -1,10 +1,7 @@
 package org.firstinspires.ftc.teamcode.pedro.subsystems;
 
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.gamepad1;
-
 import androidx.annotation.NonNull;
 
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
@@ -20,7 +17,7 @@ public class Agropecuaria {
         left = new ServoTaura(s1);
         right = new ServoTaura(s2);
 
-        s1.setDirection(Servo.Direction.FORWARD );
+        s1.setDirection(Servo.Direction.FORWARD);
         s2.setDirection(Servo.Direction.REVERSE);
 
 

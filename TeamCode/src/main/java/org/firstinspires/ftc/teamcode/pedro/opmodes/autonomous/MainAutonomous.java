@@ -5,10 +5,10 @@ import com.pedropathing.math.Pose;
 import static com.pedropathing.api.Paths.*;
 
 import com.pedropathing.paths.Path;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
+@Autonomous
 public class MainAutonomous {
-
-
     PoseFactory factory = PoseFactory.degrees();
 
 
