@@ -11,6 +11,7 @@ public class Intake {
 
     private final DcMotor intake;
     public Agropecuaria agro;
+    double maxPower = 0.85;
     private boolean isOn = false;
     public Intake(HardwareMap hardwareMap) {
         intake = hardwareMap.get(DcMotor.class, "intake");
@@ -20,13 +21,13 @@ public class Intake {
 
     public void in() {
         isOn = true;
-        intake.setPower(1);
+        intake.setPower(maxPower);
 
     }
 
     public void out() {
         isOn = true;
-        intake.setPower(-1);
+        intake.setPower(-maxPower);
     }
 
     public void stop() {
