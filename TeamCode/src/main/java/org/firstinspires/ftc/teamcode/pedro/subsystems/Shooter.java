@@ -17,6 +17,8 @@ public class Shooter {
     Intake intake;
 
     DcMotorEx rs, ls;
+    public double targetBangBang = 0.85;
+    private final double feedForward = 0.4;
     public double maxpower = 1, minpower = 0;
     public double start, now;
     boolean isOn = false;
@@ -35,8 +37,8 @@ public class Shooter {
         rs.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, controller);
 
 
-//        ls.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-//        rs.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        ls.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        rs.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 
         intake = new Intake(hardwareMap);
     }
@@ -86,4 +88,30 @@ public class Shooter {
         ls.setPower(0);
         isOn = false;
     }
+
+
+//-------------------BangBang-----------------------
+    public void shooterPower(double wantedVelo) {
+        this.targetBangBang = wantedVelo;
+    }
+
+    public void updateBangBang() {
+
+        if (targetBangBang == 0) {
+            rs.setPower(0);
+            ls.setPower(0);
+            return;
+        }
+
+        double curVelocity = (rs.getVelocity() + ls.getVelocity()) /2;
+
+        if (curVelocity < targetBangBang) {
+            rs.setPower(1);
+            ls.setPower(1);
+        } else {
+            rs.setPower(feedForward);
+            ls.setPower(feedForward);
+        }
+    }
+
 }
