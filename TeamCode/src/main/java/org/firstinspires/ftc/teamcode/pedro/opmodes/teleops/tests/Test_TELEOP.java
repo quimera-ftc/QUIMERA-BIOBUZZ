@@ -21,6 +21,8 @@ public class Test_TELEOP extends OpMode {
     Agropecuaria agro;
     Follower follower;
 
+    //public boolean isOn = false;
+
     @Override
     public void init() {
         follower = Constants.create(hardwareMap);
@@ -41,20 +43,11 @@ public class Test_TELEOP extends OpMode {
         Pose currentPose = follower.pose();
 
         if (gamepad1.aWasPressed()) {
-
-            if (intake.isOn()) {
-                intake.stop();
-            } else {
-                intake.in();
-            }
+            intake.toggle();
         }
 
         if (gamepad1.yWasPressed()) {
-            if (intake.isOn()) {
-                intake.stop();
-            } else {
-                intake.out();
-            }
+            intake.toggleReversed();
         }
 
         if (gamepad1.right_trigger_pressed) {
@@ -68,6 +61,12 @@ public class Test_TELEOP extends OpMode {
         }else{
             agro.up();
         }
+
+//        if (isOn) {
+//            intake.in();
+//        } else {
+//            intake.stop();
+//        } //porquice
 
         driveTrain.driveStick();
 
