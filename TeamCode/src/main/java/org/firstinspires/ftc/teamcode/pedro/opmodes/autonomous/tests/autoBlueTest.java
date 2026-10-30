@@ -35,12 +35,12 @@ public class autoBlueTest extends OpMode {
     Scheduler scheduler;
     private Follower follower;
 
-    Pose startingPoint = poseFactory.of(86.06466512702079,133.1605080831409,270);
+    Pose startingPoint = poseFactory.of(86.06466512702079,134.1431469720298,270);
     Pose collect1 = poseFactory.of(130.4805984673269,94.36056581986145,0);
     Pose shoot2 = poseFactory.of(81.96651270207855,16.393764434180113,45);
     Pose collect2 = poseFactory.of(92.53464203233256,8.706697459584301,280);
     Pose shoot3 = poseFactory.of(80.1431870669746,8.654734411085453,90);
-    Pose park = poseFactory.of(132.4109489051095, 19.869388686131376, 0);
+    Pose park = poseFactory.of(132.12685185185188, 51.289675925925924, 0);
 
 
     public Path START_TO_COLLECT1() {
@@ -92,14 +92,14 @@ public class autoBlueTest extends OpMode {
                         follow(follower, START_TO_COLLECT1()),
                         intake.intakePP()
                 ),
-                instant(() -> intake.stop()),
+                intake.intakestopPP(),
                 follow(follower, COLLECT1_TO_SHOOT2()),
                 shooter.shootPP(),
                 parallel(
                         follow(follower, SHOOT2_TO_COLLECT2()),
                         intake.intakePP()
                 ),
-                instant(() -> intake.stop()),
+                intake.intakestopPP(),
                 follow(follower, COLLECT2_TO_SHOOT3()),
                 shooter.shootPP(),
                 follow(follower, SHOOT3_TO_PARK())
