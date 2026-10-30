@@ -18,10 +18,6 @@ public class Intake {
 
     }
 
-
-
-
-
     public void in() {
         isOn = true;
         intake.setPower(1);
@@ -40,14 +36,30 @@ public class Intake {
     }
 
     public void toggle() {
-        if (!isOn) {
+        if (isOn) {
             in();
-        } else stop();
+        } else {
+            stop();
+        }
+
+        isOn = !isOn;
+    }
+
+    public void toggleReversed() {
+        if (isOn) {
+            out();
+        } else {
+            stop();
+        }
+
+        isOn = !isOn;
     }
 
     public boolean isOn(){
         return isOn;
     }
+
+    //Metodos em Commands-----------------------------------------
 
     //metodo p intake no autoooo
     public Command intakePP() {
@@ -57,4 +69,18 @@ public class Intake {
         );
 
     }
+
+    public Command intakestopPP() {
+        return sequential(
+                instant(() -> stop()),
+                instant(() -> agro.up())
+        );
+    }
+
+    public Command togglePP() {
+        return sequential(
+                instant(() -> toggle())
+        );
+    }
+
 }
