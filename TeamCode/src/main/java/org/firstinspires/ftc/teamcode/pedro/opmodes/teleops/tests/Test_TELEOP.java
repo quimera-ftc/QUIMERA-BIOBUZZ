@@ -69,6 +69,18 @@ public class Test_TELEOP extends OpMode {
             agro.up();
         }
 
+        if (gamepad1.dpadRightWasPressed() && !tower.isLocked()) {
+
+            if (!tower.isTracking()) {
+
+                if (currentPose.y() >= 70.75) {
+                    tower.track(Tower.TrackingPose.TOP_GOAL_BLUE);
+                } else tower.track(Tower.TrackingPose.BOTTOM_GOAL_BLUE);
+
+            } else tower.stop();
+
+        }
+
         driveTrain.driveStick();
 
 
@@ -78,8 +90,8 @@ public class Test_TELEOP extends OpMode {
         telemetry.addData("x", currentPose.x());
         telemetry.addData("y", currentPose.y());
         telemetry.addData("heading", Math.toDegrees(currentPose.heading()));
-        telemetry.addLine("--TORRETA--");
-        tower.printTelemetry();
+//        telemetry.addLine("--TORRETA--");
+//        tower.printTelemetry();
 
         telemetry.update();
     }

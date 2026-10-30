@@ -10,12 +10,14 @@ import org.firstinspires.ftc.teamcode.pedro.Constants;
 import org.firstinspires.ftc.teamcode.pedro.subsystems.Agropecuaria;
 import org.firstinspires.ftc.teamcode.pedro.subsystems.DriveTrain;
 import org.firstinspires.ftc.teamcode.pedro.subsystems.Intake;
+import org.firstinspires.ftc.teamcode.pedro.subsystems.Shooter;
 import org.firstinspires.ftc.teamcode.pedro.subsystems.Tower;
 
 @TeleOp(name="BLUE_TOP", group="Blue")
-public class TeleOp_BLUE extends OpMode {
+public class TELEOP_BLUE_TOP extends OpMode {
     Intake intake;
     Agropecuaria agro;
+    Shooter shooter;
     DriveTrain driveTrain;
     Tower tower;
     boolean flower = false;
@@ -28,6 +30,8 @@ public class TeleOp_BLUE extends OpMode {
         follower = Constants.create(hardwareMap);
         tower = new Tower(hardwareMap, telemetry);
         driveTrain = new DriveTrain(hardwareMap, gamepad1);
+        shooter = new Shooter(hardwareMap);
+        intake = new Intake(hardwareMap);
         agro = new Agropecuaria(hardwareMap);
         agro.up();
         follower.setPose(new Pose(132.6505617977528, 133.92247191011242, Math.toRadians(270)));
@@ -57,10 +61,32 @@ public class TeleOp_BLUE extends OpMode {
             tower.stop();
         }
 
+        if (gamepad1.aWasPressed()) {
+
+            if (intake.isOn()) {
+                intake.stop();
+            } else {
+                intake.in();
+            }
+        }
+
+        if (gamepad1.yWasPressed()) {
+            if (intake.isOn()) {
+                intake.stop();
+            } else {
+                intake.out();
+            }
+        }
+
+        if (gamepad1.right_trigger_pressed) {
+            shooter.powerUp();
+        } else {
+            shooter.stop();
+        }
+
         if (gamepad1.xWasPressed()) {
 
-            if (flower) {
-
+            if (!flower) {
                 agro.down();
             } else agro.up();
 

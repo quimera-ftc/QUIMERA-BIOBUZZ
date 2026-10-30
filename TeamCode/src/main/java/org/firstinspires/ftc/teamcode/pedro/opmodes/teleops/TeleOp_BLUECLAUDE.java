@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.pedro.Constants;
+import org.firstinspires.ftc.teamcode.pedro.subsystems.Agropecuaria;
 import org.firstinspires.ftc.teamcode.pedro.subsystems.DriveTrain;
 import org.firstinspires.ftc.teamcode.pedro.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.pedro.subsystems.Tower;
@@ -19,6 +20,7 @@ public class TeleOp_BLUECLAUDE extends OpMode {
     Intake intake;
     DriveTrain driveTrain;
     TowerCLAUDE tower;
+    Agropecuaria agropecuaria;
 
     Follower follower;
 
@@ -31,6 +33,9 @@ public class TeleOp_BLUECLAUDE extends OpMode {
         for (LynxModule hub : hardwareMap.getAll(LynxModule.class)) {
             hub.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
         }
+
+        agropecuaria = new Agropecuaria(hardwareMap);
+        agropecuaria.up();
 
         follower = Constants.create(hardwareMap);
         tower = new TowerCLAUDE(hardwareMap, telemetry);
