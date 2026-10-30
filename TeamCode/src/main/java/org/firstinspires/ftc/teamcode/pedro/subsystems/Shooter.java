@@ -33,8 +33,8 @@ public class Shooter {
         ls.setDirection(DcMotorSimple.Direction.FORWARD);
             rs.setDirection(DcMotorSimple.Direction.FORWARD);
 
-        ls.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, controller);
-        rs.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, controller);
+        ls.setPIDFCoefficients(DcMotor.RunMode.RUN_WITHOUT_ENCODER, controller);
+        rs.setPIDFCoefficients(DcMotor.RunMode.RUN_WITHOUT_ENCODER, controller);
 
 
         ls.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);

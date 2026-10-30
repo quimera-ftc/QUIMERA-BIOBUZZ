@@ -60,6 +60,8 @@ public class Test_TELEOP extends OpMode {
 
         if (gamepad1.left_trigger_pressed) {
             shooter.shooterPower(2100);
+        } else {
+            shooter.stop();
         }
 
         if (gamepad1.xWasPressed()) {
