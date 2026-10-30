@@ -20,6 +20,8 @@ public class Test_TELEOP extends OpMode {
     Shooter shooter;
     Agropecuaria agro;
     Follower follower;
+    Pose startPose = new Pose(132.6505617977528, 133.92247191011242, Math.toRadians(270));
+
 
     @Override
     public void init() {
@@ -28,7 +30,7 @@ public class Test_TELEOP extends OpMode {
         intake = new Intake(hardwareMap);
         driveTrain = new DriveTrain(hardwareMap, gamepad1);
         shooter = new Shooter(hardwareMap);
-        tower = new Tower(hardwareMap, telemetry);
+        tower = new Tower(hardwareMap);
         agro = new Agropecuaria(hardwareMap);
 
         follower.setPose(new Pose(132.6505617977528, 133.92247191011242, Math.toRadians(270)));
@@ -79,7 +81,6 @@ public class Test_TELEOP extends OpMode {
         telemetry.addData("y", currentPose.y());
         telemetry.addData("heading", Math.toDegrees(currentPose.heading()));
         telemetry.addLine("--TORRETA--");
-        tower.printTelemetry();
 
         telemetry.update();
     }
