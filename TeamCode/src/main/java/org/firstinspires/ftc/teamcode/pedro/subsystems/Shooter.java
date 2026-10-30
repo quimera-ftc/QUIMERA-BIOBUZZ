@@ -17,7 +17,7 @@ public class Shooter {
     Intake intake;
 
     DcMotorEx rs, ls;
-    public double maxpower = 1, minpower = 0;
+    public double maxpower = 0.84, minpower = 0;
     public double start, now;
     boolean isOn = false;
     public ElapsedTime runtime = new ElapsedTime();
@@ -28,12 +28,14 @@ public class Shooter {
         ls = hardwareMap.get(DcMotorEx.class, "ls");
         rs = hardwareMap.get(DcMotorEx.class, "rs");
 
-        ls.setDirection(DcMotorSimple.Direction.FORWARD);
-            rs.setDirection(DcMotorSimple.Direction.FORWARD);
+        ls.setDirection(DcMotorSimple.Direction.REVERSE);
+        rs.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        ls.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, controller);
-        rs.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, controller);
+//        ls.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, controller);
+//        rs.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, controller);
 
+        ls.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        rs.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
 //        ls.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 //        rs.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
