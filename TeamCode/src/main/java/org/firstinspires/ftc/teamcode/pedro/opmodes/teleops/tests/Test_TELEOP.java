@@ -23,6 +23,8 @@ public class Test_TELEOP extends OpMode {
     Pose startPose = new Pose(132.6505617977528, 133.92247191011242, Math.toRadians(270));
 
 
+    //public boolean isOn = false;
+
     @Override
     public void init() {
         follower = Constants.create(hardwareMap);
@@ -43,20 +45,11 @@ public class Test_TELEOP extends OpMode {
         Pose currentPose = follower.pose();
 
         if (gamepad1.aWasPressed()) {
-
-            if (intake.isOn()) {
-                intake.stop();
-            } else {
-                intake.in();
-            }
+            intake.toggle();
         }
 
         if (gamepad1.yWasPressed()) {
-            if (intake.isOn()) {
-                intake.stop();
-            } else {
-                intake.out();
-            }
+            intake.toggleReversed();
         }
 
         if (gamepad1.right_trigger_pressed) {
@@ -70,6 +63,12 @@ public class Test_TELEOP extends OpMode {
         }else{
             agro.up();
         }
+
+//        if (isOn) {
+//            intake.in();
+//        } else {
+//            intake.stop();
+//        } //porquice
 
         driveTrain.driveStick();
 
