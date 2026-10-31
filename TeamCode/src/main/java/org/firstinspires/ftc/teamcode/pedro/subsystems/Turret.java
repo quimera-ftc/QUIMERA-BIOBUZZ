@@ -4,14 +4,16 @@ import androidx.annotation.NonNull;
 
 import com.pedropathing.math.Pose;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.teamcode.pedro.Constants;
 
 public class Turret {
 
-    static double maxPower  = 1;
+    static double maxPower  = 1, manualPower = 0;
 
     // --- mecanico ---
     DcMotorEx motor;
@@ -21,7 +23,7 @@ public class Turret {
     double ticksPerRev = 28.0 * (76.0 / 21.0) * gearRatio; // HD Hex = 28 ticks/volta; redução "4:1" é na real 76/21 (~3.62:1)
     double ticksPerDegree = ticksPerRev / 360.0;
 
-    double lastError = 0;
+    double lastError = 0, lastTime = 0;
     double integral = 0;
     static double maxIntegral = 50;
     static double kP = 0.005;
@@ -31,7 +33,8 @@ public class Turret {
 
     Constants.Alliance alliance;
     Pose currentPose;
-
+    ElapsedTime timer = new ElapsedTime();
+    double currentTime = 0;
     Mode mode = Mode.IDLE;
 
     public enum Mode {
@@ -48,17 +51,45 @@ public class Turret {
         motor.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         motor.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
 
-        motor.setDirection(DcMotorEx.Direction.REVERSE);
+        motor.setDirection(DcMotorEx.Direction.FORWARD);
         motor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+        timer.reset();
+    }
+
+    public void setManualPower(double power) {
+        manualPower = power;
     }
 
     public void update(Pose pose) {
         currentPose = pose;
+
+        currentTime = timer.seconds();
+        double dt = currentTime - lastTime;
+        lastTime = dt;
+
+        switch (mode) {
+
+            case TRACKING:
+
+                setPower(calculatePower(dt));
+                break;
+
+            case MANUAL:
+                setPower(manualPower);
+                break;
+
+            case IDLE:
+            default:
+                setPower(0);
+                break;
+        }
     }
     public void setMode(Mode mode) {
         this.mode = mode;
     }
-
+    public Mode getMode() {
+        return mode;
+    }
     public Pose getTrackingPose() {
 
         if (alliance == Constants.Alliance.BLUE) {
@@ -77,8 +108,13 @@ public class Turret {
     }
 
     public Pose getTurretPose() {
-        double turret_x = OFFSET_X * Math.cos(currentPose.heading()) - OFFSET_Y * Math.sin(currentPose.heading());
-        double turret_y = OFFSET_X * Math.sin(currentPose.heading()) + OFFSET_Y * Math.cos(currentPose.heading());
+        double heading = currentPose.heading();
+
+        double rotated_offsetX = OFFSET_X * Math.cos(heading) - OFFSET_Y * Math.sin(heading);
+        double rotated_offsetY = OFFSET_X * Math.sin(heading) + OFFSET_Y * Math.cos(heading);
+
+        double turret_x = currentPose.x() + rotated_offsetX;
+        double turret_y = currentPose.y() + rotated_offsetY;
 
         return new Pose(turret_x, turret_y);
     }
@@ -102,15 +138,14 @@ public class Turret {
         return;
     }
 
-    private double calculatePower() {
+    private double calculatePower(double dt) {
 
         double error = computeTargetAngle() - getAbsoluteAngle();
-        double dt;
 
         integral += error;
         integral = Range.clip(integral, -maxIntegral, maxIntegral);
 
-        double derivative = (error - lastError) ;
+        double derivative = (error - lastError) / dt ;
 
         double out = kP * error + kI * integral + kD * derivative;
         return out;
@@ -125,14 +160,22 @@ public class Turret {
         Pose turretPose = getTurretPose();
         Pose trackedPose = getTrackingPose();
 
-        double desired = Math.toDegrees(
+
+        double globalDesiredAngle = Math.toDegrees(
                 Math.atan2(trackedPose.y() - turretPose.y(), trackedPose.x() - turretPose.x())
         );
 
-        return normalizeDegrees(desired - getRawAngle());
+
+        double robotHeadingDeg = Math.toDegrees(currentPose.heading());
+
+        double localDesiredAngle = globalDesiredAngle - robotHeadingDeg;
+
+        // Normaliza o alvo para mantê-lo entre -180 e 180
+        return normalizeDegrees(localDesiredAngle);
     }
 
-    private double normalizeDegrees(double angle) {
+
+    public double normalizeDegrees(double angle) {
         while (angle > 180) angle -= 360;
         while (angle < -180) angle += 360;
         return angle;
