@@ -32,8 +32,8 @@ public class Constants {
         c.backLeftName.set("bl");
         c.backRightName.set("br");
 
-        c.frontLeftDirection.set(DcMotorSimple.Direction.FORWARD);
-        c.frontRightDirection.set(DcMotorSimple.Direction.FORWARD);
+        c.frontLeftDirection.set(DcMotorSimple.Direction.REVERSE);
+        c.frontRightDirection.set(DcMotorSimple.Direction.REVERSE);
         c.backLeftDirection.set(DcMotorSimple.Direction.FORWARD);
         c.backRightDirection.set(DcMotorSimple.Direction.REVERSE);
     });
@@ -41,8 +41,8 @@ public class Constants {
     public static PinpointConfig localizerConfig = new PinpointConfig(c -> {
         c.name.set("pinpoint");
         c.podType.set(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD);
-        c.xPodOffset.set(0.19194910845418617);
-        c.yPodOffset.set(-0.1009774865127924);
+        c.xPodOffset.set(-0.14633333589148334);
+        c.yPodOffset.set(0.18838323007418417);
         c.xPodDirection.set(GoBildaPinpointDriver.EncoderDirection.FORWARD);
         c.yPodDirection.set(GoBildaPinpointDriver.EncoderDirection.FORWARD);
         c.globalDistanceUnit.set(DistanceUnit.INCH);
@@ -66,7 +66,7 @@ public class Constants {
                 c.headingFeedback.set(Controller.proportional(6.602584212767482)); //6.602584212767482
                 c.headingBrakeCoefficients.set(Vector2D.cartesian(0.16609097675135914, 0.006894017463738513));
 
-                c.linearBrakeCoefficients.set(Matrix.diag(0.2634012946731598, 0.044359529102128675));
+                c.linearBrakeCoefficients.set(Matrix.diag(0.1034012946731598, 0.044359529102128675));
                 c.quadraticBrakeCoefficients.set(Matrix.diag(0.0031053216462230996, 0.004177042976344401));
 
                 c.maxAchievableForwardVelocity.set(60.80197535823279);
