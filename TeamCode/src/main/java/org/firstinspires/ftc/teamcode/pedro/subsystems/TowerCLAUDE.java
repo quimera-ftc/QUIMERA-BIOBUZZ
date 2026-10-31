@@ -12,53 +12,33 @@ import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
-/**
- * Torreta com controle proprio (PD + feedforward), no lugar do RUN_TO_POSITION do hub.
- *
- *   potencia = kP*erro + kD*(velAlvo - velTorre) + kV*velAlvo + kA*acelAlvo  (+ kS no sentido do movimento)
- *
- *   kP  empurra para o alvo (proporcional ao erro)
- *   kD  amortece: freia antes de chegar, para nao passar do alvo
- *   kV  feedforward: gira junto com o robo ANTES de aparecer erro (e o que deixa a mira "grudada")
- *   kS  potencia minima para vencer o atrito da torreta
- *   kA  (opcional) ajuda quando o robo arranca o giro
- *
- * Zona morta: com o alvo parado e erro menor que TOLERANCE, o motor desliga (o BRAKE segura).
- * So volta a corrigir quando o erro passa de RESUME. E isso que acaba com o "samba" perto do alvo.
- *
- * Os ganhos sao "public static" para o Test_TOWER poder mudar com o gamepad2 sem recompilar.
- */
 public class TowerCLAUDE {
 
-    // ===================== MECANICA =====================
-    // HD Hex: 28 ticks por volta do motor. Cartucho "4:1" da UltraPlanetary e na real 76/21 (~3,62:1).
-    // Engrenagem do motor 15 dentes -> coroa da torreta 50 dentes. Resultado: ~0,94 tick/grau (1 tick ~ 1,07 grau).
     public static final double TICKS_PER_DEGREE = 28.0 * (76.0 / 21.0) * (50.0 / 15.0) / 360.0;
 
-    // Posicao da torreta em relacao ao centro do robo, em POLEGADAS (convencao do Pedro: x = frente, y = esquerda).
-    // Antes estava "new double[] {0, 1,772}": o Java leu TRES numeros (0, 1 e 772), entao o offset usado era 1, nao 1,772.
-    private static final double TURRET_OFFSET_FORWARD = 0.0;
-    private static final double TURRET_OFFSET_LEFT = 1.772;
+
+    private static final double TURRET_OFFSET_FORWARD = -1.772;
+    private static final double TURRET_OFFSET_LEFT = 0.0;
 
     // ===================== GANHOS (ajustar no robo com o Test_TOWER) =====================
-    public static double kP = 0.02;     // potencia por grau de erro
+    public static double kP = 0.03;     // potencia por grau de erro
     public static double kD = 0.003;    // potencia por grau/s de diferenca de velocidade
-    public static double kV = 0.00035;  // potencia por grau/s de velocidade do alvo (~ 1 / velocidade maxima)
+    public static double kV = 0.0004;  // potencia por grau/s de velocidade do alvo (~ 1 / velocidade maxima)
     public static double kS = 0.06;     // potencia minima para a torreta comecar a girar (MEDIR com o Test_TOWER)
-    public static double kA = 0.0;      // potencia por grau/s^2 (opcional, comece em 0; ajuda torreta pesada a acompanhar arrancadas)
+    public static double kA = 0.0001;      // potencia por grau/s^2 (opcional, comece em 0; ajuda torreta pesada a acompanhar arrancadas)
     public static double MAX_POWER = 1.0;
 
     // ===================== ZONA MORTA (anti-samba) =====================
     public static double TOLERANCE = 1.5;     // graus: abaixo disso a torreta "assenta" e o motor desliga
     public static double RESUME = 2.5;        // graus: assentada, so volta a corrigir acima disso
     public static double SETTLE_SPEED = 15;   // graus/s: so assenta se a torreta estiver quase parada
-    public static double TARGET_MOVING = 8;   // graus/s: acima disso o alvo esta se mexendo (robo andando/girando)
-    public static double AIM_TOLERANCE = 3;   // graus: isOnTarget() fica true abaixo disso
+    public static double TARGET_MOVING = 5;   // graus/s: acima disso o alvo esta se mexendo (robo andando/girando)
+    public static double AIM_TOLERANCE = 1.5;   // graus: isOnTarget() fica true abaixo disso
 
     // ===================== OUTROS =====================
     public static double MAX_SPIN = 150;           // limite de giro para cada lado (graus); deixe ~15 graus de folga ate o limite fisico (cabos)
-    public static double MANUAL_SPEED = 200;       // graus/s com o bumper apertado
-    public static double MANUAL_ACCEL = 800;       // graus/s^2: rampa do giro manual (e freada antes do limite)
+    public static double MANUAL_SPEED = 300;       // graus/s com o bumper apertado
+    public static double MANUAL_ACCEL = 1200;       // graus/s^2: rampa do giro manual (e freada antes do limite)
     public static double IDLE_BRAKE = 0.006;       // potencia por grau/s para frear ao parar (stop())
     public static double IDLE_BRAKE_SPEED = 40;    // graus/s: abaixo disso o BRAKE do motor termina de parar
     public static boolean FEEDFORWARD = true;      // false = so posicao, como era antes (bom para comparar)
@@ -222,12 +202,8 @@ public class TowerCLAUDE {
         setPower(0);
     }
 
-    // ===================== LOOP =====================
-
-    /** Chame UMA vez por loop, depois de follower.update() e dos comandos do gamepad. */
     public void update(@NonNull Pose pose) {
         double now = clock.seconds();
-        // se ficou muito tempo sem update() (ex.: Test_TOWER medindo kS), recomeca a estimativa de velocidade
         if (hasLastPose && now - lastTime > 0.25) {
             hasLastPose = false;
             robotVx = robotVy = robotOmega = robotAlpha = 0;
@@ -253,11 +229,9 @@ public class TowerCLAUDE {
                 computeTrackingTarget(pose);
                 break;
             case MANUAL: {
-                // o alvo acelera e freia aos poucos (MANUAL_ACCEL), para a torreta conseguir acompanhar
                 double previousVelocity = manualVelocity;
                 double step = MANUAL_ACCEL * dt;
                 manualVelocity += Range.clip(manualDirection * MANUAL_SPEED - manualVelocity, -step, step);
-                // perto do limite, so deixa a velocidade que ainda da para frear antes de chegar nele
                 double dir = Math.signum(manualVelocity);
                 if (dir != 0) {
                     double room = Math.max(MAX_SPIN - targetAngle * dir, 0);
