@@ -65,7 +65,7 @@ public class Tower {
         telemetry = null;
 
         tower.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        tower.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        tower.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         tower.setDirection(DcMotor.Direction.REVERSE);
         tower.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
