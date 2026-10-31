@@ -54,8 +54,8 @@ public class Constants {
             c -> {
                 Controller primaryTranslationalForward = Controller.proportional(0.4519073567755977);
                 Controller secondaryTranslationalForward = Controller.proportional(0.16696769314161838);
-                Controller primaryTranslationalLateral = Controller.proportional(1.360617858083); //1.700772322603729
-                Controller secondaryTranslationalLateral = Controller.proportional(0.475387236913); //0.594234045381101
+                Controller primaryTranslationalLateral = Controller.proportional(0.960617858083); //0.960617858083
+                Controller secondaryTranslationalLateral = Controller.proportional(0.375387236913); //0.475387236913
 
                 c.forwardTranslational.set(Controller.piecewise(secondaryTranslationalForward).put(2.5, primaryTranslationalForward));
                 c.strafeTranslational.set(Controller.piecewise(secondaryTranslationalLateral).put(2.5, primaryTranslationalLateral));
@@ -63,16 +63,16 @@ public class Constants {
                 c.coast.set(Controller.proportionalFeedforward(0.008542520646834938));
                 c.brake.set(Controller.proportionalFeedforward(0.007261142549809697));
 
-                c.headingFeedback.set(Controller.proportional(6.602584212767482)); //6.602584212767482
+                c.headingFeedback.set(Controller.proportional(2.002584212767482)); //2.602584212767482
                 c.headingBrakeCoefficients.set(Vector2D.cartesian(0.16609097675135914, 0.006894017463738513));
 
                 c.linearBrakeCoefficients.set(Matrix.diag(0.1034012946731598, 0.044359529102128675));
-                c.quadraticBrakeCoefficients.set(Matrix.diag(0.0031053216462230996, 1.004177042976344401));
+                c.quadraticBrakeCoefficients.set(Matrix.diag(0.0031053216462230996, 0.014177042976344401));//0.0031053216462230996 //0.014177042976344401
 
                 c.maxAchievableForwardVelocity.set(60.80197535823279);
                 c.maxAchievableStrafeVelocity.set(45.001169530401384);
                 c.naturalForwardDeceleration.set(26.726102036766637);
-                c.naturalStrafeDeceleration.set(68.77118960818211);
+                c.naturalStrafeDeceleration.set(48.77118960818211); //
             }
     );
 
