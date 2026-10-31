@@ -2,7 +2,6 @@
 package org.firstinspires.ftc.teamcode.pedro.opmodes.teleops;
 
 import com.pedropathing.follower.Follower;
-import com.pedropathing.ivy.Scheduler;
 import com.pedropathing.math.Pose;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -11,7 +10,6 @@ import org.firstinspires.ftc.teamcode.pedro.Constants;
 import org.firstinspires.ftc.teamcode.pedro.subsystems.Agropecuaria;
 import org.firstinspires.ftc.teamcode.pedro.subsystems.DriveTrain;
 import org.firstinspires.ftc.teamcode.pedro.subsystems.Intake;
-import org.firstinspires.ftc.teamcode.pedro.subsystems.Tower;
 
 @TeleOp(name="TELEOP_BLUE_TOP", group="Blue")
 public class teleop_BLUE_TOP extends OpMode {

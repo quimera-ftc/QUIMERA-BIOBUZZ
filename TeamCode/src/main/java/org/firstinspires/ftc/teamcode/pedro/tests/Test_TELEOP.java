@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.pedro.opmodes.teleops.tests;
+package org.firstinspires.ftc.teamcode.pedro.tests;
 
 import com.pedropathing.follower.Follower;
 import com.pedropathing.math.Pose;
@@ -10,13 +10,13 @@ import org.firstinspires.ftc.teamcode.pedro.subsystems.Agropecuaria;
 import org.firstinspires.ftc.teamcode.pedro.subsystems.DriveTrain;
 import org.firstinspires.ftc.teamcode.pedro.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.pedro.subsystems.Shooter;
-import org.firstinspires.ftc.teamcode.pedro.subsystems.Tower;
+import org.firstinspires.ftc.teamcode.pedro.subsystems.Turret;
 
 @TeleOp(name="TELEOP", group="Tests")
 public class Test_TELEOP extends OpMode {
     Intake intake;
     DriveTrain driveTrain;
-    Tower tower;
+    Turret turret;
     Shooter shooter;
     Agropecuaria agro;
     Follower follower;
@@ -32,7 +32,7 @@ public class Test_TELEOP extends OpMode {
         intake = new Intake(hardwareMap);
         driveTrain = new DriveTrain(hardwareMap, gamepad1);
         shooter = new Shooter(hardwareMap);
-        tower = new Tower(hardwareMap);
+        turret = new Turret(hardwareMap, startPose, Constants.Alliance.BLUE);
         agro = new Agropecuaria(hardwareMap);
 
         follower.setPose(new Pose(132.6505617977528, 133.92247191011242, Math.toRadians(270)));
@@ -52,14 +52,17 @@ public class Test_TELEOP extends OpMode {
             intake.toggleReversed();
         }
 
-        if (gamepad1.right_trigger_pressed) {
-            shooter.powerUp();
-        } else {
-            shooter.stop();
-        }
+//        if (gamepad1.right_trigger_pressed) {
+//            shooter.powerUp();
+//        } else {
+//            shooter.stop();
+//        }
 
         if (gamepad1.left_trigger_pressed) {
-            shooter.shooterPower(2100);
+
+            shooter.shooterPower(1670);
+            shooter.updateBangBang();
+
         } else {
             shooter.stop();
         }

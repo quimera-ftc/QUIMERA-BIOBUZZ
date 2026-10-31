@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.pedro.opmodes.autonomous.tests;
+package org.firstinspires.ftc.teamcode.pedro.opmodes.autonomous;
 
 import static com.pedropathing.api.Paths.curve;
 import static com.pedropathing.api.Paths.line;
