@@ -23,7 +23,7 @@ public class Shooter {
     public double start, now;
     boolean isOn = false;
     public ElapsedTime runtime = new ElapsedTime();
-    PIDFCoefficients controller=  new PIDFCoefficients(0.5,0,0,0.5);
+    //PIDFCoefficients controller=  new PIDFCoefficients(0.5,0,0,0.5);
     //-- GnHk28 has left the Commits
 
     public Shooter(HardwareMap hardwareMap) {
@@ -31,10 +31,10 @@ public class Shooter {
         rs = hardwareMap.get(DcMotorEx.class, "rs");
 
         ls.setDirection(DcMotorSimple.Direction.FORWARD);
-            rs.setDirection(DcMotorSimple.Direction.FORWARD);
+        rs.setDirection(DcMotorSimple.Direction.FORWARD);
 
-        ls.setPIDFCoefficients(DcMotor.RunMode.RUN_WITHOUT_ENCODER, controller);
-        rs.setPIDFCoefficients(DcMotor.RunMode.RUN_WITHOUT_ENCODER, controller);
+        ls.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        rs.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
 
         ls.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
