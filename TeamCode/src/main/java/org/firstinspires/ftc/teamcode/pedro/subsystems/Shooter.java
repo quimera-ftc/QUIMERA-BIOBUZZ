@@ -30,8 +30,8 @@ public class Shooter {
         ls = hardwareMap.get(DcMotorEx.class, "ls");
         rs = hardwareMap.get(DcMotorEx.class, "rs");
 
-        ls.setDirection(DcMotorSimple.Direction.FORWARD);
-        rs.setDirection(DcMotorSimple.Direction.FORWARD);
+        ls.setDirection(DcMotorSimple.Direction.REVERSE);
+        rs.setDirection(DcMotorSimple.Direction.REVERSE);
 
         ls.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         rs.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -103,7 +103,7 @@ public class Shooter {
             return;
         }
 
-        double curVelocity = (rs.getVelocity() + ls.getVelocity()) /2;
+        double curVelocity = (rs.getVelocity() + ls.getVelocity()) / 2;
 
         if (curVelocity < targetBangBang) {
             rs.setPower(1);
