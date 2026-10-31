@@ -22,14 +22,15 @@ public class Turret {
     double gearRatio = 50.0 / 15.0;
     double ticksPerRev = 28.0 * (76.0 / 21.0) * gearRatio; // HD Hex = 28 ticks/volta; redução "4:1" é na real 76/21 (~3.62:1)
     double ticksPerDegree = ticksPerRev / 360.0;
-
+    static double LIMIT_BUFFER = 90;
+    static double LIMIT_SPIN = 130;
     double lastError = 0, lastTime = 0;
     double integral = 0;
     static double maxIntegral = 50;
-    static double kP = 0.005;
+    static double kP = 0.055;
     static double kI = 0;
-    static double kD = 0;
-    static double kS = 0.7;
+    static double kD = 0.067;
+    static double kS = 0.22;
 
     Constants.Alliance alliance;
     Pose currentPose;
@@ -60,6 +61,11 @@ public class Turret {
         manualPower = power;
     }
 
+    public void resetController() {
+        integral = 0;
+        lastError = 0;
+    }
+
     public void update(Pose pose) {
         currentPose = pose;
 
@@ -75,7 +81,27 @@ public class Turret {
                 break;
 
             case MANUAL:
-                setPower(manualPower);
+                double currentAngle = getRawAngle();
+                double safePower = manualPower;
+
+                if (manualPower > 0) { // Indo para o limite positivo
+                    if (currentAngle % 360 >= LIMIT_SPIN) {
+                        safePower = 0;
+                    } else if (currentAngle % 360 > LIMIT_SPIN - LIMIT_BUFFER) {
+                        double distanceToLimit = LIMIT_SPIN - (currentAngle % 360);
+                        safePower = manualPower * (distanceToLimit / LIMIT_BUFFER);
+                    }
+                }
+                else if (manualPower < 0) {
+                    if (currentAngle % 360 <= -LIMIT_SPIN) {
+                        safePower = 0;
+                    } else if (currentAngle % 360 < -LIMIT_SPIN + LIMIT_BUFFER) {
+                        double distanceToLimit = (currentAngle % 360) - (-LIMIT_SPIN);
+                        safePower = manualPower * (distanceToLimit / LIMIT_BUFFER);
+                    }
+                }
+
+                setPower(safePower);
                 break;
 
             case IDLE:
@@ -84,8 +110,11 @@ public class Turret {
                 break;
         }
     }
-    public void setMode(Mode mode) {
-        this.mode = mode;
+    public void setMode(Mode newMode) {
+        if (this.mode != Mode.TRACKING && newMode == Mode.TRACKING) {
+            resetController();
+        }
+        this.mode = newMode;
     }
     public Mode getMode() {
         return mode;
@@ -133,22 +162,27 @@ public class Turret {
     }
 
 
+    public double calculatePower(double dt) {
+        double error = normalizeDegrees(computeTargetAngle() - getRawAngle());
 
-    public void setAbsoluteTarget(double angle) {
-        return;
-    }
-
-    private double calculatePower(double dt) {
-
-        double error = computeTargetAngle() - getAbsoluteAngle();
-
-        integral += error;
+        integral += error * dt;
         integral = Range.clip(integral, -maxIntegral, maxIntegral);
 
-        double derivative = (error - lastError) / dt ;
+        double derivative = (error - lastError) / dt;
+        lastError = error;
 
-        double out = kP * error + kI * integral + kD * derivative;
-        return out;
+        double pOut = kP * error;
+        double iOut = kI * integral;
+        double dOut = kD * derivative;
+
+        // kS: Força mínima para vencer o atrito estático.
+        // Só aplicamos se o erro for maior que 1 grau para evitar trepidação no alvo.
+        double sOut = 0;
+        if (Math.abs(error) > 1.0) {
+            sOut = Math.signum(error) * kS;
+        }
+
+        return pOut + iOut + dOut + sOut;
     }
 
     private void setPower(double power) {
@@ -170,10 +204,14 @@ public class Turret {
 
         double localDesiredAngle = globalDesiredAngle - robotHeadingDeg;
 
+        double normalizedTarget = normalizeDegrees(localDesiredAngle);
         // Normaliza o alvo para mantê-lo entre -180 e 180
-        return normalizeDegrees(localDesiredAngle);
+        return -Range.clip(normalizedTarget, -LIMIT_SPIN, LIMIT_SPIN);
     }
 
+    public double clampToLimits(double angles) {
+        return Range.clip(angles, -LIMIT_SPIN, LIMIT_SPIN);
+    }
 
     public double normalizeDegrees(double angle) {
         while (angle > 180) angle -= 360;
