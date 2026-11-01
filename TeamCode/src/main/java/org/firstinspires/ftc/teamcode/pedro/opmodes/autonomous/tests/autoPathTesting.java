@@ -19,11 +19,11 @@ import org.firstinspires.ftc.teamcode.pedro.Constants;
 public class autoPathTesting extends OpMode {
 
 
-    PoseFactory poseFactory = PoseFactory.radians();
+    PoseFactory poseFactory = PoseFactory.degrees();
     private Follower follower;
 
-    Pose startingPoint = poseFactory.of(124.139,-79.448,3.1543);
-    Pose followingPoint = poseFactory.of(102.563, -27.391, 4.7153);
+    Pose startingPoint = poseFactory.of(81.31, 130.05,270);
+    Pose followingPoint = poseFactory.of(34.54, 106.46, 90);
 
     public Path TEST() {
         return line(startingPoint, followingPoint).linear(startingPoint, followingPoint);

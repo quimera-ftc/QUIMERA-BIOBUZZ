@@ -23,18 +23,18 @@ public class Shooter {
     public double start, now;
     boolean isOn = false;
     public ElapsedTime runtime = new ElapsedTime();
-    PIDFCoefficients controller=  new PIDFCoefficients(0.5,0,0,0.5);
+    //PIDFCoefficients controller=  new PIDFCoefficients(0.5,0,0,0.5);
     //-- GnHk28 has left the Commits
 
     public Shooter(HardwareMap hardwareMap) {
         ls = hardwareMap.get(DcMotorEx.class, "ls");
         rs = hardwareMap.get(DcMotorEx.class, "rs");
 
-        ls.setDirection(DcMotorSimple.Direction.FORWARD);
-            rs.setDirection(DcMotorSimple.Direction.FORWARD);
+        ls.setDirection(DcMotorSimple.Direction.REVERSE);
+        rs.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        ls.setPIDFCoefficients(DcMotor.RunMode.RUN_WITHOUT_ENCODER, controller);
-        rs.setPIDFCoefficients(DcMotor.RunMode.RUN_WITHOUT_ENCODER, controller);
+        ls.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        rs.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
 
         ls.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
@@ -103,7 +103,7 @@ public class Shooter {
             return;
         }
 
-        double curVelocity = (rs.getVelocity() + ls.getVelocity()) /2;
+        double curVelocity = (rs.getVelocity() + ls.getVelocity()) / 2;
 
         if (curVelocity < targetBangBang) {
             rs.setPower(1);
