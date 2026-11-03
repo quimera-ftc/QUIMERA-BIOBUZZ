@@ -21,6 +21,7 @@ public class Test_TELEOP extends OpMode {
     Agropecuaria agro;
     Follower follower;
     Pose startPose = new Pose(132.6505617977528, 133.92247191011242, Math.toRadians(270));
+    boolean agroOn = true;
 
     @Override
     public void init() {
@@ -31,7 +32,7 @@ public class Test_TELEOP extends OpMode {
         shooter = new Shooter(hardwareMap);
         turret = new Turret(hardwareMap, startPose, Constants.Alliance.BLUE);
         agro = new Agropecuaria(hardwareMap);
-
+        agro.up();
         follower.setPose(new Pose(132.6505617977528, 133.92247191011242, Math.toRadians(270)));
     }
 
@@ -51,7 +52,7 @@ public class Test_TELEOP extends OpMode {
 
 //        if (gamepad1.right_trigger_pressed) {
 //            shooter.powerUp();
-//        } else {
+//        } else {g
 //            shooter.stop();
 //        }
 
@@ -65,10 +66,13 @@ public class Test_TELEOP extends OpMode {
         }
 
         if (gamepad1.xWasPressed()) {
-            agro.down();
-        }else{
             agro.up();
+        }else{
+            agro.down();
         }
+
+
+
 
 //        if (isOn) {
 //            intake.in();
