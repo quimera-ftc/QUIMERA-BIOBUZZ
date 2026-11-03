@@ -1,17 +1,22 @@
 package org.firstinspires.ftc.teamcode.pedro.subsystems;
 
+import static com.pedropathing.ivy.commands.Commands.infinite;
+import static com.pedropathing.ivy.commands.Commands.instant;
+import static com.pedropathing.ivy.groups.Groups.parallel;
+
 import androidx.annotation.NonNull;
 
+
+import com.pedropathing.ivy.Command;
 import com.pedropathing.math.Pose;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.teamcode.pedro.Constants;
 
-public class Turret {
+public class Turret{
 
     static double maxPower  = 1, manualPower = 0;
 
@@ -71,7 +76,7 @@ public class Turret {
 
         currentTime = timer.seconds();
         double dt = currentTime - lastTime;
-        lastTime = dt;
+        lastTime = currentTime;
 
         switch (mode) {
 
@@ -84,7 +89,7 @@ public class Turret {
                 double currentAngle = getRawAngle();
                 double safePower = manualPower;
 
-                if (manualPower > 0) { // Indo para o limite positivo
+                if (manualPower > 0) {
                     if (currentAngle % 360 >= LIMIT_SPIN) {
                         safePower = 0;
                     } else if (currentAngle % 360 > LIMIT_SPIN - LIMIT_BUFFER) {
@@ -163,7 +168,7 @@ public class Turret {
 
 
     public double calculatePower(double dt) {
-        double error = normalizeDegrees(computeTargetAngle() - getRawAngle());
+        double error = computeTargetAngle() - getRawAngle();
 
         integral += error * dt;
         integral = Range.clip(integral, -maxIntegral, maxIntegral);
