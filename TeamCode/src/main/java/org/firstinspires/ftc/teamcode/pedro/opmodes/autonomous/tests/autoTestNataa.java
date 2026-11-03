@@ -41,7 +41,7 @@ public class autoTestNataa extends OpMode {
     Pose shoot3 = poseFactory.of(108.83981481481482, 18.182870370370395, 70);
     Pose collect3 = poseFactory.of(132.8888888888889, 94.93055555555556, 0);
     Pose shoot4 = poseFactory.of(104.5462962962963, 125.4074074074074, 300);
-    Pose park = poseFactory.of(132.12685185185188, 51.289675925925924, 270);
+    Pose park = poseFactory.of(131.12685185185188, 51.289675925925924, 270);
 
 
     public Path START_TO_COLLECT1() {
@@ -97,24 +97,21 @@ public class autoTestNataa extends OpMode {
                         follow(follower, START_TO_COLLECT1()),
                         intake.intakePP()
                 ),
-                instant(() -> intake.stop()),
-                instant(() -> agro.up()),
+                intake.intakestopPP(),
                 follow(follower, COLLECT1_TO_SHOOT2()),
                 shooter.shootPP(),
                 parallel(
                         follow(follower, SHOOT2_TO_COLLECT2()),
                         intake.intakePP()
                 ),
-                instant(() -> intake.stop()),
-                instant(() -> agro.up()),
+                intake.intakestopPP(),
                 follow(follower, COLLECT2_TO_SHOOT3()),
                 shooter.shootPP(),
                 parallel(
                         follow(follower, SHOOT3_TO_COLLECT3()),
                         intake.intakePP()
                 ),
-                instant(() -> intake.stop()),
-                instant(() -> agro.up()),
+                intake.intakestopPP(),
                 follow(follower, COLLECT3_TO_SHOOT4()),
                 shooter.shootPP(),
                 follow(follower, SHOOT4_TO_PARK())
