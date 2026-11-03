@@ -1,24 +1,31 @@
 package org.firstinspires.ftc.teamcode.pedro.subsystems;
 
+import static com.pedropathing.ivy.commands.Commands.infinite;
+import static com.pedropathing.ivy.commands.Commands.instant;
+import static com.pedropathing.ivy.groups.Groups.parallel;
+
 import androidx.annotation.NonNull;
 
+
+import com.pedropathing.ivy.Command;
 import com.pedropathing.math.Pose;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.teamcode.pedro.Constants;
 
-public class Turret {
+import java.util.function.Supplier;
+
+public class Turret{
 
     static double maxPower  = 1, manualPower = 0;
 
     // --- mecanico ---
     DcMotorEx motor;
-    static double OFFSET_Y = 0.0;
-    static double OFFSET_X = -1.772;
+    static double OFFSET_Y = -1.772;
+    static double OFFSET_X = 0.0;
     double gearRatio = 50.0 / 15.0;
     double ticksPerRev = 28.0 * (76.0 / 21.0) * gearRatio; // HD Hex = 28 ticks/volta; redução "4:1" é na real 76/21 (~3.62:1)
     double ticksPerDegree = ticksPerRev / 360.0;
@@ -27,10 +34,10 @@ public class Turret {
     double lastError = 0, lastTime = 0;
     double integral = 0;
     static double maxIntegral = 50;
-    static double kP = 0.055;
-    static double kI = 0;
-    static double kD = 0.067;
-    static double kS = 0.22;
+    static double kP = 0.07524;
+    static double kI = 0.000012;
+    static double kD = 0.08129;
+    static double kS = 0.25;
 
     Constants.Alliance alliance;
     Pose currentPose;
@@ -84,7 +91,7 @@ public class Turret {
                 double currentAngle = getRawAngle();
                 double safePower = manualPower;
 
-                if (manualPower > 0) { // Indo para o limite positivo
+                if (manualPower > 0) {
                     if (currentAngle % 360 >= LIMIT_SPIN) {
                         safePower = 0;
                     } else if (currentAngle % 360 > LIMIT_SPIN - LIMIT_BUFFER) {
@@ -163,7 +170,7 @@ public class Turret {
 
 
     public double calculatePower(double dt) {
-        double error = normalizeDegrees(computeTargetAngle() - getRawAngle());
+        double error = computeTargetAngle() - getRawAngle();
 
         integral += error * dt;
         integral = Range.clip(integral, -maxIntegral, maxIntegral);
@@ -175,8 +182,6 @@ public class Turret {
         double iOut = kI * integral;
         double dOut = kD * derivative;
 
-        // kS: Força mínima para vencer o atrito estático.
-        // Só aplicamos se o erro for maior que 1 grau para evitar trepidação no alvo.
         double sOut = 0;
         if (Math.abs(error) > 1.0) {
             sOut = Math.signum(error) * kS;
@@ -217,6 +222,17 @@ public class Turret {
         while (angle > 180) angle -= 360;
         while (angle < -180) angle += 360;
         return angle;
+    }
+
+    public Command autoaim(Supplier<Pose> poseSupplier) {
+        return Command.build()
+                .setStart(() -> setMode(Mode.TRACKING))
+                .setExecute(() -> update(poseSupplier.get()))
+                .setEnd((endCondition) -> {
+                    setMode(Mode.IDLE);
+                    setPower(0);
+                })
+                .requiring(this);
     }
 
 }

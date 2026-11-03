@@ -19,7 +19,7 @@ public class teleop_BLUE_TOP extends OpMode {
     DriveTrain driveTrain;
     Turret turret;
     boolean flower = false;
-    Pose startPose = new Pose(132.12, 51.28, Math.toRadians(180));
+    Pose startPose = new Pose(132.12, 51.28, Math.toRadians(270));
     Follower follower;
 
     @Override
