@@ -17,9 +17,9 @@ public class Agropecuaria {
 
         left = new ServoTaura(s1);
         right = new ServoTaura(s2);
-
-        s1.setDirection(Servo.Direction.FORWARD);
-        s2.setDirection(Servo.Direction.REVERSE);
+//
+//        s1.setDirection(Servo.Direction.FORWARD);
+//        s2.setDirection(Servo.Direction.REVERSE);
 
 
     }
@@ -29,6 +29,6 @@ public class Agropecuaria {
     }
     public void down() {
         right.setPosition(0.47);
-        right.setPosition(0.47);
+        left.setPosition(0.47);
     }
 }
