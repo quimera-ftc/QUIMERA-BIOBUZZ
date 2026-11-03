@@ -12,7 +12,7 @@ import org.firstinspires.ftc.teamcode.pedro.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.pedro.subsystems.Shooter;
 import org.firstinspires.ftc.teamcode.pedro.subsystems.Turret;
 
-@TeleOp(name="TELEOP", group="Tests")
+@TeleOp(name="TEST MECHANISMS", group="Tests")
 public class Test_TELEOP extends OpMode {
     Intake intake;
     DriveTrain driveTrain;
@@ -21,9 +21,6 @@ public class Test_TELEOP extends OpMode {
     Agropecuaria agro;
     Follower follower;
     Pose startPose = new Pose(132.6505617977528, 133.92247191011242, Math.toRadians(270));
-
-
-    //public boolean isOn = false;
 
     @Override
     public void init() {
