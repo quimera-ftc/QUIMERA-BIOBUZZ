@@ -59,7 +59,7 @@ public class Shooter {
         return sequential(
                 instant(() -> powerUp()),
                 instant(() -> intake.in()),
-                waitMs(1000),
+                waitMs(1500),
                 instant(() -> {
                     intake.stop();
                 })
