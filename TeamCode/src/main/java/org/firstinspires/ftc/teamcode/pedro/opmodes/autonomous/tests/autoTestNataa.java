@@ -21,6 +21,7 @@ import org.firstinspires.ftc.teamcode.pedro.Constants;
 import org.firstinspires.ftc.teamcode.pedro.subsystems.Agropecuaria;
 import org.firstinspires.ftc.teamcode.pedro.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.pedro.subsystems.Shooter;
+import org.firstinspires.ftc.teamcode.pedro.subsystems.Turret;
 
 @Autonomous
 public class autoTestNataa extends OpMode {
@@ -28,6 +29,7 @@ public class autoTestNataa extends OpMode {
     Shooter shooter;
     Intake intake;
     Agropecuaria agro;
+    Turret turret;
 
 
     PoseFactory poseFactory = PoseFactory.degrees();
@@ -35,11 +37,11 @@ public class autoTestNataa extends OpMode {
 
 
     Pose startingPoint = poseFactory.of(86.06466512702079,134.1431469720298,0);
-    Pose collect1 = poseFactory.of(132.97337962962962, 131.97106481481478, 0);
-    Pose shoot2 = poseFactory.of(108.83981481481482, 18.182870370370395, 72);
+    Pose collect1 = poseFactory.of(130.97337962962962, 131.97106481481478, 0);
+    Pose shoot2 = poseFactory.of(108.83981481481482, 20.182870370370395, 72);
     Pose collect2 = poseFactory.of(100.44675925925927, 12.232638888888886, 250);
-    Pose shoot3 = poseFactory.of(108.83981481481482, 18.182870370370395, 70);
-    Pose collect3 = poseFactory.of(132.8888888888889, 94.93055555555556, 0);
+    Pose shoot3 = poseFactory.of(108.83981481481482, 20.182870370370395, 70);
+    Pose collect3 = poseFactory.of(123.8888888888889, 106.93055555555556, 0);
     Pose shoot4 = poseFactory.of(104.5462962962963, 125.4074074074074, 300);
     Pose park = poseFactory.of(132.12685185185188, 51.289675925925924, 270);
 
@@ -57,7 +59,7 @@ public class autoTestNataa extends OpMode {
         return line(collect2, shoot3).linear(collect2, shoot3);
     }
     public Path SHOOT3_TO_COLLECT3() {
-        return curve(shoot3, poseFactory.of(116.42245370370371, 63.38194444444444, 70),collect3).linear(shoot3, collect3);
+        return curve(shoot3, poseFactory.of(111.42245370370371, 67.38194444444444, 70),collect3).linear(shoot3, collect3);
     }
     public Path COLLECT3_TO_SHOOT4() {
         return line(collect3, shoot4).linear(collect3, shoot4);
@@ -75,6 +77,7 @@ public class autoTestNataa extends OpMode {
         shooter = new Shooter(hardwareMap);
         intake = new Intake(hardwareMap);
         agro = new Agropecuaria(hardwareMap);
+        turret = new Turret(hardwareMap, startingPoint, Constants.Alliance.BLUE);
 
     }
 
@@ -82,42 +85,47 @@ public class autoTestNataa extends OpMode {
         follower.update();
         Scheduler.execute();
 
+        Pose currentPose = follower.pose();
+        turret.update(currentPose);
+
     }
 
     public void start() {
         shooter.powerUp();
         Scheduler.schedule(routine());
+
     }
 
     public Command routine() {
-        return sequential(
+        return parallel(sequential(
                 waitMs(2000),
                 shooter.shootPP(),
                 parallel(
                         follow(follower, START_TO_COLLECT1()),
                         intake.intakePP()
                 ),
-                instant(() -> intake.stop()),
-                instant(() -> agro.up()),
+                waitMs(1500),
+                intake.intakestopPP(),
                 follow(follower, COLLECT1_TO_SHOOT2()),
                 shooter.shootPP(),
                 parallel(
                         follow(follower, SHOOT2_TO_COLLECT2()),
                         intake.intakePP()
                 ),
-                instant(() -> intake.stop()),
-                instant(() -> agro.up()),
+                waitMs(1500),
+                intake.intakestopPP(),
                 follow(follower, COLLECT2_TO_SHOOT3()),
                 shooter.shootPP(),
                 parallel(
                         follow(follower, SHOOT3_TO_COLLECT3()),
                         intake.intakePP()
                 ),
-                instant(() -> intake.stop()),
-                instant(() -> agro.up()),
+                waitMs(1500),
+                intake.intakestopPP(),
                 follow(follower, COLLECT3_TO_SHOOT4()),
                 shooter.shootPP(),
                 follow(follower, SHOOT4_TO_PARK())
-        );
+                ),
+                turret.autoaim(follower::pose));
     }
 }
