@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 public class Agropecuaria {
 
     ServoTaura left, right;
+
     public Agropecuaria(@NonNull HardwareMap hardwareMap) {
 
         Servo s1, s2;
@@ -24,9 +25,10 @@ public class Agropecuaria {
     }
     public void up() {
         left.setPosition(0);
-
+        right.setPosition(0);
     }
     public void down() {
-        right.setPosition(0.5);
+        right.setPosition(0.47);
+        right.setPosition(0.47);
     }
 }
