@@ -1,6 +1,8 @@
 
 package org.firstinspires.ftc.teamcode.pedro.opmodes.teleops;
 
+import static org.firstinspires.ftc.teamcode.pedro.Constants.BangBangCoeffiecients.kBB;
+
 import com.pedropathing.follower.Follower;
 import com.pedropathing.math.Pose;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
@@ -58,7 +60,7 @@ public class teleop_BLUE_TOP extends OpMode {
         }
 
         if (gamepad1.right_trigger_pressed) {
-            shooter.shooterPower(1670);
+            shooter.shooterPower(kBB);
             shooter.powerUp();
         } else shooter.stop();
 
