@@ -38,10 +38,10 @@ public class autoTestNataa extends OpMode {
 
     Pose startingPoint = poseFactory.of(86.06466512702079,134.1431469720298,0);
     Pose collect1 = poseFactory.of(130.97337962962962, 131.97106481481478, 0);
-    Pose shoot2 = poseFactory.of(108.83981481481482, 20.182870370370395, 72);
+    Pose shoot2 = poseFactory.of(114.01981481481482, 17.932870370370395, 72);
     Pose collect2 = poseFactory.of(100.44675925925927, 12.232638888888886, 250);
-    Pose shoot3 = poseFactory.of(108.83981481481482, 20.182870370370395, 70);
-    Pose collect3 = poseFactory.of(123.8888888888889, 106.93055555555556, 0);
+    Pose shoot3 = poseFactory.of(114.01981481481482, 17.932870370370395, 70);
+    Pose collect3 = poseFactory.of(130.5388888888889, 95.13055555555556, 0);
     Pose shoot4 = poseFactory.of(104.5462962962963, 125.4074074074074, 300);
     Pose park = poseFactory.of(132.12685185185188, 51.289675925925924, 270);
 

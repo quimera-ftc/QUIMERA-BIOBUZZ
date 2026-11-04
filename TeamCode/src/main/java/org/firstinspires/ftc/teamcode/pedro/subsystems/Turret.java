@@ -9,12 +9,15 @@ import androidx.annotation.NonNull;
 
 import com.pedropathing.ivy.Command;
 import com.pedropathing.math.Pose;
+import com.qualcomm.hardware.limelightvision.LLResult;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.teamcode.pedro.Constants;
+import com.qualcomm.hardware.limelightvision.Limelight3A;
 
 import java.util.function.Supplier;
 
@@ -24,7 +27,7 @@ public class Turret{
     double manualPower = 0;
 
     // --- mecanico ---
-    final DcMotorEx motor;
+    DcMotorEx motor;
     final static double OFFSET_Y = -1.772;
     final static double OFFSET_X = 0.0;
     final double gearRatio = 50.0 / 15.0;
@@ -63,6 +66,8 @@ public class Turret{
         motor.setDirection(DcMotorEx.Direction.FORWARD);
         motor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
         timer.reset();
+
+        initLimeLight(hardwareMap);
     }
 
     public void setManualPower(double power) {
@@ -171,7 +176,7 @@ public class Turret{
 
 
     public double calculatePower(double dt) {
-        double error = computeTargetAngle() - getRawAngle();
+        double error = computeTargetAngle() + getLimelightOffset() - getRawAngle();
 
         integral += error * dt;
         integral = Range.clip(integral, -maxIntegral, maxIntegral);
@@ -234,6 +239,59 @@ public class Turret{
                     setPower(0);
                 })
                 .requiring(this);
+    }
+
+
+
+//-------------------laimilaite--------------------------------
+
+
+    Limelight3A limelight;
+    private final ElapsedTime timerLL = new ElapsedTime();
+
+    private static final int LL_PIPELINE = 0;
+    private double goalX = 0;
+    private double angleToleranceLL = 0.5;
+    private double kLL = 1.5;
+    private static final double MAX_OFFSET_LL = 6.0;
+    private double offsetLL = 0;
+
+
+    public void initLimeLight(HardwareMap hardwareMap) {
+        limelight = hardwareMap.get(Limelight3A.class, "limelight");
+        limelight.pipelineSwitch(LL_PIPELINE);
+        limelight.start();
+        timerLL.reset();
+    }
+
+    public double getLimelightOffset() {
+        double dtLL = timerLL.seconds();
+        timerLL.reset();
+
+        if(limelight == null){
+            return 0;
+        }
+
+        LLResult result = limelight.getLatestResult();
+
+        if (result != null & result.isValid() && dtLL > 0) {
+            double errorLL = result.getTx() - goalX;
+
+            if (Math.abs(errorLL) > angleToleranceLL) {
+
+                offsetLL += errorLL * kLL * Math.min(dtLL, 0.1);
+                offsetLL = Range.clip(offsetLL, -MAX_OFFSET_LL, MAX_OFFSET_LL);
+            }
+        }
+        return offsetLL;
+    }
+
+    public void resetLimelightOffset() {
+        offsetLL = 0;
+    }
+
+    public void stopLimelight() {
+        if (limelight != null) limelight.stop();
     }
 
 }
