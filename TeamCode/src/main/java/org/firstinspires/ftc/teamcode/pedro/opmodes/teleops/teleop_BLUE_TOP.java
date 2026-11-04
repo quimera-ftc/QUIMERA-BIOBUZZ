@@ -48,6 +48,8 @@ public class teleop_BLUE_TOP extends OpMode {
     public void loop() {
         follower.update();
 
+        driveTrain.driveStick();
+
         Pose currentPose = follower.pose();
         turret.update(currentPose);
 
@@ -78,7 +80,7 @@ public class teleop_BLUE_TOP extends OpMode {
 
         }
 
-        driveTrain.driveStick();
+
         telemetry.update();
     }
 
