@@ -1,14 +1,34 @@
 package org.firstinspires.ftc.teamcode.pedro.opmodes.autonomous.tests;
 
 import static com.pedropathing.api.Paths.line;
+import static com.pedropathing.ivy.commands.Commands.waitMs;
+import static com.pedropathing.ivy.groups.Groups.parallel;
+import static com.pedropathing.ivy.groups.Groups.sequential;
+import static com.pedropathing.ivy.pedro.PedroCommands.follow;
 
 import com.pedropathing.api.Paths;
 import com.pedropathing.api.PoseFactory;
+import com.pedropathing.follower.Follower;
+import com.pedropathing.ivy.Command;
+import com.pedropathing.ivy.Scheduler;
 import com.pedropathing.math.Pose;
 import com.pedropathing.paths.Path;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
+import org.firstinspires.ftc.teamcode.pedro.Constants;
+import org.firstinspires.ftc.teamcode.pedro.subsystems.Agropecuaria;
+import org.firstinspires.ftc.teamcode.pedro.subsystems.Intake;
+import org.firstinspires.ftc.teamcode.pedro.subsystems.Shooter;
+import org.firstinspires.ftc.teamcode.pedro.subsystems.Turret;
+
 public class autoAllianceTest extends OpMode {
+
+    Shooter shooter;
+    Intake intake;
+    Agropecuaria agro;
+    Turret turret;
+
+    private Follower follower;
 
 
     PoseFactory poseFactory = PoseFactory.degrees();
@@ -37,16 +57,57 @@ public class autoAllianceTest extends OpMode {
     }
 
     public void loop(){
+        follower.update();
+        Scheduler.execute();
+
+        Pose currentPose = follower.pose();
+        turret.update(currentPose);
 
     }
 
     public void init() {
+        Scheduler.reset();
+        follower = Constants.create(hardwareMap);
+        follower.setPose(startingPoint);
+
+        shooter = new Shooter(hardwareMap);
+        intake = new Intake(hardwareMap);
+        agro = new Agropecuaria(hardwareMap);
+        turret = new Turret(hardwareMap, startingPoint, Constants.Alliance.BLUE);
 
 
     }
 
     public void start() {
+        shooter.powerUp();
+        Scheduler.schedule(routine());
 
+    }
+
+    public Command routine() {
+        return parallel(
+                sequential(
+                        waitMs(2000),
+                        shooter.shootPP(),
+                        parallel(
+                                follow(follower, START_TO_COLLECT1()),
+                                intake.intakePP()
+                                ),
+                        intake.intakestopPP(),
+                        follow(follower, COLLECT1_TO_SHOOT2()),
+                        shooter.shootPP(),
+                        parallel(
+                                follow(follower, SHOOT2_TO_COLLECT2()),
+                                intake.intakePP()
+                        ),
+                        intake.intakestopPP(),
+                        follow(follower, COLLECT2_TO_SHOOT3()),
+                        shooter.shootPP(),
+                        follow(follower, SHOOT3_TO_PARK())
+                ),
+                turret.autoaim(follower::pose)
+
+        );
     }
 
 

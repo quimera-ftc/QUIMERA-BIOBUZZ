@@ -26,8 +26,8 @@ public class Agropecuaria  {
 
     }
     public void up() {
-        left.setPosition(0);
-        right.setPosition(0.07);
+        left.setPosition(0.1);
+        right.setPosition(0.1);
     }
     public void down() {
         right.setPosition(0.47);

@@ -10,6 +10,7 @@ import static com.pedropathing.ivy.commands.Commands.*;
 import static com.pedropathing.ivy.groups.Groups.*;
 import com.pedropathing.ivy.Command;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.pedro.subsystems.Intake;
 
 public class Shooter {
@@ -22,9 +23,28 @@ public class Shooter {
     public double maxpower = 0.86, minpower = 0;
     public double start, now;
     boolean isOn = false;
+
+    public Telemetry telemetry;
     public ElapsedTime runtime = new ElapsedTime();
     //PIDFCoefficients controller=  new PIDFCoefficients(0.5,0,0,0.5);
     //-- GnHk28 has left the Commits
+
+    public Shooter(HardwareMap hardwareMap, Telemetry telemetry) {
+        ls = hardwareMap.get(DcMotorEx.class, "ls");
+        rs = hardwareMap.get(DcMotorEx.class, "rs");
+
+        ls.setDirection(DcMotorSimple.Direction.REVERSE);
+        rs.setDirection(DcMotorSimple.Direction.REVERSE);
+
+        ls.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        rs.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        this.telemetry = telemetry;
+
+        ls.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        rs.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+
+        intake = new Intake(hardwareMap);
+    }
 
     public Shooter(HardwareMap hardwareMap) {
         ls = hardwareMap.get(DcMotorEx.class, "ls");
@@ -36,13 +56,11 @@ public class Shooter {
         ls.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         rs.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-
         ls.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         rs.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 
         intake = new Intake(hardwareMap);
     }
-
     public boolean isOn() {
         return isOn;
     }
@@ -57,7 +75,7 @@ public class Shooter {
     //metodo p shootar no autooooo
     public Command shootPP() {
         return sequential(
-                instant(() -> powerUp()),
+//                instant(() -> powerUp()),
                 instant(() -> intake.in()),
                 waitMs(1000),
                 instant(() -> {
@@ -111,6 +129,11 @@ public class Shooter {
         } else {
             rs.setPower(feedForward);
             ls.setPower(feedForward);
+        }
+
+        if (telemetry != null) {
+            telemetry.addData("velo right", rs.getVelocity());
+            telemetry.addData( "velo left", ls.getVelocity());
         }
     }
 

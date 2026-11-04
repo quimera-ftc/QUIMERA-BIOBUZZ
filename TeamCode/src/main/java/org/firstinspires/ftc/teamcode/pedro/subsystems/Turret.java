@@ -167,7 +167,7 @@ public class Turret{
 
 
     public double calculatePower(double dt) {
-        double error = clampToLimits(computeTargetAngle() + getLimeLightOffset())- getRawAngle();
+        double error = clampToLimits(computeTargetAngle() + getLimeLightOffset()) - getRawAngle();
 
         integral += error * dt;
         integral = Range.clip(integral, -maxIntegral, maxIntegral);
