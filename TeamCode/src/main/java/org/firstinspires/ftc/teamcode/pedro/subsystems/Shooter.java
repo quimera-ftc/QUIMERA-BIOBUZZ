@@ -17,9 +17,9 @@ public class Shooter {
     Intake intake;
 
     DcMotorEx rs, ls;
-    public double targetBangBang = 0.85;
-    private final double feedForward = 0.4;
-    public double maxpower = 1, minpower = 0;
+    public double targetBangBang = 0.95;
+    private final double feedForward = 0.2;
+    public double maxpower = 0.86, minpower = 0;
     public double start, now;
     boolean isOn = false;
     public ElapsedTime runtime = new ElapsedTime();
