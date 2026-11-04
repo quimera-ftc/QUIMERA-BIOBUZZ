@@ -21,7 +21,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 public class Constants {
 
     public static class BangBangCoeffiecients {
-        public static final double kBB = 1720; //1837
+        public static final double kBB = 1837; //1837
     }
 
     @Config
