@@ -11,6 +11,7 @@ import com.pedropathing.ivy.Command;
 import com.pedropathing.ivy.Scheduler;
 import static com.pedropathing.ivy.Scheduler.schedule;
 import static com.pedropathing.ivy.commands.Commands.*;
+import static com.pedropathing.ivy.groups.Groups.parallel;
 import static com.pedropathing.ivy.groups.Groups.sequential;
 import static com.pedropathing.ivy.pedro.PedroCommands.follow;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -19,6 +20,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.teamcode.pedro.Constants;
 import org.firstinspires.ftc.teamcode.pedro.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.pedro.subsystems.Shooter;
+import org.firstinspires.ftc.teamcode.pedro.subsystems.Turret;
 
 @Autonomous(name = "AutoPath", group = "Autonomous")
 public class downTestBlue extends LinearOpMode {
@@ -26,42 +28,73 @@ public class downTestBlue extends LinearOpMode {
     private Follower follower;
     Shooter shooter;
     Intake intake;
+    Turret turret;
 
     private final PoseFactory poseFactory = PoseFactory.degrees();
 
     private final Pose biobuzzmatesc = poseFactory.of(82.6039, 8.1762, 90);
-    private final Pose path1 = poseFactory.of(94.2254, 21.7589, -90);
+    private final Pose path1 = poseFactory.of(94.2254, 21.7589, 270);
     private final Pose path1Control1 = poseFactory.of(89.5237, 52.8836, 0);
-    private final Pose point2Start = poseFactory.of(94.2254, 21.7589, -90);
-    private final Pose point2 = poseFactory.of(94.4418, 13.4704, -90);
-    private final Pose point3Start = poseFactory.of(94.4418, 13.4704, -90);
+    private final Pose point2Start = poseFactory.of(94.2254, 21.7589, 270);
+    private final Pose point2 = poseFactory.of(94.4418, 13.4704, 270);
+    private final Pose point3Start = poseFactory.of(94.4418, 13.4704, 270);
     private final Pose point3 = poseFactory.of(83.0864, 8.7627, 180);
     private final Pose point4Start = poseFactory.of(83.0864, 8.7627, 90);
     private final Pose point4 = poseFactory.of(82.5094, 128.8409, 0);
     private final Pose point5Start = poseFactory.of(82.5094, 128.8409, 0);
     private final Pose point5 = poseFactory.of(134.2853, 135.7414, 0);
     private final Pose point6Start = poseFactory.of(134.2853, 135.7414, 0);
-    private final Pose point6 = poseFactory.of(96.6269, 121.4958, -60);
-    private final Pose point7Start = poseFactory.of(96.6269, 121.4958, -60);
+    private final Pose point6 = poseFactory.of(96.63, 121.4958, 300);
+    private final Pose point7Start = poseFactory.of(96.63, 121.4958, 300);
     private final Pose point7 = poseFactory.of(111.4148, 93.481, 0);
     private final Pose point8Start = poseFactory.of(111.4148, 93.481, 0);
     private final Pose point8 = poseFactory.of(129.7837, 93.5798, 0);
     private final Pose point9Start = poseFactory.of(129.7837, 93.5798, 0);
-    private final Pose point9 = poseFactory.of(132.1269, 51.2897, 0);
+    private final Pose point9 = poseFactory.of(96.63, 121.5, 300);
+    private final Pose point10Start = poseFactory.of(96.63, 121.5, 0);
+    private final Pose point10 = poseFactory.of(132.1269, 51.2897, 270);
 
     // Autonomous routine
     public Command autoRoutine() {
-        return sequential(
+        return parallel(sequential( waitMs(2000),
+                shooter.shootPP(),
                 follow(follower, path1()),
-                follow(follower, path2()),
+
+                parallel(
+                        follow(follower, path2()),
+                        intake.intakePP()
+                ),
+                instant(() -> intake.stop()),
+
                 follow(follower, path3()),
+                shooter.shootPP(),
+
                 follow(follower, path4()),
-                follow(follower, path5()),
+
+                parallel(
+                        follow(follower, path5()),
+
+                        intake.intakePP()
+                ),
+                instant(() -> intake.stop()),
+
                 follow(follower, path6()),
+                shooter.shootPP(),
+
                 follow(follower, path7()),
-                follow(follower, path8()),
-                follow(follower, path9())
-        );
+
+                parallel(
+                        follow(follower, path8()),
+                        intake.intakePP()
+                ),
+                instant(() -> intake.stop()),
+
+                follow(follower, path9()),
+                shooter.shootPP(),
+
+                follow(follower, path10())),
+
+                turret.autoaim(follower::pose));
     }
 
     @Override
@@ -125,5 +158,9 @@ public class downTestBlue extends LinearOpMode {
 
     public Path path9() {
         return Paths.line(point9Start, point9).linear(point9Start, point9);
+    }
+
+    public Path path10() {
+        return Paths.line(point10Start, point10).linear(point10Start, point10);
     }
 }
