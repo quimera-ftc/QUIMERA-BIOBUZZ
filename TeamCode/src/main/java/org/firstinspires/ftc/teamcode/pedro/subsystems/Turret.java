@@ -66,6 +66,8 @@ public class Turret{
         motor.setDirection(DcMotorEx.Direction.FORWARD);
         motor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
         timer.reset();
+
+        initLimeLight(hardwareMap);
     }
 
     public void setManualPower(double power) {
@@ -174,7 +176,7 @@ public class Turret{
 
 
     public double calculatePower(double dt) {
-        double error = computeTargetAngle() - getRawAngle();
+        double error = computeTargetAngle() + getLimelightOffset() - getRawAngle();
 
         integral += error * dt;
         integral = Range.clip(integral, -maxIntegral, maxIntegral);
