@@ -9,6 +9,7 @@ import androidx.annotation.NonNull;
 
 import com.pedropathing.ivy.Command;
 import com.pedropathing.math.Pose;
+import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -254,5 +255,41 @@ public class Turret{
     private double offsetLL = 0;
 
 
+    public void initLimeLight(HardwareMap hardwareMap) {
+        limelight = hardwareMap.get(Limelight3A.class, "limelight");
+        limelight.pipelineSwitch(LL_PIPELINE);
+        limelight.start();
+        timerLL.reset();
+    }
+
+    public double getLimelightOffset() {
+        double dtLL = timerLL.seconds();
+        timerLL.reset();
+
+        if(limelight == null){
+            return 0;
+        }
+
+        LLResult result = limelight.getLatestResult();
+
+        if (result != null & result.isValid() && dtLL > 0) {
+            double errorLL = result.getTx() - goalX;
+
+            if (Math.abs(errorLL) > angleToleranceLL) {
+
+                offsetLL += errorLL * kLL * Math.min(dtLL, 0.1);
+                offsetLL = Range.clip(offsetLL, -MAX_OFFSET_LL, MAX_OFFSET_LL);
+            }
+        }
+        return offsetLL;
+    }
+
+    public void resetLimelightOffset() {
+        offsetLL = 0;
+    }
+
+    public void stopLimelight() {
+        if (limelight != null) limelight.stop();
+    }
 
 }
