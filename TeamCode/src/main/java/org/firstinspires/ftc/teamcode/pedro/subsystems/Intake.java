@@ -38,23 +38,20 @@ public class Intake {
     }
 
     public void toggle() {
-        if (isOn) {
+        if (!isOn) {
             in();
         } else {
             stop();
         }
-
-        isOn = !isOn;
     }
 
     public void toggleReversed() {
-        if (isOn) {
+        if (!isOn) {
             out();
         } else {
             stop();
         }
 
-        isOn = !isOn;
     }
 
     public boolean isOn(){
@@ -66,16 +63,16 @@ public class Intake {
     //metodo p intake no autoooo
     public Command intakePP() {
         return parallel(
-                instant(() -> in()),
-                instant(() -> agro.down())
+                instant(() -> in())//,
+                //instant(() -> agro.down())
         );
 
     }
 
     public Command intakestopPP() {
         return parallel(
-                instant(() -> stop()),
-                instant(() -> agro.up())
+                instant(() -> stop())//,
+                //instant(() -> agro.up())
         );
     }
 
