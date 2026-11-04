@@ -35,9 +35,9 @@ public class AutoRedDown extends OpMode {
     private Follower follower;
 
 
-    Pose start = poseFactory.of(59.436428571428564,132.9242857142857,-90);
+    Pose start = poseFactory.of(83.58,103.36,270);
     Pose collect = poseFactory.of(47.08,128.10,90);
-    Pose  shoot = poseFactory.of(47.71,111.39,-90);
+    Pose  shoot = poseFactory.of(47.71,111.39,270);
     Pose front = poseFactory.of(58.67,10.22,180);
     Pose collect2 = poseFactory.of(8.912,7.02,180);
     Pose  diagonal  = poseFactory.of(26.32,47.38,180);
@@ -45,7 +45,7 @@ public class AutoRedDown extends OpMode {
     Pose shoot2 = poseFactory.of(8.912,7.02,180);
 
     public Path START_TO_COLLECT(){
-        return curve(start, poseFactory.of(53.16,80.15,90),collect).linear(start,collect);
+        return curve(start,collect).linear(start,collect);
     }
     public Path COLLECT_TO_SHOOT(){
         return line(collect,shoot).linear(collect,shoot);
