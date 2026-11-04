@@ -57,7 +57,7 @@ public class Shooter {
     //metodo p shootar no autooooo
     public Command shootPP() {
         return sequential(
-                instant(() -> powerUp()),
+//                instant(() -> powerUp()),
                 instant(() -> intake.in()),
                 waitMs(1000),
                 instant(() -> {
