@@ -12,8 +12,8 @@ import org.firstinspires.ftc.teamcode.pedro.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.pedro.subsystems.Shooter;
 import org.firstinspires.ftc.teamcode.pedro.subsystems.Turret;
 
-@TeleOp(name="TELEOP", group="Tests")
-public class Test_TELEOP extends OpMode {
+@TeleOp(name="TEST MECHANISMS", group="Tests")
+public class Test_MECHANISMS extends OpMode {
     Intake intake;
     DriveTrain driveTrain;
     Turret turret;
@@ -21,9 +21,7 @@ public class Test_TELEOP extends OpMode {
     Agropecuaria agro;
     Follower follower;
     Pose startPose = new Pose(132.6505617977528, 133.92247191011242, Math.toRadians(270));
-
-
-    //public boolean isOn = false;
+    boolean flower = true;
 
     @Override
     public void init() {
@@ -34,7 +32,7 @@ public class Test_TELEOP extends OpMode {
         shooter = new Shooter(hardwareMap);
         turret = new Turret(hardwareMap, startPose, Constants.Alliance.BLUE);
         agro = new Agropecuaria(hardwareMap);
-
+        agro.up();
         follower.setPose(new Pose(132.6505617977528, 133.92247191011242, Math.toRadians(270)));
     }
 
@@ -43,6 +41,7 @@ public class Test_TELEOP extends OpMode {
         follower.update();
 
         Pose currentPose = follower.pose();
+        turret.update(currentPose);
 
         if (gamepad1.aWasPressed()) {
             intake.toggle();
@@ -52,14 +51,7 @@ public class Test_TELEOP extends OpMode {
             intake.toggleReversed();
         }
 
-//        if (gamepad1.right_trigger_pressed) {
-//            shooter.powerUp();
-//        } else {
-//            shooter.stop();
-//        }
-
-        if (gamepad1.left_trigger_pressed) {
-
+        if (gamepad1.right_trigger_pressed) {
             shooter.shooterPower(1670);
             shooter.updateBangBang();
 
@@ -68,27 +60,38 @@ public class Test_TELEOP extends OpMode {
         }
 
         if (gamepad1.xWasPressed()) {
-            agro.down();
-        }else{
-            agro.up();
+
+            if (!flower) {
+                agro.up();
+            } else agro.down();
+
+            flower = !flower;
+
         }
 
-//        if (isOn) {
-//            intake.in();
-//        } else {
-//            intake.stop();
-//        } //porquice
+        if (gamepad1.right_bumper) {
+            turret.setManualPower(0.75);
+        } else if (gamepad1.left_bumper) {
+            turret.setManualPower(-0.75);
+        } else turret.setManualPower(0);
+
+        if (gamepad1.dpadRightWasPressed()) {
+
+            if (turret.getMode() == Turret.Mode.MANUAL) {
+                turret.setMode(Turret.Mode.TRACKING);
+            } else turret.setMode(Turret.Mode.MANUAL);
+
+        }
 
         driveTrain.driveStick();
 
-
         telemetry.addData("intake", intake.isOn() ? "LIGADO" : "DESLIGADO");
         telemetry.addData("shooter", shooter.isOn() ? "LIGADO" : "DESLIGADO");
+        telemetry.addData("turret", turret.getMode());
         telemetry.addLine("--ODOMETRIA--");
         telemetry.addData("x", currentPose.x());
         telemetry.addData("y", currentPose.y());
         telemetry.addData("heading", Math.toDegrees(currentPose.heading()));
-        telemetry.addLine("--TORRETA--");
 
         telemetry.update();
     }

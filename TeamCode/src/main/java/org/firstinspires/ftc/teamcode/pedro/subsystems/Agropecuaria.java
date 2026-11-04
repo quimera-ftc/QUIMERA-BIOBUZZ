@@ -2,12 +2,15 @@ package org.firstinspires.ftc.teamcode.pedro.subsystems;
 
 import androidx.annotation.NonNull;
 
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
-public class Agropecuaria {
+public class Agropecuaria  {
 
     ServoTaura left, right;
+
     public Agropecuaria(@NonNull HardwareMap hardwareMap) {
 
         Servo s1, s2;
@@ -24,9 +27,10 @@ public class Agropecuaria {
     }
     public void up() {
         left.setPosition(0);
-
+        right.setPosition(0.07);
     }
     public void down() {
-        right.setPosition(0.5);
+        right.setPosition(0.47);
+        left.setPosition(0.47);
     }
 }

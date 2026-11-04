@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.pedro.subsystems;
 
 import static com.pedropathing.ivy.commands.Commands.instant;
+import static com.pedropathing.ivy.groups.Groups.parallel;
 import static com.pedropathing.ivy.groups.Groups.sequential;
 
 import com.pedropathing.ivy.Command;
@@ -64,7 +65,7 @@ public class Intake {
 
     //metodo p intake no autoooo
     public Command intakePP() {
-        return sequential(
+        return parallel(
                 instant(() -> in()),
                 instant(() -> agro.down())
         );
@@ -72,7 +73,7 @@ public class Intake {
     }
 
     public Command intakestopPP() {
-        return sequential(
+        return parallel(
                 instant(() -> stop()),
                 instant(() -> agro.up())
         );

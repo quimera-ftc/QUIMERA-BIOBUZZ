@@ -25,7 +25,7 @@ public class TestTurret extends OpMode {
     public void init() {
 
         follower = Constants.create(hardwareMap);
-        turret = new Turret(hardwareMap, startPose, Constants.Alliance.RED);
+        turret = new Turret(hardwareMap, startPose, Constants.Alliance.BLUE);
         driveTrain = new DriveTrain(hardwareMap, gamepad1);
         agro = new Agropecuaria(hardwareMap);
         agro.up();
@@ -48,9 +48,9 @@ public class TestTurret extends OpMode {
 
 
         if (gamepad1.right_bumper) {
-            turret.setManualPower(0.5);
+            turret.setManualPower(0.7);
         } else if (gamepad1.left_bumper) {
-            turret.setManualPower(-0.5);
+            turret.setManualPower(-0.7);
         } else turret.setManualPower(0);
 
         if (gamepad1.dpadRightWasPressed()) {
@@ -67,10 +67,9 @@ public class TestTurret extends OpMode {
         telemetry.addData("Turret Y", turret.getTurretPose().y());
 
         telemetry.addData("1. Alvo Local (Target)", turret.computeTargetAngle());
-        telemetry.addData("2. Posicao Local (Raw)", turret.getRawAngle());
+        telemetry.addData("2. Posição Local (Raw)", turret.getRawAngle());
 //
         telemetry.addData("3. Erro Atual", turret.normalizeDegrees(turret.computeTargetAngle() - turret.getRawAngle()));
-        telemetry.addData("4. PID Power", turret.calculatePower(0.02));
 
         driveTrain.driveStick();
         telemetry.update();
