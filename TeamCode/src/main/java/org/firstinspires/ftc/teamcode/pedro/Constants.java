@@ -26,15 +26,15 @@ public class Constants {
 
     @Config
     public static class TurretPIDCoefficients {
-        public static double kP = 0.071222;
+        public static double kP = 0.069921222;
         public static double kI = 0.0000;
-        public static double kD = 0.06721222;
-        public static double kS = 0.24;
+        public static double kD = 0.067921222;
+        public static double kS = 0.25;
     }
     public static final Pose topNestBLUE = new Pose(84, 84);
-    public static final Pose bottomNestBLUE = new Pose(84, 59);
-    public static final Pose topNestRED = new Pose(60, 84);
-    public static final Pose bottomNestRED = new Pose(60, 59);
+    public static final Pose bottomNestBLUE = new Pose(84, 55);
+    public static final Pose topNestRED = new Pose(57.7, 84);
+    public static final Pose bottomNestRED = new Pose(57.7, 55);
     public enum Alliance {
         RED,
         BLUE
