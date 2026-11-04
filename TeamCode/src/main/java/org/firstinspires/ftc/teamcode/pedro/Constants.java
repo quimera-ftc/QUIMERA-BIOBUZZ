@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.pedro;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.pedropathing.algorithm.Foresight;
 import com.pedropathing.algorithm.ForesightConfig;
 import com.pedropathing.controllers.Controller;
@@ -18,6 +19,18 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 public class Constants {
+
+    public static class BangBangCoeffiecients {
+        public static final double kBB = 1950;
+    }
+
+    @Config
+    public static class TurretPIDCoefficients {
+        public static double kP = 0.071222;
+        public static double kI = 0.0000;
+        public static double kD = 0.06721222;
+        public static double kS = 0.24;
+    }
     public static final Pose topNestBLUE = new Pose(84, 84);
     public static final Pose bottomNestBLUE = new Pose(84, 59);
     public static final Pose topNestRED = new Pose(60, 84);
