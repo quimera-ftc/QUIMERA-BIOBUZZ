@@ -1,10 +1,5 @@
 package org.firstinspires.ftc.teamcode.pedro.subsystems;
 
-import static org.firstinspires.ftc.teamcode.pedro.Constants.TurretPIDCoefficients.kD;
-import static org.firstinspires.ftc.teamcode.pedro.Constants.TurretPIDCoefficients.kI;
-import static org.firstinspires.ftc.teamcode.pedro.Constants.TurretPIDCoefficients.kP;
-import static org.firstinspires.ftc.teamcode.pedro.Constants.TurretPIDCoefficients.kS;
-
 import androidx.annotation.NonNull;
 
 
@@ -57,7 +52,6 @@ public class Turret{
         currentPose = startPose;
         this.alliance = alliance;
 
-        motor.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         motor.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
 
         motor.setDirection(DcMotorEx.Direction.FORWARD);
@@ -173,7 +167,7 @@ public class Turret{
 
 
     public double calculatePower(double dt) {
-        double error = clampToLimits(computeTargetAngle() + getLimeLightOffset()) - getRawAngle();
+        double error = clampToLimits(computeTargetAngle() + getLimeLightOffset())- getRawAngle();
 
         integral += error * dt;
         integral = Range.clip(integral, -maxIntegral, maxIntegral);
@@ -181,13 +175,13 @@ public class Turret{
         double derivative = (error - lastError) / dt;
         lastError = error;
 
-        double pOut = kP * error;
-        double iOut = kI * integral;
-        double dOut = kD * derivative;
+        double pOut = Constants.TurretPIDCoefficients.kP * error;
+        double iOut = Constants.TurretPIDCoefficients.kI * integral;
+        double dOut = Constants.TurretPIDCoefficients.kD * derivative;
 
         double sOut = 0;
         if (Math.abs(error) > angleTolerance) {
-            sOut = Math.signum(error) * kS;
+            sOut = Math.signum(error) * Constants.TurretPIDCoefficients.kS;
         }
 
         return pOut + iOut + dOut + sOut;
