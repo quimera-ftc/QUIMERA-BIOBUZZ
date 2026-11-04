@@ -1,8 +1,9 @@
 package org.firstinspires.ftc.teamcode.pedro.subsystems;
 
-import static com.pedropathing.ivy.commands.Commands.infinite;
-import static com.pedropathing.ivy.commands.Commands.instant;
-import static com.pedropathing.ivy.groups.Groups.parallel;
+import static org.firstinspires.ftc.teamcode.pedro.Constants.TurretPIDCoefficients.kD;
+import static org.firstinspires.ftc.teamcode.pedro.Constants.TurretPIDCoefficients.kI;
+import static org.firstinspires.ftc.teamcode.pedro.Constants.TurretPIDCoefficients.kP;
+import static org.firstinspires.ftc.teamcode.pedro.Constants.TurretPIDCoefficients.kS;
 
 import androidx.annotation.NonNull;
 
@@ -10,7 +11,6 @@ import androidx.annotation.NonNull;
 import com.pedropathing.ivy.Command;
 import com.pedropathing.math.Pose;
 import com.qualcomm.hardware.limelightvision.LLResult;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -38,10 +38,7 @@ public class Turret{
     double lastError = 0, lastTime = 0;
     double integral = 0;
     static final double maxIntegral = 50;
-    static final double kP = 0.07524;
-    static final double kI = 0.000012;
-    static final double kD = 0.07129;
-    static final double kS = 0.24;
+
     static final double angleTolerance = 2.0;
     final Constants.Alliance alliance;
     Pose currentPose;
@@ -176,7 +173,7 @@ public class Turret{
 
 
     public double calculatePower(double dt) {
-        double error = computeTargetAngle() + getLimelightOffset() - getRawAngle();
+        double error = clampToLimits(computeTargetAngle() + getLimeLightOffset()) - getRawAngle();
 
         integral += error * dt;
         integral = Range.clip(integral, -maxIntegral, maxIntegral);
@@ -264,7 +261,7 @@ public class Turret{
         timerLL.reset();
     }
 
-    public double getLimelightOffset() {
+    public double getLimeLightOffset() {
         double dtLL = timerLL.seconds();
         timerLL.reset();
 
