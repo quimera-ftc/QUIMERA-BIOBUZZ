@@ -57,13 +57,7 @@ public class Test_MECHANISMS extends OpMode {
             intake.toggleReversed();
         }
 
-        if (gamepad1.right_trigger_pressed) {
-            shooter.shooterPower(kBB);
-            shooter.updateBangBang();
 
-        } else {
-            shooter.stop();
-        }
 
         if (gamepad1.xWasPressed()) {
 
