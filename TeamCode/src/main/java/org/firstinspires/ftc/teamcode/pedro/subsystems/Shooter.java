@@ -25,6 +25,7 @@ public class Shooter {
     public double targetBangBang = 0.95;
     private double alvoTps = 0;
     private double medidoTps = 0;
+    private boolean encoderOff = false;
     private final double feedForward = 0.2;
     public double maxpower = 0.86, minpower = 0;
     public double start, now;
@@ -33,7 +34,6 @@ public class Shooter {
 
     public Telemetry telemetry;
     public ElapsedTime runtime = new ElapsedTime();
-    //PIDFCoefficients controller=  new PIDFCoefficients(0.5,0,0,0.5);
     //-- GnHk28 has left the Commits
 
     public Shooter(HardwareMap hardwareMap, Telemetry telemetry) {
@@ -106,7 +106,7 @@ public class Shooter {
     }
 
     public void update() {
-        medidoTps = (getVelDir() + getVelEsq() / 2.0);
+        medidoTps = readVelocity();
 
         if (alvoTps <= 0) {
             ls.setPower(0);
@@ -127,7 +127,28 @@ public class Shooter {
         return alvoTps > 0 && Math.abs(alvoTps - medidoTps) < Constants.ShooterCoefficients.READY_TOL;
     }
 
-    //---------------------metodos testes--------------------------------
+    private double readVelocity() {
+        double veloLeft = getVelEsq();
+        double veloRight = getVelDir();
+
+        double max = Math.max(veloLeft, veloRight);
+        double min = Math.min(veloLeft, veloRight);
+
+        encoderOff = max > 200 && (max - min) > 0.15 * max;
+
+        return encoderOff ? max :(max + min) / 2.0;
+    }
+
+    public boolean isEncoderOff() {
+        return encoderOff;
+    }
+
+    public double getMedidoTps() {
+        return medidoTps;
+    }
+
+
+    //-------------------------metodos testes--------------------------------
     public void setPotenciaDireta(double p) {
         p = Range.clip(p, 0, 1);
         ls.setPower(p);
@@ -143,6 +164,11 @@ public class Shooter {
         telemetry.addData("Vel esq", "%.0f", getVelEsq());
         telemetry.addData("Vel dir", "%.0f", getVelDir());
         telemetry.addData("Tensao", "%.2f", getTensao());
+        telemetry.addLine("-------------------------------");
+        telemetry.addData("Alvo", 2300);
+        telemetry.addData("Medido", "%.0f", getMedidoTps());
+        telemetry.addData("Pronto", atSpeed());
+        telemetry.addData("Encoder off", isEncoderOff());
     }
 
 }

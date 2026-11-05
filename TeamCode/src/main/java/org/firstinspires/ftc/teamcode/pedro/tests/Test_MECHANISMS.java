@@ -57,8 +57,6 @@ public class Test_MECHANISMS extends OpMode {
             intake.toggleReversed();
         }
 
-
-
         if (gamepad1.xWasPressed()) {
 
             if (!flower) {
@@ -68,6 +66,12 @@ public class Test_MECHANISMS extends OpMode {
             flower = !flower;
 
         }
+
+//        if (gamepad1.right_trigger > 0.5) {
+//            shooter.setAlvo(Constants.ShooterCoefficients.ALVO_TPS);
+//        } else {
+//            shooter.setAlvo(Constants.ShooterCoefficients.IDLE_TPS);
+//        } //2300 é um valor placeholder
 
         if (gamepad1.right_bumper) {
             turret.setManualPower(0.75);
@@ -94,6 +98,7 @@ public class Test_MECHANISMS extends OpMode {
         potenciaTeste = Math.max(0, Math.min(1, potenciaTeste));
         shooter.setPotenciaDireta(potenciaTeste);
 
+        //shooter.update();
         driveTrain.driveStick();
 
         shooter.telemetriaTeste(telemetry, potenciaTeste); // TELEMETRIA PRA ANOTAR COISAS DE TESTE DO SHOOTER

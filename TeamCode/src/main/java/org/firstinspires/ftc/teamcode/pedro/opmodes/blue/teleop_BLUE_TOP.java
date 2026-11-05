@@ -72,6 +72,12 @@ public class teleop_BLUE_TOP extends OpMode {
             shooter.stop();
         }
 
+        if (gamepad1.right_trigger > 0.5) {
+            shooter.setAlvo(Constants.ShooterCoefficients.ALVO_TPS);
+        } else {
+            shooter.setAlvo(Constants.ShooterCoefficients.IDLE_TPS);
+        } //2300 ainda é um valor placeholder
+
 
         if (gamepad1.right_bumper) {
             turret.setManualPower(0.75);
@@ -88,6 +94,7 @@ public class teleop_BLUE_TOP extends OpMode {
         }
 
 
+        shooter.update();
         telemetry.update();
     }
 
