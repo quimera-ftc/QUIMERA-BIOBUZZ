@@ -9,6 +9,9 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import static com.pedropathing.ivy.commands.Commands.*;
 import static com.pedropathing.ivy.groups.Groups.*;
 import com.pedropathing.ivy.Command;
+import com.qualcomm.robotcore.hardware.VoltageSensor;
+import com.qualcomm.robotcore.util.Range;
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.pedro.subsystems.Intake;
@@ -23,6 +26,7 @@ public class Shooter {
     public double maxpower = 0.86, minpower = 0;
     public double start, now;
     boolean isOn = false;
+    private VoltageSensor bateria;
 
     public Telemetry telemetry;
     public ElapsedTime runtime = new ElapsedTime();
@@ -44,6 +48,7 @@ public class Shooter {
         rs.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 
         intake = new Intake(hardwareMap);
+        bateria = hardwareMap.voltageSensor.iterator().next();
     }
 
     public Shooter(HardwareMap hardwareMap) {
@@ -91,6 +96,24 @@ public class Shooter {
         ls.setPower(0);
         isOn = false;
     }
+
+    public void setPotenciaDireta(double p) {
+        p = Range.clip(p, 0, 1);
+        ls.setPower(p);
+        rs.setPower(p);
+    }
+
+    public double getVelEsq() { return Math.abs(ls.getVelocity()); }
+    public double getVelDir() { return Math.abs(rs.getVelocity()); }
+    public double getTensao() { return bateria.getVoltage(); }
+
+    public void telemetriaTeste(Telemetry telemetry, double potencia) { //isso aqui a gnt anota pors testes ok
+        telemetry.addData("Potencia", "%.1f", potencia);
+        telemetry.addData("Vel esq", "%.0f", getVelEsq());
+        telemetry.addData("Vel dir", "%.0f", getVelDir());
+        telemetry.addData("Tensao", "%.2f", getTensao());
+    }
+
 
 
 //-------------------BangBang-----------------------
