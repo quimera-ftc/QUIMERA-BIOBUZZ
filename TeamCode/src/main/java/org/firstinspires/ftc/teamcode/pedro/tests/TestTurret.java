@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.pedro.Constants;
+import org.firstinspires.ftc.teamcode.pedro.math.TurretController;
 import org.firstinspires.ftc.teamcode.pedro.subsystems.Agropecuaria;
 import org.firstinspires.ftc.teamcode.pedro.subsystems.DriveTrain;
 import org.firstinspires.ftc.teamcode.pedro.subsystems.Intake;
@@ -65,15 +66,15 @@ public class TestTurret extends OpMode {
 
         }
 
-        telemetry.addData("target angle", turret.computeTargetAngle());
-        telemetry.addData("mode", turret.getMode());
-        telemetry.addData("Turret X", turret.getTurretPose().x());
-        telemetry.addData("Turret Y", turret.getTurretPose().y());
+        Pose turretPose = TurretController.getTurretPose(currentPose);
+        double target = TurretController.computeTargetAngle(turretPose, TurretController.getTurretPose(turretPose));
 
-        telemetry.addData("1. Alvo Local (Target)", turret.computeTargetAngle());
+        telemetry.addData("mode", turret.getMode());
+        telemetry.addData("Turret X", turretPose.x());
+        telemetry.addData("Turret Y", turretPose.y());
+        telemetry.addData("1. Alvo Local (Target)", target);
         telemetry.addData("2. Posição Local (Raw)", turret.getRawAngle());
-//
-        telemetry.addData("3. Erro Atual", turret.normalizeDegrees(turret.computeTargetAngle() - turret.getRawAngle()));
+        telemetry.addData("3. Erro Atual", TurretController.normalizeDegrees(target - turret.getRawAngle()));
         telemetry.addData("tempo de ciclo", turret.getDt());
         driveTrain.driveStick();
         telemetry.update();

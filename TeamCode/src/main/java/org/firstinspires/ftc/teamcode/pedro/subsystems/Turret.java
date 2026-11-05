@@ -1,5 +1,18 @@
 package org.firstinspires.ftc.teamcode.pedro.subsystems;
 
+import static org.firstinspires.ftc.teamcode.pedro.Constants.TurretConstants.LIMIT_BUFFER;
+import static org.firstinspires.ftc.teamcode.pedro.Constants.TurretConstants.LIMIT_SPIN;
+import static org.firstinspires.ftc.teamcode.pedro.Constants.TurretConstants.LL_PIPELINE;
+import static org.firstinspires.ftc.teamcode.pedro.Constants.TurretConstants.MAX_OFFSET_LL;
+import static org.firstinspires.ftc.teamcode.pedro.Constants.TurretConstants.angleToleranceLL;
+import static org.firstinspires.ftc.teamcode.pedro.Constants.TurretConstants.goalX;
+import static org.firstinspires.ftc.teamcode.pedro.Constants.TurretConstants.kLL;
+import static org.firstinspires.ftc.teamcode.pedro.Constants.TurretConstants.maxIntegral;
+import static org.firstinspires.ftc.teamcode.pedro.Constants.TurretConstants.maxPower;
+import static org.firstinspires.ftc.teamcode.pedro.Constants.TurretConstants.ticksPerDegree;
+import static org.firstinspires.ftc.teamcode.pedro.math.TurretController.clampToLimits;
+import static org.firstinspires.ftc.teamcode.pedro.math.TurretController.computeTargetAngle;
+
 import androidx.annotation.NonNull;
 
 
@@ -12,36 +25,25 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.teamcode.pedro.Constants;
+import org.firstinspires.ftc.teamcode.pedro.math.TurretController;
+
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 
 import java.util.function.Supplier;
 
 public class Turret{
 
-    static final double maxPower = 1;
-    double manualPower = 0;
 
-    // --- mecanico ---
+    double manualPower = 0;
     DcMotorEx motor;
-    final static double OFFSET_Y = -1.772;
-    final static double OFFSET_X = 0.0;
-    final double gearRatio = 50.0 / 15.0;
-    final double ticksPerRev = 28.0 * (76.0 / 21.0) * gearRatio; // HD Hex = 28 ticks/volta; redução "4:1" é na real 76/21 (~3.62:1)
-    final double ticksPerDegree = ticksPerRev / 360.0;
-    static final double LIMIT_BUFFER = 90;
-    static final double LIMIT_SPIN = 130;
+
     double lastError = 0, lastTime = 0;
     double integral = 0;
-    static final double maxIntegral = 50;
-
-    static final double TOLERANCE = 100;
-    static final double angleTolerance = 2.0;
     final Constants.Alliance alliance;
     Pose currentPose;
     ElapsedTime timer = new ElapsedTime();
     double currentTime = 0;
     Mode mode = Mode.IDLE;
-
     public enum Mode {
         IDLE,
         TRACKING,
@@ -71,11 +73,13 @@ public class Turret{
         lastError = 0;
     }
 
-//    public boolean aligned() {
-//        return true;
-//    }
+    public boolean aligned() {
+        return true;
+    }
 
-    public double getDt(){return currentTime - lastTime;}
+    public double getDt() {
+        return currentTime - lastTime;
+    }
 
     public void update(Pose pose) {
         currentPose = pose;
@@ -88,30 +92,15 @@ public class Turret{
         switch (mode) {
 
             case TRACKING:
-
-                setPower(calculatePower(dt));
+                double error = clampToLimits(computeTargetAngle(currentPose, getTrackingPose()) + getLimeLightOffset()) - getRawAngle();
+                integral += error * dt;
+                integral = Range.clip(integral, -maxIntegral, maxIntegral);
+                setPower(TurretController.calculatePower(dt, integral, error, lastError));
+                lastError = error;
                 break;
 
             case MANUAL:
-                double currentAngle = getRawAngle();
-                double safePower = manualPower;
-
-                if (manualPower > 0) {
-                    if (currentAngle % 360 >= LIMIT_SPIN) {
-                        safePower = 0;
-                    } else if (currentAngle % 360 > LIMIT_SPIN - LIMIT_BUFFER) {
-                        double distanceToLimit = LIMIT_SPIN - (currentAngle % 360);
-                        safePower = manualPower * (distanceToLimit / LIMIT_BUFFER);
-                    }
-                }
-                else if (manualPower < 0) {
-                    if (currentAngle % 360 <= -LIMIT_SPIN) {
-                        safePower = 0;
-                    } else if (currentAngle % 360 < -LIMIT_SPIN + LIMIT_BUFFER) {
-                        double distanceToLimit = (currentAngle % 360) - (-LIMIT_SPIN);
-                        safePower = manualPower * (distanceToLimit / LIMIT_BUFFER);
-                    }
-                }
+                double safePower = getSafePower();
 
                 setPower(safePower);
                 break;
@@ -122,6 +111,30 @@ public class Turret{
                 break;
         }
     }
+
+    private double getSafePower() {
+        double currentAngle = getRawAngle();
+        double safePower = manualPower;
+
+        if (manualPower > 0) {
+            if (currentAngle % 360 >= LIMIT_SPIN) {
+                safePower = 0;
+            } else if (currentAngle % 360 > LIMIT_SPIN - LIMIT_BUFFER) {
+                double distanceToLimit = LIMIT_SPIN - (currentAngle % 360);
+                safePower = manualPower * (distanceToLimit / LIMIT_BUFFER);
+            }
+        }
+        else if (manualPower < 0) {
+            if (currentAngle % 360 <= -LIMIT_SPIN) {
+                safePower = 0;
+            } else if (currentAngle % 360 < -LIMIT_SPIN + LIMIT_BUFFER) {
+                double distanceToLimit = (currentAngle % 360) - (-LIMIT_SPIN);
+                safePower = manualPower * (distanceToLimit / LIMIT_BUFFER);
+            }
+        }
+        return safePower;
+    }
+
     public void setMode(Mode newMode) {
         if (this.mode != Mode.TRACKING && newMode == Mode.TRACKING) {
             resetController();
@@ -148,18 +161,6 @@ public class Turret{
 
     }
 
-    public Pose getTurretPose() {
-        double heading = currentPose.heading();
-
-        double rotated_offsetX = OFFSET_X * Math.cos(heading) - OFFSET_Y * Math.sin(heading);
-        double rotated_offsetY = OFFSET_X * Math.sin(heading) + OFFSET_Y * Math.cos(heading);
-
-        double turret_x = currentPose.x() + rotated_offsetX;
-        double turret_y = currentPose.y() + rotated_offsetY;
-
-        return new Pose(turret_x, turret_y);
-    }
-
     public double getRawAngle() {
         return motor.getCurrentPosition() / ticksPerDegree;
     }
@@ -167,66 +168,13 @@ public class Turret{
         return Math.toDegrees(currentPose.heading()) + getRawAngle();
     }
 
-
     public void resetEncoder() {
         motor.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         motor.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
     }
 
-
-    public double calculatePower(double dt) {
-        double error = clampToLimits(computeTargetAngle() + getLimeLightOffset()) - getRawAngle();
-
-        integral += error * dt;
-        integral = Range.clip(integral, -maxIntegral, maxIntegral);
-
-        double derivative = (error - lastError) / dt;
-        lastError = error;
-
-        double pOut = Constants.TurretPIDCoefficients.kP * error;
-        double iOut = Constants.TurretPIDCoefficients.kI * integral;
-        double dOut = Constants.TurretPIDCoefficients.kD * derivative;
-
-        double sOut = 0;
-        if (Math.abs(error) > angleTolerance) {
-            sOut = Math.signum(error) * Constants.TurretPIDCoefficients.kS;
-        }
-
-        return pOut + iOut + dOut + sOut;
-    }
-
     private void setPower(double power) {
         motor.setPower(Range.clip(power, -maxPower, maxPower));
-    }
-
-    public double computeTargetAngle() {
-
-        Pose turretPose = getTurretPose();
-        Pose trackedPose = getTrackingPose();
-
-
-        double globalDesiredAngle = Math.toDegrees(
-                Math.atan2(trackedPose.y() - turretPose.y(), trackedPose.x() - turretPose.x())
-        );
-
-
-        double robotHeadingDeg = Math.toDegrees(currentPose.heading());
-
-        double localDesiredAngle = globalDesiredAngle - robotHeadingDeg;
-
-        double normalizedTarget = normalizeDegrees(localDesiredAngle);
-        // Normaliza o alvo para mantê-lo entre -180 e 180
-        return -Range.clip(normalizedTarget, -LIMIT_SPIN, LIMIT_SPIN);
-    }
-
-    public double clampToLimits(double angles) {
-        return Range.clip(angles, -LIMIT_SPIN, LIMIT_SPIN);
-    }
-
-    public double normalizeDegrees(double angle) {
-        while (angle > 180) angle -= 360;
-        while (angle < -180) angle += 360;
-        return angle;
     }
 
     public Command autoaim(Supplier<Pose> poseSupplier) {
@@ -247,14 +195,7 @@ public class Turret{
 
     Limelight3A limelight;
     private final ElapsedTime timerLL = new ElapsedTime();
-
-    private static final int LL_PIPELINE = 0;
-    private double goalX = 0;
-    private double angleToleranceLL = 0.5;
-    private double kLL = 1.5;
-    private static final double MAX_OFFSET_LL = 6.0;
-    private double offsetLL = 0;
-
+    public double offsetLL = 0;
 
     public void initLimeLight(HardwareMap hardwareMap) {
         limelight = hardwareMap.get(Limelight3A.class, "limelight");
