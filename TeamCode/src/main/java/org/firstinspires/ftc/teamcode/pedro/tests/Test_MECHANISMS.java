@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.pedro.tests;
 
-import static org.firstinspires.ftc.teamcode.pedro.Constants.BangBangCoeffiecients.kBB;
 
 import com.pedropathing.follower.Follower;
 import com.pedropathing.math.Pose;
@@ -9,6 +8,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 import org.firstinspires.ftc.teamcode.pedro.Constants;
+import org.firstinspires.ftc.teamcode.pedro.math.VoltageCompensator;
 import org.firstinspires.ftc.teamcode.pedro.subsystems.Agropecuaria;
 import org.firstinspires.ftc.teamcode.pedro.subsystems.DriveTrain;
 import org.firstinspires.ftc.teamcode.pedro.subsystems.Intake;
@@ -23,6 +23,7 @@ public class Test_MECHANISMS extends OpMode {
     Shooter shooter;
     Agropecuaria agro;
     Follower follower;
+    VoltageCompensator voltageController;
     Pose startPose = new Pose(132.6505617977528, 133.92247191011242, Math.toRadians(270));
     boolean flower = true;
 
@@ -38,8 +39,12 @@ public class Test_MECHANISMS extends OpMode {
         shooter = new Shooter(hardwareMap, telemetry);
         turret = new Turret(hardwareMap, startPose, Constants.Alliance.BLUE);
         agro = new Agropecuaria(hardwareMap);
+        voltageController = new VoltageCompensator(hardwareMap);
+
         agro.up();
         follower.setPose(new Pose(132.6505617977528, 133.92247191011242, Math.toRadians(270)));
+
+
     }
 
     @Override
@@ -67,11 +72,11 @@ public class Test_MECHANISMS extends OpMode {
 
         }
 
-//        if (gamepad1.right_trigger > 0.5) {
-//            shooter.setAlvo(Constants.ShooterCoefficients.ALVO_TPS);
-//        } else {
-//            shooter.setAlvo(Constants.ShooterCoefficients.IDLE_TPS);
-//        } //2300 é um valor placeholder
+        if (gamepad1.right_trigger > 0.5) {
+            shooter.setAlvo(Constants.ShooterCoefficients.ALVO_TPS);
+        } else {
+            shooter.setAlvo(Constants.ShooterCoefficients.IDLE_TPS);
+        }
 
         if (gamepad1.right_bumper) {
             turret.setManualPower(0.75);
@@ -87,21 +92,21 @@ public class Test_MECHANISMS extends OpMode {
 
         }
 
-        if (gamepad1.dpad_up && !dpadCimaAntes) {
-            potenciaTeste += 0.1;
-        }
-        if (gamepad1.dpad_down && !dpadBaixoAntes) {
-            potenciaTeste -= 0.1;
-        }
-        dpadCimaAntes = gamepad1.dpad_up;
-        dpadBaixoAntes = gamepad1.dpad_down;
-        potenciaTeste = Math.max(0, Math.min(1, potenciaTeste));
-        shooter.setPotenciaDireta(potenciaTeste);
+//        if (gamepad1.dpad_up && !dpadCimaAntes) {
+//            potenciaTeste += 0.1;
+//        }
+//        if (gamepad1.dpad_down && !dpadBaixoAntes) {
+//            potenciaTeste -= 0.1;
+//        }
+//        dpadCimaAntes = gamepad1.dpad_up;
+//        dpadBaixoAntes = gamepad1.dpad_down;
+//        potenciaTeste = Math.max(0, Math.min(1, potenciaTeste));
+//        shooter.setPotenciaDireta(potenciaTeste);
 
-        //shooter.update();
+        shooter.update();
         driveTrain.driveStick();
 
-        shooter.telemetriaTeste(telemetry, potenciaTeste); // TELEMETRIA PRA ANOTAR COISAS DE TESTE DO SHOOTER
+        shooter.telemetriaTeste(telemetry); // TELEMETRIA PRA ANOTAR COISAS DE TESTE DO SHOOTER
         telemetry.addData("intake", intake.isOn() ? "LIGADO" : "DESLIGADO");
         telemetry.addData("shooter", shooter.isOn() ? "LIGADO" : "DESLIGADO");
         telemetry.addData("turret", turret.getMode());
@@ -109,19 +114,9 @@ public class Test_MECHANISMS extends OpMode {
         telemetry.addData("x", currentPose.x());
         telemetry.addData("y", currentPose.y());
         telemetry.addData("heading", Math.toDegrees(currentPose.heading()));
-        telemetry.addData("voltage","%.2f V", getVoltage());
+        telemetry.addData("voltage","%.2f V", voltageController.getVoltage());
 
         telemetry.update();
     }
 
-    public double getVoltage() {
-        double minVoltage = Double.POSITIVE_INFINITY;
-        for (VoltageSensor sensor : hardwareMap.voltageSensor) {
-            double voltage = sensor.getVoltage();
-            if (voltage > 0) {
-                minVoltage = Math.min(minVoltage, voltage);
-            }
-        }
-        return minVoltage;
-    }
 }
