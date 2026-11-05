@@ -1,0 +1,67 @@
+package org.firstinspires.ftc.teamcode.pedro.math;
+
+import static org.firstinspires.ftc.teamcode.pedro.Constants.TurretConstants.LIMIT_SPIN;
+import static org.firstinspires.ftc.teamcode.pedro.Constants.TurretConstants.OFFSET_X;
+import static org.firstinspires.ftc.teamcode.pedro.Constants.TurretConstants.OFFSET_Y;
+import static org.firstinspires.ftc.teamcode.pedro.Constants.TurretConstants.TOLERANCE;
+
+import com.pedropathing.math.Pose;
+import com.qualcomm.robotcore.util.Range;
+
+import org.firstinspires.ftc.teamcode.pedro.Constants;
+
+public class TurretController {
+    public static Pose getTurretPose(Pose currentPose) {
+        double heading = currentPose.heading();
+
+        double rotated_offsetX = OFFSET_X * Math.cos(heading) - OFFSET_Y * Math.sin(heading);
+        double rotated_offsetY = OFFSET_X * Math.sin(heading) + OFFSET_Y * Math.cos(heading);
+
+        double turret_x = currentPose.x() + rotated_offsetX;
+        double turret_y = currentPose.y() + rotated_offsetY;
+
+        return new Pose(turret_x, turret_y);
+    }
+    public static double calculatePower(double dt, double integral, double error, double lastError) {
+
+        double derivative = (error - lastError) / dt;
+
+        double pOut = Constants.TurretConstants.kP * error;
+        double iOut = Constants.TurretConstants.kI * integral;
+        double dOut = Constants.TurretConstants.kD * derivative;
+
+        double sOut = 0;
+        if (Math.abs(error) > TOLERANCE) {
+            sOut = Math.signum(error) * Constants.TurretConstants.kS;
+        }
+
+        return pOut + iOut + dOut + sOut;
+    }
+    public static double computeTargetAngle(Pose currentPose, Pose trackedPose) {
+
+        Pose turretPose = TurretController.getTurretPose(currentPose);
+
+        double globalDesiredAngle = Math.toDegrees(
+                Math.atan2(trackedPose.y() - turretPose.y(), trackedPose.x() - turretPose.x())
+        );
+
+
+        double robotHeadingDeg = Math.toDegrees(currentPose.heading());
+
+        double localDesiredAngle = globalDesiredAngle - robotHeadingDeg;
+
+        double normalizedTarget = normalizeDegrees(localDesiredAngle);
+        // Normaliza o alvo para mantê-lo entre -180 e 180
+        return -Range.clip(normalizedTarget, -LIMIT_SPIN, LIMIT_SPIN);
+    }
+
+    public static double normalizeDegrees(double angle) {
+        while (angle > 180) angle -= 360;
+        while (angle < -180) angle += 360;
+        return angle;
+    }
+
+    public static double clampToLimits(double angles) {
+        return Range.clip(angles, -LIMIT_SPIN, LIMIT_SPIN);
+    }
+}
