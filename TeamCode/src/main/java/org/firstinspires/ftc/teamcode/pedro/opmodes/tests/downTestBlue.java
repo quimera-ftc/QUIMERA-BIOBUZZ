@@ -35,8 +35,9 @@ public class downTestBlue extends OpMode {
 
     private Follower follower;
 
-
-    Pose start = poseFactory.of(91.02,37.98,270);
+    private final Pose torre = poseFactory.of(78.5051, 8.889, 90);
+    private final Pose start =  poseFactory.of(91.0176, 37.9776, 270);
+    private final Pose point2Start = poseFactory.of(91.0176, 37.9776, 270);
     Pose collect = poseFactory.of(93.86,16.61,270);
     Pose  shoot = poseFactory.of(78.63,9.73,90);
     Pose fim = poseFactory.of(129.45,17.79,90);
