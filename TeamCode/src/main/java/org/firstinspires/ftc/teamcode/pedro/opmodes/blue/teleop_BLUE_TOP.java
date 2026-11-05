@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.pedro.Constants;
+import org.firstinspires.ftc.teamcode.pedro.math.VoltageCompensator;
 import org.firstinspires.ftc.teamcode.pedro.subsystems.Agropecuaria;
 import org.firstinspires.ftc.teamcode.pedro.subsystems.DriveTrain;
 import org.firstinspires.ftc.teamcode.pedro.subsystems.Intake;
@@ -20,6 +21,7 @@ public class teleop_BLUE_TOP extends OpMode {
     DriveTrain driveTrain;
     Shooter shooter;
     Turret turret;
+    VoltageCompensator voltageController;
     boolean flower = false;
     boolean collecting = false;
     Pose startPose = new Pose(132.12, 51.28, Math.toRadians(270));
@@ -34,6 +36,8 @@ public class teleop_BLUE_TOP extends OpMode {
         agro = new Agropecuaria(hardwareMap);
         intake = new Intake(hardwareMap);
         shooter = new Shooter(hardwareMap);
+        voltageController = new VoltageCompensator(hardwareMap);
+
         agro.up();
         follower.setPose(startPose);
     }
@@ -76,7 +80,7 @@ public class teleop_BLUE_TOP extends OpMode {
             shooter.setAlvo(Constants.ShooterCoefficients.ALVO_TPS);
         } else {
             shooter.setAlvo(Constants.ShooterCoefficients.IDLE_TPS);
-        } //2300 ainda é um valor placeholder
+        }
 
 
         if (gamepad1.right_bumper) {
@@ -95,6 +99,8 @@ public class teleop_BLUE_TOP extends OpMode {
 
 
         shooter.update();
+
+        shooter.telemetriaTeste(telemetry);
         telemetry.update();
     }
 
