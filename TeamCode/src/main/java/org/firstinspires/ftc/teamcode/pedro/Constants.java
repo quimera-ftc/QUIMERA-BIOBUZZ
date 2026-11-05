@@ -55,6 +55,7 @@ public class Constants {
         public static double kD = 0.0; // 0.067921222
         public static double kS = 0.25;
         public static double kV = 3.927; // rad/s
+        public static double D_ALPHA = 0.25;
         // --------- limelight -----------
         public static final int LL_PIPELINE = 0;
         public static final double goalX = 0;
