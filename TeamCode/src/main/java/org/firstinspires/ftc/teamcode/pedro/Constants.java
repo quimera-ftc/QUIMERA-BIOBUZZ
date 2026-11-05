@@ -26,16 +26,12 @@ public class Constants {
     @Config
     public static class ShooterCoefficients { //valores chutados
 
-        public static double kS = 0.05;
-        public static double kV = 0.00035;
+        public static double kS = 0.1756102778;
+        public static double kV = 0.0003752448739;
         public static double kP = 0.0005;
         public static double READY_TOL = 50;
         public static double IDLE_TPS = 900;
-        public static double ALVO_TPS = 2300; //valor placeholder
-    }
-
-    public static class BangBangCoeffiecients {
-        public static final double kBB = 1837; //1837
+        public static double ALVO_TPS = 1235;
     }
 
     @Config
