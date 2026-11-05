@@ -6,6 +6,7 @@ import com.pedropathing.follower.Follower;
 import com.pedropathing.math.Pose;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 import org.firstinspires.ftc.teamcode.pedro.Constants;
 import org.firstinspires.ftc.teamcode.pedro.subsystems.Agropecuaria;
@@ -28,7 +29,6 @@ public class Test_MECHANISMS extends OpMode {
     @Override
     public void init() {
         follower = Constants.create(hardwareMap);
-
         intake = new Intake(hardwareMap);
         driveTrain = new DriveTrain(hardwareMap, gamepad1);
         shooter = new Shooter(hardwareMap, telemetry);
@@ -94,7 +94,19 @@ public class Test_MECHANISMS extends OpMode {
         telemetry.addData("x", currentPose.x());
         telemetry.addData("y", currentPose.y());
         telemetry.addData("heading", Math.toDegrees(currentPose.heading()));
+        telemetry.addData("voltage","%.2f V", getVoltage());
 
         telemetry.update();
+    }
+
+    public double getVoltage() {
+        double minVoltage = Double.POSITIVE_INFINITY;
+        for (VoltageSensor sensor : hardwareMap.voltageSensor) {
+            double voltage = sensor.getVoltage();
+            if (voltage > 0) {
+                minVoltage = Math.min(minVoltage, voltage);
+            }
+        }
+        return minVoltage;
     }
 }

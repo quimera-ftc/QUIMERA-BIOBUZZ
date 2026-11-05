@@ -23,6 +23,7 @@ public class teleop_BLUE_TOP extends OpMode {
     Shooter shooter;
     Turret turret;
     boolean flower = false;
+    boolean collecting = false;
     Pose startPose = new Pose(132.12, 51.28, Math.toRadians(270));
     Follower follower;
 
@@ -54,8 +55,12 @@ public class teleop_BLUE_TOP extends OpMode {
         turret.update(currentPose);
 
         if (gamepad1.aWasPressed()) {
-            intake.toggle();
+            collecting = !collecting;
         }
+
+        if (collecting) {
+            intake.in();
+        } else intake.stop();
 
         if (gamepad1.yWasPressed()) {
             intake.toggleReversed();
