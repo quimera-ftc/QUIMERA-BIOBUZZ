@@ -107,7 +107,7 @@ public class Shooter {
     }
 
     public void update() {
-        medidoTps = (getVelDir() + getVelEsq() / 2.0);
+        medidoTps = readVelocity();
 
         if (alvoTps <= 0) {
             ls.setPower(0);
