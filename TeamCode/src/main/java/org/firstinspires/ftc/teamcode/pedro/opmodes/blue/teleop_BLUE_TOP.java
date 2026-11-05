@@ -1,7 +1,5 @@
 
-package org.firstinspires.ftc.teamcode.pedro.opmodes.teleops;
-
-import static org.firstinspires.ftc.teamcode.pedro.Constants.BangBangCoeffiecients.kBB;
+package org.firstinspires.ftc.teamcode.pedro.opmodes.blue;
 
 import com.pedropathing.follower.Follower;
 import com.pedropathing.math.Pose;

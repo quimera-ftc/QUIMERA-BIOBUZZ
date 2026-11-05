@@ -41,7 +41,7 @@ public class Constants {
         public static final double OFFSET_X = 0.000;
         public static final double LIMIT_SPIN = 130;
         public static final double maxIntegral = 50;
-        public static final double TOLERANCE = 100;
+        public static final double TOLERANCE = 2.5;
         public static final double gearRatio = 50.0 / 15.0;
         public static final double ticksPerRev = 28.0 * (76.0 / 21.0) * gearRatio; // HD Hex = 28 ticks/volta; redução "4:1" é na real 76/21 (~3.62:1)
         public static final double ticksPerDegree = ticksPerRev / 360.0;

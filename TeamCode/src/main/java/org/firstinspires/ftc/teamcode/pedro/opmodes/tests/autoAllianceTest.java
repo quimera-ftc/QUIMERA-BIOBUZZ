@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.pedro.opmodes.autonomous.tests;
+package org.firstinspires.ftc.teamcode.pedro.opmodes.tests;
 
 import static com.pedropathing.api.Paths.line;
 import static com.pedropathing.ivy.commands.Commands.waitMs;
@@ -6,7 +6,6 @@ import static com.pedropathing.ivy.groups.Groups.parallel;
 import static com.pedropathing.ivy.groups.Groups.sequential;
 import static com.pedropathing.ivy.pedro.PedroCommands.follow;
 
-import com.pedropathing.api.Paths;
 import com.pedropathing.api.PoseFactory;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.ivy.Command;
