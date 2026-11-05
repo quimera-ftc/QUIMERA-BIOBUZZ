@@ -1,13 +1,13 @@
 package org.firstinspires.ftc.teamcode.pedro.math;
 
-import static org.firstinspires.ftc.teamcode.pedro.subsystems.TurretConstants.LIMIT_SPIN;
-import static org.firstinspires.ftc.teamcode.pedro.subsystems.TurretConstants.OFFSET_X;
-import static org.firstinspires.ftc.teamcode.pedro.subsystems.TurretConstants.OFFSET_Y;
-import static org.firstinspires.ftc.teamcode.pedro.subsystems.TurretConstants.TOLERANCE;
-import static org.firstinspires.ftc.teamcode.pedro.subsystems.TurretConstants.kD;
-import static org.firstinspires.ftc.teamcode.pedro.subsystems.TurretConstants.kI;
-import static org.firstinspires.ftc.teamcode.pedro.subsystems.TurretConstants.kP;
-import static org.firstinspires.ftc.teamcode.pedro.subsystems.TurretConstants.kS;
+import static org.firstinspires.ftc.teamcode.pedro.subsystems.subConstants.TurretConstants.LIMIT_SPIN;
+import static org.firstinspires.ftc.teamcode.pedro.subsystems.subConstants.TurretConstants.OFFSET_X;
+import static org.firstinspires.ftc.teamcode.pedro.subsystems.subConstants.TurretConstants.OFFSET_Y;
+import static org.firstinspires.ftc.teamcode.pedro.subsystems.subConstants.TurretConstants.TOLERANCE;
+import static org.firstinspires.ftc.teamcode.pedro.subsystems.subConstants.TurretConstants.kD;
+import static org.firstinspires.ftc.teamcode.pedro.subsystems.subConstants.TurretConstants.kI;
+import static org.firstinspires.ftc.teamcode.pedro.subsystems.subConstants.TurretConstants.kP;
+import static org.firstinspires.ftc.teamcode.pedro.subsystems.subConstants.TurretConstants.kS;
 
 import com.pedropathing.math.Pose;
 import com.qualcomm.robotcore.util.Range;

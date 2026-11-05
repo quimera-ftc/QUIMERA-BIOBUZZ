@@ -1,19 +1,18 @@
 package org.firstinspires.ftc.teamcode.pedro.subsystems;
 
 import static org.firstinspires.ftc.teamcode.pedro.math.TurretController.clampToLimits;
-import static org.firstinspires.ftc.teamcode.pedro.math.TurretController.computeTargetAngle;
-import static org.firstinspires.ftc.teamcode.pedro.subsystems.TurretConstants.LIMIT_BUFFER;
-import static org.firstinspires.ftc.teamcode.pedro.subsystems.TurretConstants.LIMIT_SPIN;
-import static org.firstinspires.ftc.teamcode.pedro.subsystems.TurretConstants.LL_PIPELINE;
-import static org.firstinspires.ftc.teamcode.pedro.subsystems.TurretConstants.MAX_OFFSET_LL;
-import static org.firstinspires.ftc.teamcode.pedro.subsystems.TurretConstants.TOLERANCE;
-import static org.firstinspires.ftc.teamcode.pedro.subsystems.TurretConstants.alpha;
-import static org.firstinspires.ftc.teamcode.pedro.subsystems.TurretConstants.angleToleranceLL;
-import static org.firstinspires.ftc.teamcode.pedro.subsystems.TurretConstants.goalX;
-import static org.firstinspires.ftc.teamcode.pedro.subsystems.TurretConstants.kLL;
-import static org.firstinspires.ftc.teamcode.pedro.subsystems.TurretConstants.maxIntegral;
-import static org.firstinspires.ftc.teamcode.pedro.subsystems.TurretConstants.maxPower;
-import static org.firstinspires.ftc.teamcode.pedro.subsystems.TurretConstants.ticksPerDegree;
+import static org.firstinspires.ftc.teamcode.pedro.subsystems.subConstants.TurretConstants.LIMIT_BUFFER;
+import static org.firstinspires.ftc.teamcode.pedro.subsystems.subConstants.TurretConstants.LIMIT_SPIN;
+import static org.firstinspires.ftc.teamcode.pedro.subsystems.subConstants.TurretConstants.LL_PIPELINE;
+import static org.firstinspires.ftc.teamcode.pedro.subsystems.subConstants.TurretConstants.MAX_OFFSET_LL;
+import static org.firstinspires.ftc.teamcode.pedro.subsystems.subConstants.TurretConstants.TOLERANCE;
+import static org.firstinspires.ftc.teamcode.pedro.subsystems.subConstants.TurretConstants.alpha;
+import static org.firstinspires.ftc.teamcode.pedro.subsystems.subConstants.TurretConstants.angleToleranceLL;
+import static org.firstinspires.ftc.teamcode.pedro.subsystems.subConstants.TurretConstants.goalX;
+import static org.firstinspires.ftc.teamcode.pedro.subsystems.subConstants.TurretConstants.kLL;
+import static org.firstinspires.ftc.teamcode.pedro.subsystems.subConstants.TurretConstants.maxIntegral;
+import static org.firstinspires.ftc.teamcode.pedro.subsystems.subConstants.TurretConstants.maxPower;
+import static org.firstinspires.ftc.teamcode.pedro.subsystems.subConstants.TurretConstants.ticksPerDegree;
 
 import androidx.annotation.NonNull;
 
