@@ -18,6 +18,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.teamcode.pedro.Constants;
+import org.firstinspires.ftc.teamcode.pedro.PoseStorage;
 import org.firstinspires.ftc.teamcode.pedro.subsystems.Agropecuaria;
 import org.firstinspires.ftc.teamcode.pedro.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.pedro.subsystems.Shooter;
@@ -95,6 +96,11 @@ public class autoTestNataa extends OpMode {
         shooter.powerUp();
         Scheduler.schedule(routine());
 
+    }
+
+    @Override
+    public void stop() {
+        PoseStorage.currentPose = follower.pose();
     }
 
     public Command routine() {

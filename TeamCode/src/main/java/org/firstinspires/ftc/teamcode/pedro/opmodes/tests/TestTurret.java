@@ -1,7 +1,7 @@
-package org.firstinspires.ftc.teamcode.pedro.tests;
+package org.firstinspires.ftc.teamcode.pedro.opmodes.tests;
 
-import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.math.Pose;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;

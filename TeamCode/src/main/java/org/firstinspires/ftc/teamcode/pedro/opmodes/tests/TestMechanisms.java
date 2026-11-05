@@ -1,6 +1,4 @@
-package org.firstinspires.ftc.teamcode.pedro.tests;
-
-import static org.firstinspires.ftc.teamcode.pedro.Constants.BangBangCoeffiecients.kBB;
+package org.firstinspires.ftc.teamcode.pedro.opmodes.tests;
 
 import com.pedropathing.follower.Follower;
 import com.pedropathing.math.Pose;
@@ -16,7 +14,7 @@ import org.firstinspires.ftc.teamcode.pedro.subsystems.Shooter;
 import org.firstinspires.ftc.teamcode.pedro.subsystems.Turret;
 
 @TeleOp(name="TEST MECHANISMS", group="Tests")
-public class Test_MECHANISMS extends OpMode {
+public class TestMechanisms extends OpMode {
     Intake intake;
     DriveTrain driveTrain;
     Turret turret;
@@ -67,11 +65,11 @@ public class Test_MECHANISMS extends OpMode {
 
         }
 
-//        if (gamepad1.right_trigger > 0.5) {
-//            shooter.setAlvo(Constants.ShooterCoefficients.ALVO_TPS);
-//        } else {
-//            shooter.setAlvo(Constants.ShooterCoefficients.IDLE_TPS);
-//        } //2300 é um valor placeholder
+        //        if (gamepad1.right_trigger > 0.5) {
+        //            shooter.setAlvo(Constants.ShooterCoefficients.ALVO_TPS);
+        //        } else {
+        //            shooter.setAlvo(Constants.ShooterCoefficients.IDLE_TPS);
+        //        } //2300 é um valor placeholder
 
         if (gamepad1.right_bumper) {
             turret.setManualPower(0.75);

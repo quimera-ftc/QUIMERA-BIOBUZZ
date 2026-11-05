@@ -4,6 +4,8 @@ import static com.pedropathing.api.Paths.line;
 import static com.pedropathing.ivy.groups.Groups.sequential;
 import static com.pedropathing.ivy.pedro.PedroCommands.follow;
 
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.pedropathing.api.PoseFactory;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.ivy.Command;
@@ -12,8 +14,16 @@ import com.pedropathing.math.Pose;
 import com.pedropathing.paths.Path;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 import org.firstinspires.ftc.teamcode.pedro.Constants;
+import org.firstinspires.ftc.teamcode.pedro.math.TurretController;
+import org.firstinspires.ftc.teamcode.pedro.subsystems.Agropecuaria;
+import org.firstinspires.ftc.teamcode.pedro.subsystems.DriveTrain;
+import org.firstinspires.ftc.teamcode.pedro.subsystems.Intake;
+import org.firstinspires.ftc.teamcode.pedro.subsystems.Shooter;
+import org.firstinspires.ftc.teamcode.pedro.subsystems.Turret;
 
 @Autonomous
 public class autoPathTesting extends OpMode {
