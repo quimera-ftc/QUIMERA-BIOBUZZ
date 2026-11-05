@@ -28,6 +28,7 @@ public class Constants {
         public static double kP = 0.0005;
         public static double READY_TOL = 50;
         public static double IDLE_TPS = 900;
+        public static double ALVO_TPS = 2300; //valor placeholder
     }
 
     public static class BangBangCoeffiecients {
