@@ -41,7 +41,7 @@ public class teleop_BLUE_TOP extends OpMode {
         intake = new Intake(hardwareMap);
         shooter = new Shooter(hardwareMap);
         voltageController = new VoltageCompensator(hardwareMap);
-
+        turret.resetEncoder();
         agro.up();
         follower.setPose(startPose);
 
@@ -92,7 +92,7 @@ public class teleop_BLUE_TOP extends OpMode {
         if (gamepad1.right_trigger > 0.5) {
             shooter.setAlvo(Constants.ShooterCoefficients.ALVO_TPS);
         } else {
-            shooter.setAlvo(Constants.ShooterCoefficients.IDLE_TPS);
+            shooter.setAlvo(0);
         }
 
 
