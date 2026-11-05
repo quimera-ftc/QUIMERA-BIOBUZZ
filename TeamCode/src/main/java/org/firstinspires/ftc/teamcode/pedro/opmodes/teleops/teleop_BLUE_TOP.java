@@ -60,16 +60,20 @@ public class teleop_BLUE_TOP extends OpMode {
 
         if (collecting) {
             intake.in();
-        } else intake.stop();
+        } else {
+            intake.stop();
+        }
 
         if (gamepad1.yWasPressed()) {
             intake.toggleReversed();
         }
 
         if (gamepad1.right_trigger_pressed) {
-            shooter.shooterPower(kBB);
             shooter.powerUp();
-        } else shooter.stop();
+        } else {
+            shooter.stop();
+        }
+
 
         if (gamepad1.right_bumper) {
             turret.setManualPower(0.75);
