@@ -99,7 +99,7 @@ public class autoTestNataa extends OpMode {
 
     public Command routine() {
         return parallel(
-                instant(() -> shooter.setAlvo(Constants.ShooterCoefficients.ALVO_TPS)), //lembrando mais uma vez que 2300 é um valor placeholder
+                instant(() -> shooter.setAlvo(Constants.ShooterCoefficients.ALVO_TPS)),
                 sequential(
                 waitMs(2000),
                 shooter.shootPP(),
