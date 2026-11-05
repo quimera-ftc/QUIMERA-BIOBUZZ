@@ -37,31 +37,44 @@ public class downTestBlue extends OpMode {
 
     private final Pose torre = poseFactory.of(78.5051, 8.889, 90);
     private final Pose start =  poseFactory.of(91.0176, 37.9776, 270);
-    private final Pose point2Start = poseFactory.of(91.0176, 37.9776, 270);
-    Pose collect = poseFactory.of(93.86,16.61,270);
-    Pose  shoot = poseFactory.of(78.63,9.73,90);
-    Pose fim = poseFactory.of(129.45,17.79,90);
+    private final Pose collectStart = poseFactory.of(93.86, 16.61, 270);
+    private  final Pose collect = poseFactory.of(94.04,26.23,270);
+    private final  Pose turneStart = poseFactory .of(94.04,26.23,270);
+    private final Pose turne = poseFactory.of(93.86,16.61,270);
 
-    public Path START_TO_COLLECT(){
-        return line(start,collect).linear(start,collect);
+    private final Pose shootStart = poseFactory.of(93.8607, 16.6075, 270);
+   private final Pose  shoot = poseFactory.of(78.63,9.73,90);
+    private final Pose fimStart = poseFactory.of(78.6305, 9.7349, 90);
+   private final Pose fim = poseFactory.of(129.45,17.79,90);
+
+    public Path START(){
+        return line(torre,start).linear(torre,start);
     }
-    public Path COLLECT_TO_SHOOT(){
-        return line(collect,shoot).linear(collect,shoot);
+    public Path COLLECT(){
+        return line(collectStart,collect).linear(collectStart,collect);
+    }
+    public  Path TURNE(){
+        return line(turneStart,turne).linear(turneStart,turne);
     }
 
-    public Path SHOOT_TO_FIM() {
-        return line(shoot, fim).linear(shoot, fim);
+    public Path SHOOT() {
+        return line(shootStart, shoot).linear(shootStart, shoot);
     }
+    public Path FIM(){
+
+        return line(fimStart,fim).linear(fimStart, fim);
+    }
+
 
 
     public void init(){
         Scheduler.reset();
         follower = Constants.create(hardwareMap);
-        follower.setPose(start);
+        follower.setPose(torre);
 
         shooter = new Shooter(hardwareMap);
         intake = new Intake(hardwareMap);
-        turret = new Turret(hardwareMap, start, Constants.Alliance.BLUE);
+        turret = new Turret(hardwareMap, torre, Constants.Alliance.BLUE);
 
 
 
@@ -86,14 +99,16 @@ public class downTestBlue extends OpMode {
                 sequential(
                 waitMs(2000),
                 shooter.shootPP(),
-                follow(follower, START_TO_COLLECT()),
+                follow(follower, START()),
                 parallel(
-                        follow(follower, COLLECT_TO_SHOOT()),
+                        follow(follower, COLLECT()),
                         intake.intakePP()
                 ),
                 instant(() -> intake.stop()),
-                follow(follower,SHOOT_TO_FIM()),
-                shooter.shootPP()
+                follow(follower,TURNE()),
+                follow(follower,SHOOT()),
+                        shooter.shootPP(),
+                        follow(follower, FIM())
 
                 ), turret.autoaim(follower::pose));
     }
