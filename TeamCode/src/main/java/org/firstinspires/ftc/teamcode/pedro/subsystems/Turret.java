@@ -34,6 +34,7 @@ public class Turret{
     double integral = 0;
     static final double maxIntegral = 50;
 
+    static final double TOLERANCE = 100;
     static final double angleTolerance = 2.0;
     final Constants.Alliance alliance;
     Pose currentPose;
@@ -70,12 +71,19 @@ public class Turret{
         lastError = 0;
     }
 
+//    public boolean aligned() {
+//        return true;
+//    }
+
+    public double getDt(){return currentTime - lastTime;}
+
     public void update(Pose pose) {
         currentPose = pose;
 
         currentTime = timer.seconds();
         double dt = currentTime - lastTime;
-        lastTime = dt;
+        if (dt <= 0.002 || dt > 0.1) dt = 0.02;
+        lastTime = currentTime;
 
         switch (mode) {
 
@@ -265,7 +273,7 @@ public class Turret{
 
         LLResult result = limelight.getLatestResult();
 
-        if (result != null & result.isValid() && dtLL > 0) {
+        if (result != null && result.isValid() && dtLL > 0) {
             double errorLL = result.getTx() - goalX;
 
             if (Math.abs(errorLL) > angleToleranceLL) {
