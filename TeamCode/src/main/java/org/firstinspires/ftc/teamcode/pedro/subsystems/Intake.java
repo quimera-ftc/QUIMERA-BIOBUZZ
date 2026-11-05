@@ -12,7 +12,7 @@ public class Intake {
 
     private final DcMotor intake;
     public Agropecuaria agro;
-    double maxPower = 0.95;
+    double maxPower = 0.75;
     private boolean isOn = false;
     public Intake(HardwareMap hardwareMap) {
         intake = hardwareMap.get(DcMotor.class, "intake");
