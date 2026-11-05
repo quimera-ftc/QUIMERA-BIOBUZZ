@@ -13,6 +13,7 @@ import com.pedropathing.ivy.Command;
 import com.pedropathing.ivy.Scheduler;
 import com.pedropathing.math.Pose;
 import com.pedropathing.paths.Path;
+import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
@@ -20,7 +21,7 @@ import org.firstinspires.ftc.teamcode.pedro.Constants;
 import org.firstinspires.ftc.teamcode.pedro.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.pedro.subsystems.Shooter;
 
-
+import java.util.List;
 
 
 @Autonomous
@@ -32,6 +33,7 @@ public class autoBlueTest extends OpMode {
     PoseFactory poseFactory = PoseFactory.degrees();
     Scheduler scheduler;
     private Follower follower;
+    List<LynxModule> allHubs;
 
     Pose startingPoint = poseFactory.of(86.06466512702079,134.1431469720298,270);
     Pose collect1 = poseFactory.of(130.4805984673269,94.36056581986145,0);
@@ -67,6 +69,11 @@ public class autoBlueTest extends OpMode {
         shooter = new Shooter(hardwareMap);
         intake = new Intake(hardwareMap);
 
+        allHubs = hardwareMap.getAll(LynxModule.class);
+        for (LynxModule hub : allHubs) {
+            hub.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
+        }
+
     }
 
     @Override
@@ -77,6 +84,10 @@ public class autoBlueTest extends OpMode {
 
     @Override
     public void loop() {
+        for (LynxModule hub : allHubs) {
+            hub.clearBulkCache();
+        }
+
         follower.update();
         Scheduler.execute();
 

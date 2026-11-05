@@ -4,6 +4,7 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.math.Pose;
+import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -11,19 +12,18 @@ import org.firstinspires.ftc.teamcode.pedro.Constants;
 import org.firstinspires.ftc.teamcode.pedro.math.TurretController;
 import org.firstinspires.ftc.teamcode.pedro.subsystems.Agropecuaria;
 import org.firstinspires.ftc.teamcode.pedro.subsystems.DriveTrain;
-import org.firstinspires.ftc.teamcode.pedro.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.pedro.subsystems.Turret;
+
+import java.util.List;
 
 @TeleOp(name="CALIBRATE TURRET", group="Tests")
 public class TestTurret extends OpMode {
-    Intake intake;
     Agropecuaria agro;
     DriveTrain driveTrain;
     Turret turret;
-
-    boolean flower = false;
     Pose startPose = new Pose(132.6505617977528, 133.92247191011242, Math.toRadians(270));
     Follower follower;
+    List<LynxModule> allHubs;
 
     @Override
     public void init() {
@@ -38,6 +38,11 @@ public class TestTurret extends OpMode {
 
         turret.resetEncoder();
         turret.setMode(Turret.Mode.IDLE);
+
+        allHubs = hardwareMap.getAll(LynxModule.class);
+        for (LynxModule hub : allHubs) {
+            hub.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
+        }
     }
 
     @Override
@@ -47,6 +52,10 @@ public class TestTurret extends OpMode {
 
     @Override
     public void loop() {
+        for (LynxModule hub : allHubs) {
+            hub.clearBulkCache();
+        }
+
         follower.update();
 
         Pose currentPose = follower.pose();

@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.pedro.opmodes.tests;
 
 import com.pedropathing.follower.Follower;
 import com.pedropathing.math.Pose;
+import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
@@ -12,6 +13,8 @@ import org.firstinspires.ftc.teamcode.pedro.subsystems.DriveTrain;
 import org.firstinspires.ftc.teamcode.pedro.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.pedro.subsystems.Shooter;
 import org.firstinspires.ftc.teamcode.pedro.subsystems.Turret;
+
+import java.util.List;
 
 @TeleOp(name="TEST MECHANISMS", group="Tests")
 public class TestMechanisms extends OpMode {
@@ -27,6 +30,7 @@ public class TestMechanisms extends OpMode {
     double potenciaTeste = 0.0;
     boolean dpadCimaAntes = false;
     boolean dpadBaixoAntes = false;
+    List<LynxModule> allHubs;
 
     @Override
     public void init() {
@@ -38,10 +42,19 @@ public class TestMechanisms extends OpMode {
         agro = new Agropecuaria(hardwareMap);
         agro.up();
         follower.setPose(new Pose(132.6505617977528, 133.92247191011242, Math.toRadians(270)));
+
+        allHubs = hardwareMap.getAll(LynxModule.class);
+        for (LynxModule hub : allHubs) {
+            hub.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
+        }
     }
 
     @Override
     public void loop() {
+        for (LynxModule hub : allHubs) {
+            hub.clearBulkCache();
+        }
+
         follower.update();
 
         Pose currentPose = follower.pose();
@@ -99,7 +112,7 @@ public class TestMechanisms extends OpMode {
         //shooter.update();
         driveTrain.driveStick();
 
-        shooter.telemetriaTeste(telemetry, potenciaTeste); // TELEMETRIA PRA ANOTAR COISAS DE TESTE DO SHOOTER
+        shooter.telemetriaTeste(telemetry); // TELEMETRIA PRA ANOTAR COISAS DE TESTE DO SHOOTER
         telemetry.addData("intake", intake.isOn() ? "LIGADO" : "DESLIGADO");
         telemetry.addData("shooter", shooter.isOn() ? "LIGADO" : "DESLIGADO");
         telemetry.addData("turret", turret.getMode());
