@@ -145,36 +145,4 @@ public class Shooter {
         telemetry.addData("Tensao", "%.2f", getTensao());
     }
 
-
-
-
-//-------------------BangBang-----------------------
-    public void shooterPower(double wantedVelo) {
-        this.targetBangBang = wantedVelo;
-    }
-
-    public void updateBangBang() {
-
-        if (targetBangBang == 0) {
-            rs.setPower(0);
-            ls.setPower(0);
-            return;
-        }
-
-        double curVelocity = (rs.getVelocity() + ls.getVelocity()) / 2;
-
-        if (curVelocity < targetBangBang) {
-            rs.setPower(1);
-            ls.setPower(1);
-        } else {
-            rs.setPower(feedForward);
-            ls.setPower(feedForward);
-        }
-
-        if (telemetry != null) {
-            telemetry.addData("velo right", rs.getVelocity());
-            telemetry.addData( "velo left", ls.getVelocity());
-        }
-    }
-
 }
