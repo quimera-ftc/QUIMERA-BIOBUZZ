@@ -14,6 +14,7 @@ import com.qualcomm.robotcore.util.Range;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.pedro.Constants;
 import org.firstinspires.ftc.teamcode.pedro.subsystems.Intake;
 
 public class Shooter {
@@ -22,6 +23,8 @@ public class Shooter {
 
     DcMotorEx rs, ls;
     public double targetBangBang = 0.95;
+    private double alvoTps = 0;
+    private double medidoTps = 0;
     private final double feedForward = 0.2;
     public double maxpower = 0.86, minpower = 0;
     public double start, now;
@@ -97,6 +100,12 @@ public class Shooter {
         isOn = false;
     }
 
+    public void setAlvo(double tps) {
+        alvoTps = tps;
+
+    }
+
+    //---------------------metodos testes--------------------------------
     public void setPotenciaDireta(double p) {
         p = Range.clip(p, 0, 1);
         ls.setPower(p);
@@ -113,6 +122,7 @@ public class Shooter {
         telemetry.addData("Vel dir", "%.0f", getVelDir());
         telemetry.addData("Tensao", "%.2f", getTensao());
     }
+
 
 
 
