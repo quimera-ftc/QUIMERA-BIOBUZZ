@@ -1,5 +1,9 @@
 package org.firstinspires.ftc.teamcode.pedro.opmodes.tests;
 
+import static org.firstinspires.ftc.teamcode.pedro.subsystems.TurretConstants.kD;
+import static org.firstinspires.ftc.teamcode.pedro.subsystems.TurretConstants.kI;
+import static org.firstinspires.ftc.teamcode.pedro.subsystems.TurretConstants.kP;
+
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.pedropathing.follower.Follower;
@@ -9,6 +13,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.pedro.Constants;
 import org.firstinspires.ftc.teamcode.pedro.math.TurretController;
+import org.firstinspires.ftc.teamcode.pedro.math.VoltageCompensator;
 import org.firstinspires.ftc.teamcode.pedro.subsystems.Agropecuaria;
 import org.firstinspires.ftc.teamcode.pedro.subsystems.DriveTrain;
 import org.firstinspires.ftc.teamcode.pedro.subsystems.Intake;
@@ -16,14 +21,12 @@ import org.firstinspires.ftc.teamcode.pedro.subsystems.Turret;
 
 @TeleOp(name="CALIBRATE TURRET", group="Tests")
 public class TestTurret extends OpMode {
-    Intake intake;
     Agropecuaria agro;
     DriveTrain driveTrain;
     Turret turret;
-
-    boolean flower = false;
     Pose startPose = new Pose(132.6505617977528, 133.92247191011242, Math.toRadians(270));
     Follower follower;
+    VoltageCompensator voltageController;
 
     @Override
     public void init() {
@@ -35,6 +38,7 @@ public class TestTurret extends OpMode {
         agro = new Agropecuaria(hardwareMap);
         agro.up();
         follower.setPose(startPose);
+        voltageController = new VoltageCompensator(hardwareMap);
 
         turret.resetEncoder();
         turret.setMode(Turret.Mode.IDLE);
@@ -76,8 +80,14 @@ public class TestTurret extends OpMode {
         telemetry.addData("target", target);
         telemetry.addData("deslocamento (Raw)", turret.getRawAngle());
         telemetry.addData("Erro Atual", turret.getDistanceToTarget());
+        telemetry.addData("lime offset", turret.getLimeLightOffset());
         telemetry.addData("na mosca", turret.aligned() ? "sim" : "nao");
         telemetry.addData("tempo de ciclo (dt)", turret.getDt());
+        telemetry.addData("voltage", "%.2f V", voltageController.getVoltage());
+        telemetry.addData("kP", kP);
+        telemetry.addData("kI", kI);
+        telemetry.addData("kD", kD);
+
         driveTrain.driveStick();
         telemetry.update();
     }

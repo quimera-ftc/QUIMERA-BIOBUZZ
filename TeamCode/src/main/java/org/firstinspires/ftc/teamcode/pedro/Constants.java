@@ -21,7 +21,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 public class Constants {
 
     public static class VoltageConstants {
-        public static double NOMINAL_VOLTAGE = 13.0;
+        public static double NOMINAL_VOLTAGE = 11.50;
     }
     @Config
     public static class ShooterCoefficients { //valores chutados
@@ -29,37 +29,12 @@ public class Constants {
         public static double kS = 0.1756102778;
         public static double kV = 0.0003752448739;
         public static double kP = 0.0005;
-        public static double READY_TOL = 50;
+        public static double READY_TOL = 40;
         public static double IDLE_TPS = 900;
         public static double ALVO_TPS = 1235;
     }
 
-    @Config
-    public static class TurretConstants {
-        public static final double OFFSET_Y = -1.772;
-        public static final double OFFSET_X = 0.000;
-        public static final double LIMIT_SPIN = 130;
-        public static final double maxIntegral = 50;
-        public static final double gearRatio = 50.0 / 15.0;
-        public static final double ticksPerRev = 28.0 * (76.0 / 21.0) * gearRatio; // HD Hex = 28 ticks/volta; redução "4:1" é na real 76/21 (~3.62:1)
-        public static final double ticksPerDegree = ticksPerRev / 360.0;
-        public static final double maxPower = 1;
-        public static final double LIMIT_BUFFER = 90;
-        public static double TOLERANCE = 2;
-        public static double kP = 0.049921222;
-        public static double kI = 0.0000;
-        public static double kD = 0.0; // 0.067921222
-        public static double kS = 0.25;
-        public static double kV = 3.927; // rad/s
-        public static double D_ALPHA = 0.25;
-        // --------- limelight -----------
-        public static final int LL_PIPELINE = 0;
-        public static final double goalX = 0;
-        public static final double angleToleranceLL = 0.5;
-        public static double kLL = 1.5;
-        public static final double MAX_OFFSET_LL = 6.0;
 
-    }
     public static final Pose topNestBLUE = new Pose(84, 84);
     public static final Pose bottomNestBLUE = new Pose(84, 57.5);
     public static final Pose topNestRED = new Pose(57.5, 84);
