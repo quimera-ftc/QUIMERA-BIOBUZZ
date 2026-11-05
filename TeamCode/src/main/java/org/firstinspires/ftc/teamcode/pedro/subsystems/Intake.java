@@ -38,18 +38,18 @@ public class Intake {
     }
 
     public void toggle() {
-        if (!isOn) {
-            in();
-        } else {
+        if (isOn) {
             stop();
+        } else {
+            in();
         }
     }
 
     public void toggleReversed() {
-        if (!isOn) {
-            out();
-        } else {
+        if (isOn) {
             stop();
+        } else {
+            out();
         }
 
     }
