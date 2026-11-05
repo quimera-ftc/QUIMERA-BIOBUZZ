@@ -18,7 +18,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.teamcode.pedro.Constants;
-import org.firstinspires.ftc.teamcode.pedro.PoseStorage;
+import org.firstinspires.ftc.teamcode.pedro.robot.PoseStorage;
 import org.firstinspires.ftc.teamcode.pedro.subsystems.Agropecuaria;
 import org.firstinspires.ftc.teamcode.pedro.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.pedro.subsystems.Shooter;
@@ -89,7 +89,7 @@ public class autoTestNataa extends OpMode {
         Pose currentPose = follower.pose();
         turret.update(currentPose);
         shooter.update();
-
+        PoseStorage.currentPose = follower.pose();
     }
 
     public void start() {
