@@ -4,6 +4,7 @@ import static org.firstinspires.ftc.teamcode.pedro.Constants.TurretConstants.LIM
 import static org.firstinspires.ftc.teamcode.pedro.Constants.TurretConstants.LIMIT_SPIN;
 import static org.firstinspires.ftc.teamcode.pedro.Constants.TurretConstants.LL_PIPELINE;
 import static org.firstinspires.ftc.teamcode.pedro.Constants.TurretConstants.MAX_OFFSET_LL;
+import static org.firstinspires.ftc.teamcode.pedro.Constants.TurretConstants.TOLERANCE;
 import static org.firstinspires.ftc.teamcode.pedro.Constants.TurretConstants.angleToleranceLL;
 import static org.firstinspires.ftc.teamcode.pedro.Constants.TurretConstants.goalX;
 import static org.firstinspires.ftc.teamcode.pedro.Constants.TurretConstants.kLL;
@@ -32,11 +33,8 @@ import com.qualcomm.hardware.limelightvision.Limelight3A;
 import java.util.function.Supplier;
 
 public class Turret{
-
-
     double manualPower = 0;
     DcMotorEx motor;
-
     double lastError = 0, lastTime = 0;
     double integral = 0;
     final Constants.Alliance alliance;
@@ -74,7 +72,7 @@ public class Turret{
     }
 
     public boolean aligned() {
-        return true;
+        return getDistanceToTarget() <= TOLERANCE;
     }
 
     public double getDt() {
@@ -92,7 +90,7 @@ public class Turret{
         switch (mode) {
 
             case TRACKING:
-                double error = clampToLimits(computeTargetAngle(currentPose, getTrackingPose()) + getLimeLightOffset()) - getRawAngle();
+                double error = clampToLimits(getDistanceToTarget() + getLimeLightOffset());
                 integral += error * dt;
                 integral = Range.clip(integral, -maxIntegral, maxIntegral);
                 setPower(TurretController.calculatePower(dt, integral, error, lastError));
@@ -141,8 +139,14 @@ public class Turret{
         }
         this.mode = newMode;
     }
+
     public Mode getMode() {
         return mode;
+    }
+
+    public double getDistanceToTarget() {
+        double target = TurretController.computeTargetAngle(currentPose, getTrackingPose());
+        return target - getRawAngle();
     }
     public Pose getTrackingPose() {
 

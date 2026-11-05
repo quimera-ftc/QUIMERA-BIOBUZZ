@@ -30,10 +30,15 @@ public class TurretController {
         double iOut = Constants.TurretConstants.kI * integral;
         double dOut = Constants.TurretConstants.kD * derivative;
 
-        double sOut = 0;
-        if (Math.abs(error) > TOLERANCE) {
-            sOut = Math.signum(error) * Constants.TurretConstants.kS;
-        }
+
+        double errorMagnitude = Math.abs(error);
+
+        double kSFraction = Math.min(
+                1.0,
+                errorMagnitude / (2.0 * TOLERANCE)
+        );
+
+        double sOut = Math.signum(error) * Constants.TurretConstants.kS * kSFraction;
 
         return pOut + iOut + dOut + sOut;
     }
@@ -51,10 +56,8 @@ public class TurretController {
         double localDesiredAngle = globalDesiredAngle - robotHeadingDeg;
 
         double normalizedTarget = normalizeDegrees(localDesiredAngle);
-        // Normaliza o alvo para mantê-lo entre -180 e 180
         return -Range.clip(normalizedTarget, -LIMIT_SPIN, LIMIT_SPIN);
     }
-
     public static double normalizeDegrees(double angle) {
         while (angle > 180) angle -= 360;
         while (angle < -180) angle += 360;
