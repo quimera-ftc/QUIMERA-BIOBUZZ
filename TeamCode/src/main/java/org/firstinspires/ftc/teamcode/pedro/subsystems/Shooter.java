@@ -15,6 +15,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.pedro.Constants;
+import org.firstinspires.ftc.teamcode.pedro.math.VoltageCompensator;
 import org.firstinspires.ftc.teamcode.pedro.subsystems.Intake;
 
 public class Shooter {
@@ -22,11 +23,11 @@ public class Shooter {
     Intake intake;
 
     DcMotorEx rs, ls;
-    public double targetBangBang = 0.95;
+    VoltageCompensator voltageController;
+    private double potenciaUpdate;
     private double alvoTps = 0;
     private double medidoTps = 0;
     private boolean encoderOff = false;
-    private final double feedForward = 0.2;
     public double maxpower = 0.86, minpower = 0;
     public double start, now;
     boolean isOn = false;
@@ -45,6 +46,7 @@ public class Shooter {
 
         ls.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         rs.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        voltageController = new VoltageCompensator(hardwareMap);
         this.telemetry = telemetry;
 
         ls.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
@@ -68,6 +70,7 @@ public class Shooter {
         rs.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 
         intake = new Intake(hardwareMap);
+        voltageController = new VoltageCompensator(hardwareMap);
     }
     public boolean isOn() {
         return isOn;
@@ -116,11 +119,11 @@ public class Shooter {
 
         double ff = Constants.ShooterCoefficients.kS + Constants.ShooterCoefficients.kV * alvoTps; //potencia q se pa vai ser
         double fb = Constants.ShooterCoefficients.kP * (alvoTps - medidoTps); //correção do erro usando o p proporcional
-        double compTensao = 12.0 / Math.max(getTensao(), 9.0); //ajuste de tudo pela bateriaa
+        double compTensao = Constants.VoltageConstants.NOMINAL_VOLTAGE / Math.max(getTensao(), 9.0); //ajuste de tudo pela bateriaa
 
-        double potencia = Range.clip((ff + fb) * compTensao, 0, 1);
-        ls.setPower(potencia);
-        rs.setPower(potencia);
+        potenciaUpdate = Range.clip((ff + fb) * compTensao, 0, 1);
+        ls.setPower(potenciaUpdate);
+        rs.setPower(potenciaUpdate);
     }
 
     public boolean atSpeed() {
@@ -157,13 +160,14 @@ public class Shooter {
 
     public double getVelEsq() { return Math.abs(ls.getVelocity()); }
     public double getVelDir() { return Math.abs(rs.getVelocity()); }
-    public double getTensao() { return bateria.getVoltage(); }
+    public double getTensao() { return voltageController.getVoltage(); }
 
-    public void telemetriaTeste(Telemetry telemetry, double potencia) { //isso aqui a gnt anota pors testes ok
-        telemetry.addData("Potencia", "%.1f", potencia);
+    public void telemetriaTeste(Telemetry telemetry) { //isso aqui a gnt anota pors testes ok
         telemetry.addData("Vel esq", "%.0f", getVelEsq());
         telemetry.addData("Vel dir", "%.0f", getVelDir());
         telemetry.addData("Tensao", "%.2f", getTensao());
+        telemetry.addData("alvoTPS: ", Constants.ShooterCoefficients.ALVO_TPS);
+        telemetry.addData("potencia que ta indo pros motores: ", potenciaUpdate);
         telemetry.addLine("-------------------------------");
         telemetry.addData("Alvo", 2300);
         telemetry.addData("Medido", "%.0f", getMedidoTps());
