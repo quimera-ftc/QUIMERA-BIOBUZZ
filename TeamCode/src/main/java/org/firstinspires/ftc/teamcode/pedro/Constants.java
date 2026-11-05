@@ -23,7 +23,7 @@ public class Constants {
     private static PoseFactory p = PoseFactory.degrees();
 
     public static class VoltageConstants {
-        public static double NOMINAL_VOLTAGE = 13.0;
+        public static double NOMINAL_VOLTAGE = 11.50;
     }
     @Config
     public static class ShooterCoefficients { //valores chutados
@@ -33,7 +33,7 @@ public class Constants {
         public static double kP = 0.0005;
         public static double READY_TOL = 50;
         public static double IDLE_TPS = 900;
-        public static double ALVO_TPS = 1225;
+        public static double ALVO_TPS = 1210;
     }
 
     @Config
