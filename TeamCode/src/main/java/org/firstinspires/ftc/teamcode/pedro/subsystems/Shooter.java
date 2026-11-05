@@ -34,7 +34,6 @@ public class Shooter {
 
     public Telemetry telemetry;
     public ElapsedTime runtime = new ElapsedTime();
-    //PIDFCoefficients controller=  new PIDFCoefficients(0.5,0,0,0.5);
     //-- GnHk28 has left the Commits
 
     public Shooter(HardwareMap hardwareMap, Telemetry telemetry) {
@@ -144,6 +143,11 @@ public class Shooter {
         return encoderOff;
     }
 
+    public double getMedidoTps() {
+        return medidoTps;
+    }
+
+
     //-------------------------metodos testes--------------------------------
     public void setPotenciaDireta(double p) {
         p = Range.clip(p, 0, 1);
@@ -160,6 +164,11 @@ public class Shooter {
         telemetry.addData("Vel esq", "%.0f", getVelEsq());
         telemetry.addData("Vel dir", "%.0f", getVelDir());
         telemetry.addData("Tensao", "%.2f", getTensao());
+        telemetry.addLine("-------------------------------");
+        telemetry.addData("Alvo", 2300);
+        telemetry.addData("Medido", "%.0f", getMedidoTps());
+        telemetry.addData("Pronto", atSpeed());
+        telemetry.addData("Encoder off", isEncoderOff());
     }
 
 }
