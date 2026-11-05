@@ -22,7 +22,7 @@ public class Shooter {
 
     Intake intake;
 
-    DcMotorEx rs, ls;
+    public DcMotorEx rs, ls;
     VoltageCompensator voltageController;
     private double potenciaUpdate;
     private double alvoTps = 0;

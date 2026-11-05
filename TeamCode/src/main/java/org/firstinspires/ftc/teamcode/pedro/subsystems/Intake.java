@@ -6,16 +6,17 @@ import static com.pedropathing.ivy.groups.Groups.sequential;
 
 import com.pedropathing.ivy.Command;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 public class Intake {
 
-    private final DcMotor intake;
+    public final DcMotorEx intake;
     public Agropecuaria agro;
     double maxPower = 0.75;
     private boolean isOn = false;
     public Intake(HardwareMap hardwareMap) {
-        intake = hardwareMap.get(DcMotor.class, "intake");
+        intake = hardwareMap.get(DcMotorEx.class, "intake");
         agro = new Agropecuaria(hardwareMap);
 
     }
