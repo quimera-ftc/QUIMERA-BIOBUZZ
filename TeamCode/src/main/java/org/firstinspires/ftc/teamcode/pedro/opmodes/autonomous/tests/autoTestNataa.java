@@ -87,6 +87,7 @@ public class autoTestNataa extends OpMode {
 
         Pose currentPose = follower.pose();
         turret.update(currentPose);
+        shooter.update();
 
     }
 
@@ -97,7 +98,9 @@ public class autoTestNataa extends OpMode {
     }
 
     public Command routine() {
-        return parallel(sequential(
+        return parallel(
+                instant(() -> shooter.setAlvo(Constants.ShooterCoefficients.ALVO_TPS)), //lembrando mais uma vez que 2300 é um valor placeholder
+                sequential(
                 waitMs(2000),
                 shooter.shootPP(),
                 parallel(
@@ -126,6 +129,9 @@ public class autoTestNataa extends OpMode {
                 shooter.shootPP(),
                 follow(follower, SHOOT4_TO_PARK())
                 ),
+                instant(() -> shooter.setAlvo(Constants.ShooterCoefficients.IDLE_TPS)),
                 turret.autoaim(follower::pose));
+
+
     }
 }
