@@ -20,6 +20,16 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 public class Constants {
 
+    @Config
+    public static class ShooterCoefficients { //valores chutados
+
+        public static double kS = 0.05;
+        public static double kV = 0.00035;
+        public static double kP = 0.0005;
+        public static double READY_TOL = 50;
+        public static double IDLE_TPS = 900;
+    }
+
     public static class BangBangCoeffiecients {
         public static final double kBB = 1837; //1837
     }
