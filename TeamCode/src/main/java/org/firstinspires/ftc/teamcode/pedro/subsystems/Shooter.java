@@ -85,21 +85,6 @@ public class Shooter {
     }
 
     //metodo p shootar no telop
-    public void shoot() {
-        start = runtime.milliseconds();
-
-        while (runtime.seconds() - start < 3000) {
-            now = runtime.milliseconds() - start;
-
-            if (now <= 2000) {
-                powerUp();
-                continue;
-            }
-            intake.in();
-        }
-        intake.stop();
-        stop();
-    }
 
     public void stop() {
         rs.setPower(0);
