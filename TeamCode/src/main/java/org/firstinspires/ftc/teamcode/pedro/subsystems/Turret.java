@@ -158,14 +158,14 @@ public class Turret{
         if (alliance == Constants.Alliance.BLUE) {
 
             if (currentPose.y() >= 70.75) {
-                return Constants.topNestBLUE;
-            } else return Constants.bottomNestBLUE;
+                return Constants.FieldPoses.topNestBLUE;
+            } else return Constants.FieldPoses.bottomNestBLUE;
 
         } else {
 
             if (currentPose.y() >= 70.75) {
-                return Constants.topNestRED;
-            } else return Constants.bottomNestRED;
+                return Constants.FieldPoses.topNestRED;
+            } else return Constants.FieldPoses.bottomNestRED;
         }
 
     }

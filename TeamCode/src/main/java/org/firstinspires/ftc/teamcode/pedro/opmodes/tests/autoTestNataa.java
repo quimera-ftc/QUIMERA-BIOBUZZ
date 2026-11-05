@@ -14,6 +14,7 @@ import com.pedropathing.ivy.Command;
 import com.pedropathing.ivy.Scheduler;
 import com.pedropathing.math.Pose;
 import com.pedropathing.paths.Path;
+import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
@@ -23,6 +24,8 @@ import org.firstinspires.ftc.teamcode.pedro.subsystems.Agropecuaria;
 import org.firstinspires.ftc.teamcode.pedro.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.pedro.subsystems.Shooter;
 import org.firstinspires.ftc.teamcode.pedro.subsystems.Turret;
+
+import java.util.List;
 
 @Autonomous
 public class autoTestNataa extends OpMode {
@@ -36,6 +39,7 @@ public class autoTestNataa extends OpMode {
     PoseFactory poseFactory = PoseFactory.degrees();
     private Follower follower;
 
+    List<LynxModule> allHubs;
 
     Pose startingPoint = poseFactory.of(86.06466512702079,134.1431469720298,0);
     Pose collect1 = poseFactory.of(127.97337962962962, 131.97106481481478, 0);
@@ -80,9 +84,18 @@ public class autoTestNataa extends OpMode {
         agro = new Agropecuaria(hardwareMap);
         turret = new Turret(hardwareMap, startingPoint, Constants.Alliance.BLUE);
 
+        allHubs = hardwareMap.getAll(LynxModule.class);
+        for (LynxModule hub : allHubs) {
+            hub.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
+        }
+
     }
 
     public void loop() {
+        for (LynxModule hub : allHubs) {
+            hub.clearBulkCache();
+        }
+
         follower.update();
         Scheduler.execute();
 

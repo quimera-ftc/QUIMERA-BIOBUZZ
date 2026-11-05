@@ -14,12 +14,15 @@ import com.pedropathing.ivy.Command;
 import com.pedropathing.ivy.Scheduler;
 import com.pedropathing.math.Pose;
 import com.pedropathing.paths.Path;
+import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.teamcode.pedro.Constants;
 import org.firstinspires.ftc.teamcode.pedro.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.pedro.subsystems.Shooter;
+
+import java.util.List;
 
 @Autonomous
 
@@ -29,10 +32,9 @@ public class AutoRedDown extends OpMode {
     Intake intake;
 
     PoseFactory poseFactory = PoseFactory.degrees().mirrorX(70.75).mirrorY(70.75);
-
-
-
     private Follower follower;
+
+    List<LynxModule> allHubs;
 
 
     Pose start = poseFactory.of(83.58,103.36,270);
@@ -76,9 +78,10 @@ public class AutoRedDown extends OpMode {
         shooter = new Shooter(hardwareMap);
         intake = new Intake(hardwareMap);
 
-
-
-
+        allHubs = hardwareMap.getAll(LynxModule.class);
+        for (LynxModule hub : allHubs) {
+            hub.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
+        }
     }
 
     public void start(){
@@ -92,6 +95,9 @@ public class AutoRedDown extends OpMode {
         follower.update();
         Scheduler.execute();
 
+        for (LynxModule hub : allHubs) {
+            hub.clearBulkCache();
+        }
     }
 
     public Command routine() {

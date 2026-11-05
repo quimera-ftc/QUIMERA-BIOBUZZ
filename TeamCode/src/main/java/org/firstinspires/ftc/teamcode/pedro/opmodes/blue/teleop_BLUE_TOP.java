@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.pedro.opmodes.blue;
 
 import com.pedropathing.follower.Follower;
 import com.pedropathing.math.Pose;
+import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -13,6 +14,8 @@ import org.firstinspires.ftc.teamcode.pedro.subsystems.DriveTrain;
 import org.firstinspires.ftc.teamcode.pedro.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.pedro.subsystems.Shooter;
 import org.firstinspires.ftc.teamcode.pedro.subsystems.Turret;
+
+import java.util.List;
 
 @TeleOp(name="TELEOP_BLUE_TOP", group="Blue")
 public class teleop_BLUE_TOP extends OpMode {
@@ -26,6 +29,7 @@ public class teleop_BLUE_TOP extends OpMode {
     boolean collecting = false;
     Pose startPose = new Pose(132.12, 51.28, Math.toRadians(270));
     Follower follower;
+    List<LynxModule> allHubs;
 
     @Override
     public void init() {
@@ -40,6 +44,11 @@ public class teleop_BLUE_TOP extends OpMode {
 
         agro.up();
         follower.setPose(startPose);
+
+        allHubs = hardwareMap.getAll(LynxModule.class);
+        for (LynxModule hub : allHubs) {
+            hub.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
+        }
     }
 
     @Override
@@ -49,6 +58,10 @@ public class teleop_BLUE_TOP extends OpMode {
 
     @Override
     public void loop() {
+        for (LynxModule hub : allHubs) {
+            hub.clearBulkCache();
+        }
+
         follower.update();
 
         driveTrain.driveStick();

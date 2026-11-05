@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.pedro.opmodes.tests;
 
 import com.pedropathing.follower.Follower;
 import com.pedropathing.math.Pose;
+import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -15,11 +16,14 @@ import org.firstinspires.ftc.teamcode.pedro.subsystems.Shooter;
 
 @TeleOp(name = "BASE TELEOP")
 
+import java.util.List;
+
 public class TestTeleopBase extends OpMode {
     DriveTrain driveTrain;
     Shooter shooter;
     Intake intake;
     Follower follower;
+    List<LynxModule> allHubs;
 
     @Override
     public void init() {
@@ -28,10 +32,19 @@ public class TestTeleopBase extends OpMode {
         intake = new Intake(hardwareMap);
         shooter = new Shooter(hardwareMap);
         follower.setPose(PoseStorage.currentPose);
+
+        allHubs = hardwareMap.getAll(LynxModule.class);
+        for (LynxModule hub : allHubs) {
+            hub.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
+        }
     }
 
     @Override
     public void loop() {
+        for (LynxModule hub : allHubs) {
+            hub.clearBulkCache();
+        }
+
         follower.update();
 
 
