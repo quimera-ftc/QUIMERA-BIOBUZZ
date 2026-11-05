@@ -45,7 +45,7 @@ public class AutoRedDown extends OpMode {
     Pose shoot2 = poseFactory.of(8.912,7.02,180);
 
     public Path START_TO_COLLECT(){
-        return curve(start,collect).linear(start,collect);
+        return line(start,collect).linear(start,collect);
     }
     public Path COLLECT_TO_SHOOT(){
         return line(collect,shoot).linear(collect,shoot);
