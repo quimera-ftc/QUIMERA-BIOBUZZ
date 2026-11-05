@@ -1,14 +1,17 @@
 package org.firstinspires.ftc.teamcode.pedro.math;
 
-import static org.firstinspires.ftc.teamcode.pedro.Constants.TurretConstants.LIMIT_SPIN;
-import static org.firstinspires.ftc.teamcode.pedro.Constants.TurretConstants.OFFSET_X;
-import static org.firstinspires.ftc.teamcode.pedro.Constants.TurretConstants.OFFSET_Y;
-import static org.firstinspires.ftc.teamcode.pedro.Constants.TurretConstants.TOLERANCE;
+import static org.firstinspires.ftc.teamcode.pedro.subsystems.TurretConstants.LIMIT_SPIN;
+import static org.firstinspires.ftc.teamcode.pedro.subsystems.TurretConstants.OFFSET_X;
+import static org.firstinspires.ftc.teamcode.pedro.subsystems.TurretConstants.OFFSET_Y;
+import static org.firstinspires.ftc.teamcode.pedro.subsystems.TurretConstants.TOLERANCE;
+import static org.firstinspires.ftc.teamcode.pedro.subsystems.TurretConstants.kD;
+import static org.firstinspires.ftc.teamcode.pedro.subsystems.TurretConstants.kI;
+import static org.firstinspires.ftc.teamcode.pedro.subsystems.TurretConstants.kP;
+import static org.firstinspires.ftc.teamcode.pedro.subsystems.TurretConstants.kS;
 
 import com.pedropathing.math.Pose;
 import com.qualcomm.robotcore.util.Range;
 
-import org.firstinspires.ftc.teamcode.pedro.Constants;
 
 public class TurretController {
     public static Pose getTurretPose(Pose currentPose) {
@@ -26,9 +29,9 @@ public class TurretController {
 
         double derivative = (error - lastError) / dt;
 
-        double pOut = Constants.TurretConstants.kP * error;
-        double iOut = Constants.TurretConstants.kI * integral;
-        double dOut = Constants.TurretConstants.kD * derivative;
+        double pOut = kP * error;
+        double iOut = kI * integral;
+        double dOut = kD * derivative;
 
 
         double errorMagnitude = Math.abs(error);
@@ -38,9 +41,10 @@ public class TurretController {
                 errorMagnitude / (2.0 * TOLERANCE)
         );
 
-        double sOut = Math.signum(error) * Constants.TurretConstants.kS * kSFraction;
+        double sOut = Math.signum(error) * kS * kSFraction;
 
-        return pOut + iOut + dOut + sOut;
+        double power = pOut + iOut + dOut + sOut;
+        return power;
     }
     public static double computeTargetAngle(Pose currentPose, Pose trackedPose) {
 

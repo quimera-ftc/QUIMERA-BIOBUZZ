@@ -1,18 +1,18 @@
 package org.firstinspires.ftc.teamcode.pedro.subsystems;
 
-import static org.firstinspires.ftc.teamcode.pedro.Constants.TurretConstants.LIMIT_BUFFER;
-import static org.firstinspires.ftc.teamcode.pedro.Constants.TurretConstants.LIMIT_SPIN;
-import static org.firstinspires.ftc.teamcode.pedro.Constants.TurretConstants.LL_PIPELINE;
-import static org.firstinspires.ftc.teamcode.pedro.Constants.TurretConstants.MAX_OFFSET_LL;
-import static org.firstinspires.ftc.teamcode.pedro.Constants.TurretConstants.TOLERANCE;
-import static org.firstinspires.ftc.teamcode.pedro.Constants.TurretConstants.angleToleranceLL;
-import static org.firstinspires.ftc.teamcode.pedro.Constants.TurretConstants.goalX;
-import static org.firstinspires.ftc.teamcode.pedro.Constants.TurretConstants.kLL;
-import static org.firstinspires.ftc.teamcode.pedro.Constants.TurretConstants.maxIntegral;
-import static org.firstinspires.ftc.teamcode.pedro.Constants.TurretConstants.maxPower;
-import static org.firstinspires.ftc.teamcode.pedro.Constants.TurretConstants.ticksPerDegree;
 import static org.firstinspires.ftc.teamcode.pedro.math.TurretController.clampToLimits;
 import static org.firstinspires.ftc.teamcode.pedro.math.TurretController.computeTargetAngle;
+import static org.firstinspires.ftc.teamcode.pedro.subsystems.TurretConstants.LIMIT_BUFFER;
+import static org.firstinspires.ftc.teamcode.pedro.subsystems.TurretConstants.LIMIT_SPIN;
+import static org.firstinspires.ftc.teamcode.pedro.subsystems.TurretConstants.LL_PIPELINE;
+import static org.firstinspires.ftc.teamcode.pedro.subsystems.TurretConstants.MAX_OFFSET_LL;
+import static org.firstinspires.ftc.teamcode.pedro.subsystems.TurretConstants.TOLERANCE;
+import static org.firstinspires.ftc.teamcode.pedro.subsystems.TurretConstants.angleToleranceLL;
+import static org.firstinspires.ftc.teamcode.pedro.subsystems.TurretConstants.goalX;
+import static org.firstinspires.ftc.teamcode.pedro.subsystems.TurretConstants.kLL;
+import static org.firstinspires.ftc.teamcode.pedro.subsystems.TurretConstants.maxIntegral;
+import static org.firstinspires.ftc.teamcode.pedro.subsystems.TurretConstants.maxPower;
+import static org.firstinspires.ftc.teamcode.pedro.subsystems.TurretConstants.ticksPerDegree;
 
 import androidx.annotation.NonNull;
 
@@ -90,11 +90,16 @@ public class Turret{
         switch (mode) {
 
             case TRACKING:
+                if (aligned()) {
+                    setPower(0);
+                } else {
+
                 double error = clampToLimits(getDistanceToTarget() + getLimeLightOffset());
                 integral += error * dt;
                 integral = Range.clip(integral, -maxIntegral, maxIntegral);
                 setPower(TurretController.calculatePower(dt, integral, error, lastError));
                 lastError = error;
+                }
                 break;
 
             case MANUAL:

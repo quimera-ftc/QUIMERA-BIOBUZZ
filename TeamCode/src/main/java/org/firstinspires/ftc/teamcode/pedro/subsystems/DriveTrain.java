@@ -1,21 +1,21 @@
 package org.firstinspires.ftc.teamcode.pedro.subsystems;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 public class DriveTrain {
 
-    DcMotor frontLeft, frontRight, backLeft, backRight;
+   public DcMotorEx frontLeft, frontRight, backLeft, backRight;
     Gamepad gamepad1;
     public DriveTrain(HardwareMap hardwareMap, Gamepad gamepad1) {
         this.gamepad1 = gamepad1;
 
-        frontLeft = hardwareMap.get(DcMotor.class, "fl");
-        frontRight = hardwareMap.get(DcMotor.class, "fr");
-        backLeft = hardwareMap.get(DcMotor.class, "br");
-        backRight = hardwareMap.get(DcMotor.class, "bl");
+        frontLeft = hardwareMap.get(DcMotorEx.class, "fl");
+        frontRight = hardwareMap.get(DcMotorEx.class, "fr");
+        backLeft = hardwareMap.get(DcMotorEx.class, "br");
+        backRight = hardwareMap.get(DcMotorEx.class, "bl");
 
         frontLeft.setDirection(DcMotor.Direction.REVERSE);
         backLeft.setDirection(DcMotor.Direction.REVERSE);
