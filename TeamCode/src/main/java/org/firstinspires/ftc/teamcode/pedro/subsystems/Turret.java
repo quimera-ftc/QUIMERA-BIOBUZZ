@@ -72,7 +72,7 @@ public class Turret{
     }
 
     public boolean aligned() {
-        return getDistanceToTarget() <= TOLERANCE;
+        return Math.abs(getDistanceToTarget()) <= TOLERANCE;
     }
 
     public double getDt() {

@@ -36,6 +36,7 @@ public class TestTurret extends OpMode {
         agro.up();
         follower.setPose(startPose);
 
+        turret.resetEncoder();
         turret.setMode(Turret.Mode.IDLE);
     }
 
@@ -74,7 +75,7 @@ public class TestTurret extends OpMode {
         telemetry.addData("Turret Y", turretPose.y());
         telemetry.addData("target", target);
         telemetry.addData("deslocamento (Raw)", turret.getRawAngle());
-        telemetry.addData("Erro Atual", TurretController.normalizeDegrees(target - turret.getRawAngle()));
+        telemetry.addData("Erro Atual", turret.getDistanceToTarget());
         telemetry.addData("na mosca", turret.aligned() ? "sim" : "nao");
         telemetry.addData("tempo de ciclo (dt)", turret.getDt());
         driveTrain.driveStick();

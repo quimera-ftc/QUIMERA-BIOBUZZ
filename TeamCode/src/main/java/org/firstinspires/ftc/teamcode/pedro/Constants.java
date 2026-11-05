@@ -50,7 +50,7 @@ public class Constants {
         public static final double maxPower = 1;
         public static final double LIMIT_BUFFER = 90;
         public static double TOLERANCE = 2;
-        public static double kP = 0.069921222;
+        public static double kP = 0.049921222;
         public static double kI = 0.0000;
         public static double kD = 0.0; // 0.067921222
         public static double kS = 0.25;
@@ -65,9 +65,9 @@ public class Constants {
 
     }
     public static final Pose topNestBLUE = new Pose(84, 84);
-    public static final Pose bottomNestBLUE = new Pose(84, 55);
-    public static final Pose topNestRED = new Pose(57.7, 84);
-    public static final Pose bottomNestRED = new Pose(57.7, 55);
+    public static final Pose bottomNestBLUE = new Pose(84, 57.5);
+    public static final Pose topNestRED = new Pose(57.5, 84);
+    public static final Pose bottomNestRED = new Pose(57.5, 57.5);
     public enum Alliance {
         RED,
         BLUE
