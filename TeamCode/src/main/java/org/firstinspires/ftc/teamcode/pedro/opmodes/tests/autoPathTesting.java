@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.pedro.opmodes.autonomous.tests;
+package org.firstinspires.ftc.teamcode.pedro.opmodes.tests;
 
 import static com.pedropathing.api.Paths.line;
 import static com.pedropathing.ivy.groups.Groups.sequential;
