@@ -74,7 +74,7 @@ public class TestTurret extends OpMode {
         telemetry.addData("2. Posição Local (Raw)", turret.getRawAngle());
 //
         telemetry.addData("3. Erro Atual", turret.normalizeDegrees(turret.computeTargetAngle() - turret.getRawAngle()));
-
+        telemetry.addData("tempo de ciclo", turret.getDt());
         driveTrain.driveStick();
         telemetry.update();
     }
