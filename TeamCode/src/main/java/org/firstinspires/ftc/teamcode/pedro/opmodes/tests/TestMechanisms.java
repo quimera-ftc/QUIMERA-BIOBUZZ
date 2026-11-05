@@ -65,11 +65,11 @@ public class TestMechanisms extends OpMode {
 
         }
 
-        //        if (gamepad1.right_trigger > 0.5) {
-        //            shooter.setAlvo(Constants.ShooterCoefficients.ALVO_TPS);
-        //        } else {
-        //            shooter.setAlvo(Constants.ShooterCoefficients.IDLE_TPS);
-        //        } //2300 é um valor placeholder
+        if (gamepad1.right_trigger > 0.5) {
+            shooter.setAlvo(Constants.ShooterCoefficients.ALVO_TPS);
+        } else {
+            shooter.setAlvo(Constants.ShooterCoefficients.IDLE_TPS);
+        }
 
         if (gamepad1.right_bumper) {
             turret.setManualPower(0.75);
@@ -84,22 +84,22 @@ public class TestMechanisms extends OpMode {
             } else turret.setMode(Turret.Mode.MANUAL);
 
         }
+//
+//        if (gamepad1.dpad_up && !dpadCimaAntes) {
+//            potenciaTeste += 0.1;
+//        }
+//        if (gamepad1.dpad_down && !dpadBaixoAntes) {
+//            potenciaTeste -= 0.1;
+//        }
+//        dpadCimaAntes = gamepad1.dpad_up;
+//        dpadBaixoAntes = gamepad1.dpad_down;
+//        potenciaTeste = Math.max(0, Math.min(1, potenciaTeste));
+//        shooter.setPotenciaDireta(potenciaTeste);
 
-        if (gamepad1.dpad_up && !dpadCimaAntes) {
-            potenciaTeste += 0.1;
-        }
-        if (gamepad1.dpad_down && !dpadBaixoAntes) {
-            potenciaTeste -= 0.1;
-        }
-        dpadCimaAntes = gamepad1.dpad_up;
-        dpadBaixoAntes = gamepad1.dpad_down;
-        potenciaTeste = Math.max(0, Math.min(1, potenciaTeste));
-        shooter.setPotenciaDireta(potenciaTeste);
-
-        //shooter.update();
+        shooter.update();
         driveTrain.driveStick();
 
-        shooter.telemetriaTeste(telemetry, potenciaTeste); // TELEMETRIA PRA ANOTAR COISAS DE TESTE DO SHOOTER
+        shooter.telemetriaTeste(telemetry); // TELEMETRIA PRA ANOTAR COISAS DE TESTE DO SHOOTER
         telemetry.addData("intake", intake.isOn() ? "LIGADO" : "DESLIGADO");
         telemetry.addData("shooter", shooter.isOn() ? "LIGADO" : "DESLIGADO");
         telemetry.addData("turret", turret.getMode());
