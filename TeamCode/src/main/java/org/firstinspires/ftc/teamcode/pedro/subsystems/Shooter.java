@@ -25,6 +25,7 @@ public class Shooter {
     public double targetBangBang = 0.95;
     private double alvoTps = 0;
     private double medidoTps = 0;
+    private boolean encoderOff = false;
     private final double feedForward = 0.2;
     public double maxpower = 0.86, minpower = 0;
     public double start, now;
@@ -127,7 +128,23 @@ public class Shooter {
         return alvoTps > 0 && Math.abs(alvoTps - medidoTps) < Constants.ShooterCoefficients.READY_TOL;
     }
 
-    //---------------------metodos testes--------------------------------
+    private double readVelocity() {
+        double veloLeft = getVelEsq();
+        double veloRight = getVelDir();
+
+        double max = Math.max(veloLeft, veloRight);
+        double min = Math.min(veloLeft, veloRight);
+
+        encoderOff = max > 200 && (max - min) > 0.15 * max;
+
+        return encoderOff ? max :(max + min) / 2.0;
+    }
+
+    public boolean isEncoderOff() {
+        return encoderOff;
+    }
+
+    //-------------------------metodos testes--------------------------------
     public void setPotenciaDireta(double p) {
         p = Range.clip(p, 0, 1);
         ls.setPower(p);
