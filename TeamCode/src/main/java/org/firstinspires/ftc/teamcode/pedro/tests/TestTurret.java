@@ -72,10 +72,11 @@ public class TestTurret extends OpMode {
         telemetry.addData("mode", turret.getMode());
         telemetry.addData("Turret X", turretPose.x());
         telemetry.addData("Turret Y", turretPose.y());
-        telemetry.addData("1. Alvo Local (Target)", target);
-        telemetry.addData("2. Posição Local (Raw)", turret.getRawAngle());
-        telemetry.addData("3. Erro Atual", TurretController.normalizeDegrees(target - turret.getRawAngle()));
-        telemetry.addData("tempo de ciclo", turret.getDt());
+        telemetry.addData("target", target);
+        telemetry.addData("deslocamento (Raw)", turret.getRawAngle());
+        telemetry.addData("Erro Atual", TurretController.normalizeDegrees(target - turret.getRawAngle()));
+        telemetry.addData("na mosca", turret.aligned() ? "sim" : "nao");
+        telemetry.addData("tempo de ciclo (dt)", turret.getDt());
         driveTrain.driveStick();
         telemetry.update();
     }
