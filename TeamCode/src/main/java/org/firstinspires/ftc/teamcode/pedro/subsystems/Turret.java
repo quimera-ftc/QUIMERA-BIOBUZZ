@@ -7,6 +7,7 @@ import static org.firstinspires.ftc.teamcode.pedro.subsystems.TurretConstants.LI
 import static org.firstinspires.ftc.teamcode.pedro.subsystems.TurretConstants.LL_PIPELINE;
 import static org.firstinspires.ftc.teamcode.pedro.subsystems.TurretConstants.MAX_OFFSET_LL;
 import static org.firstinspires.ftc.teamcode.pedro.subsystems.TurretConstants.TOLERANCE;
+import static org.firstinspires.ftc.teamcode.pedro.subsystems.TurretConstants.alpha;
 import static org.firstinspires.ftc.teamcode.pedro.subsystems.TurretConstants.angleToleranceLL;
 import static org.firstinspires.ftc.teamcode.pedro.subsystems.TurretConstants.goalX;
 import static org.firstinspires.ftc.teamcode.pedro.subsystems.TurretConstants.kLL;
@@ -35,7 +36,7 @@ import java.util.function.Supplier;
 public class Turret{
     double manualPower = 0;
     DcMotorEx motor;
-    double lastError = 0, lastTime = 0;
+    double lastError = 0, lastTime = 0, lastFilteredDerivative = 0;
     double integral = 0;
     final Constants.Alliance alliance;
     Pose currentPose;
@@ -83,7 +84,7 @@ public class Turret{
         currentPose = pose;
 
         currentTime = timer.seconds();
-        double dt = currentTime - lastTime;
+        double dt = (currentTime - lastTime) / 1e9;
         if (dt <= 0.002 || dt > 0.1) dt = 0.02;
         lastTime = currentTime;
 
@@ -95,9 +96,14 @@ public class Turret{
                 } else {
 
                 double error = clampToLimits(getDistanceToTarget() + getLimeLightOffset());
+
                 integral += error * dt;
                 integral = Range.clip(integral, -maxIntegral, maxIntegral);
-                setPower(TurretController.calculatePower(dt, integral, error, lastError));
+                double derivative = (error - lastError) / dt;
+                double filteredDerivative = (alpha * derivative) + ((1.0 - alpha) * lastFilteredDerivative);
+
+                lastFilteredDerivative = filteredDerivative;
+                setPower(TurretController.calculatePower(integral, error, filteredDerivative));
                 lastError = error;
                 }
                 break;

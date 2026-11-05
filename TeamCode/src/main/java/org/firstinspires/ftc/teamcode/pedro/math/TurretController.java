@@ -25,13 +25,11 @@ public class TurretController {
 
         return new Pose(turret_x, turret_y);
     }
-    public static double calculatePower(double dt, double integral, double error, double lastError) {
-
-        double derivative = (error - lastError) / dt;
+    public static double calculatePower(double integral, double error, double filteredDerivative) {
 
         double pOut = kP * error;
         double iOut = kI * integral;
-        double dOut = kD * derivative;
+        double dOut = kD * filteredDerivative;
 
 
         double errorMagnitude = Math.abs(error);
@@ -43,8 +41,7 @@ public class TurretController {
 
         double sOut = Math.signum(error) * kS * kSFraction;
 
-        double power = pOut + iOut + dOut + sOut;
-        return power;
+        return pOut + iOut + dOut + sOut;
     }
     public static double computeTargetAngle(Pose currentPose, Pose trackedPose) {
 
