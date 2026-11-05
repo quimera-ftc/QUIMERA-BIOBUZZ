@@ -99,7 +99,7 @@ public class TestMechanisms extends OpMode {
         //shooter.update();
         driveTrain.driveStick();
 
-        shooter.telemetriaTeste(telemetry, potenciaTeste); // TELEMETRIA PRA ANOTAR COISAS DE TESTE DO SHOOTER
+        shooter.telemetriaTeste(telemetry); // TELEMETRIA PRA ANOTAR COISAS DE TESTE DO SHOOTER
         telemetry.addData("intake", intake.isOn() ? "LIGADO" : "DESLIGADO");
         telemetry.addData("shooter", shooter.isOn() ? "LIGADO" : "DESLIGADO");
         telemetry.addData("turret", turret.getMode());
