@@ -26,6 +26,10 @@ public class Test_MECHANISMS extends OpMode {
     Pose startPose = new Pose(132.6505617977528, 133.92247191011242, Math.toRadians(270));
     boolean flower = true;
 
+    double potenciaTeste = 0.0;
+    boolean dpadCimaAntes = false;
+    boolean dpadBaixoAntes = false;
+
     @Override
     public void init() {
         follower = Constants.create(hardwareMap);
@@ -85,8 +89,20 @@ public class Test_MECHANISMS extends OpMode {
 
         }
 
+        if (gamepad1.dpad_up && !dpadCimaAntes) {
+            potenciaTeste += 0.1;
+        }
+        if (gamepad1.dpad_down && !dpadBaixoAntes) {
+            potenciaTeste -= 0.1;
+        }
+        dpadCimaAntes = gamepad1.dpad_up;
+        dpadBaixoAntes = gamepad1.dpad_down;
+        potenciaTeste = Math.max(0, Math.min(1, potenciaTeste));
+        shooter.setPotenciaDireta(potenciaTeste);
+
         driveTrain.driveStick();
 
+        shooter.telemetriaTeste(telemetry, potenciaTeste); // TELEMETRIA PRA ANOTAR COISAS DE TESTE DO SHOOTER
         telemetry.addData("intake", intake.isOn() ? "LIGADO" : "DESLIGADO");
         telemetry.addData("shooter", shooter.isOn() ? "LIGADO" : "DESLIGADO");
         telemetry.addData("turret", turret.getMode());
