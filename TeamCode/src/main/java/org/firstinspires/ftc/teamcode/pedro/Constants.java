@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.pedro;
 import com.acmerobotics.dashboard.config.Config;
 import com.pedropathing.algorithm.Foresight;
 import com.pedropathing.algorithm.ForesightConfig;
+import com.pedropathing.api.PoseFactory;
 import com.pedropathing.controllers.Controller;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.math.Matrix;
@@ -19,6 +20,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 public class Constants {
+    private static PoseFactory p = PoseFactory.degrees();
 
     public static class VoltageConstants {
         public static double NOMINAL_VOLTAGE = 13.0;
@@ -31,7 +33,7 @@ public class Constants {
         public static double kP = 0.0005;
         public static double READY_TOL = 50;
         public static double IDLE_TPS = 900;
-        public static double ALVO_TPS = 1235;
+        public static double ALVO_TPS = 1225;
     }
 
     @Config
@@ -60,10 +62,17 @@ public class Constants {
         public static final double MAX_OFFSET_LL = 6.0;
 
     }
-    public static final Pose topNestBLUE = new Pose(84, 84);
-    public static final Pose bottomNestBLUE = new Pose(84, 57.5);
-    public static final Pose topNestRED = new Pose(57.5, 84);
-    public static final Pose bottomNestRED = new Pose(57.5, 57.5);
+
+    public static class FieldPoses {
+        public static final Pose topNestBLUE = p.of(84, 84,0);
+        public static final Pose bottomNestBLUE = p.of(84, 57.5,0);
+        public static final Pose topNestRED = p.of(57.5, 84,0);
+        public static final Pose bottomNestRED = p.of(57.5, 57.5, 0);
+
+        public static final Pose topParkBLUE = p.of(132.12685185185188, 51.289675925925924, 270);
+        public static final Pose bottomParkBLUE = p.of(129.45, 17.78, 90);
+    }
+
     public enum Alliance {
         RED,
         BLUE
