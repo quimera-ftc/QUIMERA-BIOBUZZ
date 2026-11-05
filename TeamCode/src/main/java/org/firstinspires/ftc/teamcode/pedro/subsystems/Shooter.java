@@ -105,6 +105,28 @@ public class Shooter {
 
     }
 
+    public void update() {
+        medidoTps = (getVelDir() + getVelEsq() / 2.0);
+
+        if (alvoTps <= 0) {
+            ls.setPower(0);
+            rs.setPower(0);
+            return;
+        }
+
+        double ff = Constants.ShooterCoefficients.kS + Constants.ShooterCoefficients.kV * alvoTps; //potencia q se pa vai ser
+        double fb = Constants.ShooterCoefficients.kP * (alvoTps - medidoTps); //correção do erro usando o p proporcional
+        double compTensao = 12.0 / Math.max(getTensao(), 9.0); //ajuste de tudo pela bateriaa
+
+        double potencia = Range.clip((ff + fb) * compTensao, 0, 1);
+        ls.setPower(potencia);
+        rs.setPower(potencia);
+    }
+
+    public boolean atSpeed() {
+        return alvoTps > 0 && Math.abs(alvoTps - medidoTps) < Constants.ShooterCoefficients.READY_TOL;
+    }
+
     //---------------------metodos testes--------------------------------
     public void setPotenciaDireta(double p) {
         p = Range.clip(p, 0, 1);
