@@ -1,12 +1,15 @@
 package org.firstinspires.ftc.teamcode.pedro.opmodes.tests;
 
+import static org.firstinspires.ftc.teamcode.pedro.subsystems.subConstants.IntakeConstants.*;
+
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.teamcode.pedro.Constants;
+
 import org.firstinspires.ftc.teamcode.pedro.subsystems.DriveTrain;
 import org.firstinspires.ftc.teamcode.pedro.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.pedro.subsystems.Shooter;
+
 
 @TeleOp(name="TESTS VOLTAGE", group="Tests")
 public class TestVoltage extends OpMode {
@@ -27,9 +30,9 @@ public class TestVoltage extends OpMode {
 
         if (gamepad1.aWasPressed()) {
             if(shooter.isShooting) {
-                intake.toggle(Constants.IntakeCoefficients.intakeShooting);
+                intake.toggle(intakeShooting);
             } else {
-                intake.toggle(Constants.IntakeCoefficients.intakeCollecting);
+                intake.toggle(intakeCollecting);
             }
 
         }

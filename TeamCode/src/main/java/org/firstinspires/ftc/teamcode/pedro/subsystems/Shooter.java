@@ -17,6 +17,8 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.pedro.Constants;
 import org.firstinspires.ftc.teamcode.pedro.math.VoltageCompensator;
 import org.firstinspires.ftc.teamcode.pedro.subsystems.Intake;
+import org.firstinspires.ftc.teamcode.pedro.subsystems.subConstants.IntakeConstants;
+import org.firstinspires.ftc.teamcode.pedro.subsystems.subConstants.ShooterCoefficients;
 
 public class Shooter {
 
@@ -88,7 +90,7 @@ public class Shooter {
     public Command shootPP() {
         return sequential(
 //                instant(() -> powerUp()),
-                instant(() -> intake.in(Constants.IntakeCoefficients.intakeShooting)),
+                instant(() -> intake.in(IntakeConstants.intakeShooting)),
                 waitMs(1000),
                 instant(() -> {
                     intake.stop();
@@ -124,8 +126,8 @@ public class Shooter {
             return;
         }
 
-        double ff = Constants.ShooterCoefficients.kS + Constants.ShooterCoefficients.kV * alvoTps; //potencia q se pa vai ser
-        double fb = Constants.ShooterCoefficients.kP * (alvoTps - medidoTps); //correção do erro usando o p proporcional
+        double ff = ShooterCoefficients.kS + ShooterCoefficients.kV * alvoTps; //potencia q se pa vai ser
+        double fb = ShooterCoefficients.kP * (alvoTps - medidoTps); //correção do erro usando o p proporcional
         double compTensao = Constants.VoltageConstants.NOMINAL_VOLTAGE / Math.max(getTensao(), 9.0); //ajuste de tudo pela bateriaa
 
         potenciaUpdate = Range.clip((ff + fb) * compTensao, 0, 1);
@@ -134,7 +136,7 @@ public class Shooter {
     }
 
     public boolean atSpeed() {
-        return alvoTps > 0 && Math.abs(alvoTps - medidoTps) < Constants.ShooterCoefficients.READY_TOL;
+        return alvoTps > 0 && Math.abs(alvoTps - medidoTps) < ShooterCoefficients.READY_TOL;
     }
 
     private double readVelocity() {
@@ -173,7 +175,7 @@ public class Shooter {
         telemetry.addData("Vel esq", "%.0f", getVelEsq());
         telemetry.addData("Vel dir", "%.0f", getVelDir());
         telemetry.addData("Tensao", "%.2f", getTensao());
-        telemetry.addData("alvoTPS: ", Constants.ShooterCoefficients.ALVO_TPS);
+        telemetry.addData("alvoTPS: ", ShooterCoefficients.ALVO_TPS);
         telemetry.addData("potencia que ta indo pros motores: ", potenciaUpdate);
         telemetry.addLine("-------------------------------");
         telemetry.addData("Alvo", 2300);

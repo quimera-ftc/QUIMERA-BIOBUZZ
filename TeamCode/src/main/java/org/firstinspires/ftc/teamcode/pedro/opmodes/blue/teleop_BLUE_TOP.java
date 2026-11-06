@@ -14,6 +14,8 @@ import org.firstinspires.ftc.teamcode.pedro.subsystems.DriveTrain;
 import org.firstinspires.ftc.teamcode.pedro.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.pedro.subsystems.Shooter;
 import org.firstinspires.ftc.teamcode.pedro.subsystems.Turret;
+import org.firstinspires.ftc.teamcode.pedro.subsystems.subConstants.IntakeConstants;
+import org.firstinspires.ftc.teamcode.pedro.subsystems.subConstants.ShooterCoefficients;
 
 import java.util.List;
 
@@ -71,8 +73,8 @@ public class teleop_BLUE_TOP extends OpMode {
 
         if (gamepad1.aWasPressed()) {
             double coef = shooter.isShooting
-                    ? Constants.IntakeCoefficients.intakeShooting
-                    : Constants.IntakeCoefficients.intakeCollecting;
+                    ? IntakeConstants.intakeShooting
+                    : IntakeConstants.intakeCollecting;
 
             intake.toggle(coef);
         }
@@ -82,13 +84,13 @@ public class teleop_BLUE_TOP extends OpMode {
         }
 
         if (gamepad1.right_trigger_pressed) {
-            shooter.setAlvo(Constants.ShooterCoefficients.ALVO_TPS);
+            shooter.setAlvo(ShooterCoefficients.ALVO_TPS);
         } else {
             shooter.setAlvo(0);
         }
 
         if (gamepad1.right_trigger > 0.5) {
-            shooter.setAlvo(Constants.ShooterCoefficients.ALVO_TPS);
+            shooter.setAlvo(ShooterCoefficients.ALVO_TPS);
         } else {
             shooter.setAlvo(0);
         }

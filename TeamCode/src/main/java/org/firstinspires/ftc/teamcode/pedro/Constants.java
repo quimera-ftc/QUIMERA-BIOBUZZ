@@ -20,37 +20,9 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 public class Constants {
-    private static PoseFactory p = PoseFactory.degrees();
 
     public static class VoltageConstants {
         public static double NOMINAL_VOLTAGE = 11.50;
-    }
-
-    public static class IntakeCoefficients {
-        public static double intakeShooting = 0.75;
-        public static double intakeCollecting = 1.0;
-        public static double intakeIdle = 0;
-    }
-    @Config
-    public static class ShooterCoefficients {
-
-        public static double kS = 0.1756102778;
-        public static double kV = 0.0003752448739;
-        public static double kP = 0.0005;
-        public static double READY_TOL = 50;
-        public static double IDLE_TPS = 900;
-        public static double ALVO_TPS = 1210;
-        public static double ALVO_TPS_LADO = 1235;
-    }
-
-    public static class FieldPoses {
-        public static final Pose topNestBLUE = p.of(84, 84,0);
-        public static final Pose bottomNestBLUE = p.of(84, 57.5,0);
-        public static final Pose topNestRED = p.of(57.5, 84,0);
-        public static final Pose bottomNestRED = p.of(57.5, 57.5, 0);
-
-        public static final Pose topParkBLUE = p.of(132.12685185185188, 51.289675925925924, 270);
-        public static final Pose bottomParkBLUE = p.of(129.45, 17.78, 90);
     }
 
     public enum Alliance {

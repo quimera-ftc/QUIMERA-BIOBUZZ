@@ -14,6 +14,8 @@ import org.firstinspires.ftc.teamcode.pedro.robot.PoseStorage;
 import org.firstinspires.ftc.teamcode.pedro.subsystems.DriveTrain;
 import org.firstinspires.ftc.teamcode.pedro.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.pedro.subsystems.Shooter;
+import org.firstinspires.ftc.teamcode.pedro.subsystems.subConstants.IntakeConstants;
+import org.firstinspires.ftc.teamcode.pedro.subsystems.subConstants.ShooterCoefficients;
 
 @TeleOp(name = "BASE TELEOP")
 
@@ -50,15 +52,15 @@ public class TestTeleopBase extends OpMode {
 
         if (gamepad1.aWasPressed()) {
             if(shooter.isShooting) {
-                intake.toggle(Constants.IntakeCoefficients.intakeShooting);
+                intake.toggle(IntakeConstants.intakeShooting);
             } else {
-                intake.toggle(Constants.IntakeCoefficients.intakeCollecting);
+                intake.toggle(IntakeConstants.intakeCollecting);
             }
 
         }
 
         if (gamepad1.right_trigger > 0.5) {
-            shooter.setAlvo(Constants.ShooterCoefficients.ALVO_TPS);
+            shooter.setAlvo(ShooterCoefficients.ALVO_TPS);
         } else {
             shooter.setAlvo(0);
         }

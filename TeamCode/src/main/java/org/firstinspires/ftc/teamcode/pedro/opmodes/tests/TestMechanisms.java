@@ -14,6 +14,8 @@ import org.firstinspires.ftc.teamcode.pedro.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.pedro.subsystems.Shooter;
 import org.firstinspires.ftc.teamcode.pedro.subsystems.Turret;
 import org.firstinspires.ftc.teamcode.pedro.subsystems.Zones;
+import org.firstinspires.ftc.teamcode.pedro.subsystems.subConstants.IntakeConstants;
+import org.firstinspires.ftc.teamcode.pedro.subsystems.subConstants.ShooterCoefficients;
 
 import java.util.List;
 
@@ -44,14 +46,14 @@ public class TestMechanisms extends OpMode {
         agro.up();
         follower.setPose(new Pose(132.6505617977528, 133.92247191011242, Math.toRadians(270)));
 
-        Zones zones = new Zones(Constants.ShooterCoefficients.ALVO_TPS)
-                .addZone(50.96, 91.14, 105.14, 137.71, Constants.ShooterCoefficients.ALVO_TPS)
-                .addZone(9.14, 50.96, 105.14, 137.71, Constants.ShooterCoefficients.ALVO_TPS_LADO)
-                .addZone(91.14, 132.96, 105.14, 137.71, Constants.ShooterCoefficients.ALVO_TPS_LADO)
+        Zones zones = new Zones(ShooterCoefficients.ALVO_TPS)
+                .addZone(50.96, 91.14, 105.14, 137.71,  ShooterCoefficients.ALVO_TPS)
+                .addZone(9.14, 50.96, 105.14, 137.71,   ShooterCoefficients.ALVO_TPS_LADO)
+                .addZone(91.14, 132.96, 105.14, 137.71, ShooterCoefficients.ALVO_TPS_LADO)
 
-                .addZone(50.96, 91.14, 6.29, 38.86, Constants.ShooterCoefficients.ALVO_TPS)
-                .addZone(9.14, 50.96, 6.29, 38.86, Constants.ShooterCoefficients.ALVO_TPS_LADO)
-                .addZone(91.14, 132.96, 6.29, 38.86, Constants.ShooterCoefficients.ALVO_TPS_LADO);
+                .addZone(50.96, 91.14, 6.29, 38.86,  ShooterCoefficients.ALVO_TPS)
+                .addZone(9.14, 50.96, 6.29, 38.86,   ShooterCoefficients.ALVO_TPS_LADO)
+                .addZone(91.14, 132.96, 6.29, 38.86, ShooterCoefficients.ALVO_TPS_LADO);
 
 
         allHubs = hardwareMap.getAll(LynxModule.class);
@@ -73,9 +75,9 @@ public class TestMechanisms extends OpMode {
 
         if (gamepad1.aWasPressed()) {
             if(shooter.isShooting) {
-                intake.toggle(Constants.IntakeCoefficients.intakeShooting);
+                intake.toggle(IntakeConstants.intakeShooting);
             } else {
-                intake.toggle(Constants.IntakeCoefficients.intakeCollecting);
+                intake.toggle(IntakeConstants.intakeCollecting);
             }
 
         }
@@ -95,7 +97,7 @@ public class TestMechanisms extends OpMode {
         }
 
         if (gamepad1.right_trigger > 0.5) {
-            shooter.setAlvo(Constants.ShooterCoefficients.ALVO_TPS);
+            shooter.setAlvo(ShooterCoefficients.ALVO_TPS);
         } else {
             shooter.setAlvo(0);
         }

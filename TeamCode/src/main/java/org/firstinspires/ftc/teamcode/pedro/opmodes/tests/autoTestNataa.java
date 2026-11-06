@@ -24,6 +24,7 @@ import org.firstinspires.ftc.teamcode.pedro.subsystems.Agropecuaria;
 import org.firstinspires.ftc.teamcode.pedro.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.pedro.subsystems.Shooter;
 import org.firstinspires.ftc.teamcode.pedro.subsystems.Turret;
+import org.firstinspires.ftc.teamcode.pedro.subsystems.subConstants.ShooterCoefficients;
 
 import java.util.List;
 
@@ -118,7 +119,7 @@ public class autoTestNataa extends OpMode {
 
     public Command routine() {
         return parallel(
-                instant(() -> shooter.setAlvo(Constants.ShooterCoefficients.ALVO_TPS)),
+                instant(() -> shooter.setAlvo(ShooterCoefficients.ALVO_TPS)),
                 sequential(
                 waitMs(2000),
                 shooter.shootPP(),
@@ -148,7 +149,7 @@ public class autoTestNataa extends OpMode {
                 shooter.shootPP(),
                 follow(follower, SHOOT4_TO_PARK())
                 ),
-                instant(() -> shooter.setAlvo(Constants.ShooterCoefficients.IDLE_TPS)),
+                instant(() -> shooter.setAlvo(ShooterCoefficients.IDLE_TPS)),
                 turret.autoaim(follower::pose));
 
 

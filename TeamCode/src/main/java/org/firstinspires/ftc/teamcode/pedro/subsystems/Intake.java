@@ -10,6 +10,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.pedro.Constants;
+import org.firstinspires.ftc.teamcode.pedro.subsystems.subConstants.IntakeConstants;
 
 public class Intake {
 
@@ -54,7 +55,7 @@ public class Intake {
         if (isOn) {
             stop();
         } else {
-            out(Constants.IntakeCoefficients.intakeIdle);
+            out(IntakeConstants.intakeIdle);
         }
 
     }
@@ -68,7 +69,7 @@ public class Intake {
     //metodo p intake no autoooo
     public Command intakePP() {
         return parallel(
-                instant(() -> in(Constants.IntakeCoefficients.intakeCollecting))//,
+                instant(() -> in(IntakeConstants.intakeCollecting))//,
                 //instant(() -> agro.down())
         );
 
