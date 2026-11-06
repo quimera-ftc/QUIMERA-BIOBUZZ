@@ -61,7 +61,12 @@ public class TestMechanisms extends OpMode {
         turret.update(currentPose);
 
         if (gamepad1.aWasPressed()) {
-            intake.toggle();
+            if(shooter.isShooting) {
+                intake.toggle(Constants.IntakeCoefficients.intakeShooting);
+            } else {
+                intake.toggle(Constants.IntakeCoefficients.intakeCollecting);
+            }
+
         }
 
         if (gamepad1.yWasPressed()) {

@@ -6,6 +6,7 @@ import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import java.util.List;
 
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.pedro.Constants;
@@ -16,7 +17,6 @@ import org.firstinspires.ftc.teamcode.pedro.subsystems.Shooter;
 
 @TeleOp(name = "BASE TELEOP")
 
-import java.util.List;
 
 public class TestTeleopBase extends OpMode {
     DriveTrain driveTrain;
@@ -49,7 +49,12 @@ public class TestTeleopBase extends OpMode {
 
 
         if (gamepad1.aWasPressed()) {
-            intake.toggle();
+            if(shooter.isShooting) {
+                intake.toggle(Constants.IntakeCoefficients.intakeShooting);
+            } else {
+                intake.toggle(Constants.IntakeCoefficients.intakeCollecting);
+            }
+
         }
 
         if (gamepad1.right_trigger > 0.5) {
