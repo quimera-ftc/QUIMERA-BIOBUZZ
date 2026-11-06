@@ -9,11 +9,13 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.teamcode.pedro.Constants;
+
 public class Intake {
 
     public final DcMotorEx intake;
     public Agropecuaria agro;
-    double maxPower = 0.75;
+//    double maxPower = 0.75;
     private boolean isOn = false;
     public Intake(HardwareMap hardwareMap) {
         intake = hardwareMap.get(DcMotorEx.class, "intake");
@@ -21,15 +23,15 @@ public class Intake {
 
     }
 
-    public void in() {
+    public void in(double power) {
         isOn = true;
-        intake.setPower(maxPower);
+        intake.setPower(power);
 
     }
 
-    public void out() {
+    public void out(double power) {
         isOn = true;
-        intake.setPower(-maxPower);
+        intake.setPower(power);
     }
 
     public void stop() {
@@ -38,19 +40,21 @@ public class Intake {
 
     }
 
-    public void toggle() {
+    public void toggle(double wantedCoefficient) {
         if (isOn) {
-            stop();
+            in(wantedCoefficient);
         } else {
-            in();
+            stop();
         }
+
+        isOn = !isOn;
     }
 
     public void toggleReversed() {
         if (isOn) {
             stop();
         } else {
-            out();
+            out(Constants.IntakeCoefficients.intakeIdle);
         }
 
     }
@@ -64,7 +68,7 @@ public class Intake {
     //metodo p intake no autoooo
     public Command intakePP() {
         return parallel(
-                instant(() -> in())//,
+                instant(() -> in(Constants.IntakeCoefficients.intakeCollecting))//,
                 //instant(() -> agro.down())
         );
 
@@ -77,10 +81,5 @@ public class Intake {
         );
     }
 
-    public Command togglePP() {
-        return sequential(
-                instant(() -> toggle())
-        );
-    }
 
 }

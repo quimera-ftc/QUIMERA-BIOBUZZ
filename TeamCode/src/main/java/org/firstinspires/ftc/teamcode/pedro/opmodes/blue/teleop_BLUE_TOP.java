@@ -70,13 +70,11 @@ public class teleop_BLUE_TOP extends OpMode {
         turret.update(currentPose);
 
         if (gamepad1.aWasPressed()) {
-            collecting = !collecting;
-        }
+            double coef = shooter.isShooting
+                    ? Constants.IntakeCoefficients.intakeShooting
+                    : Constants.IntakeCoefficients.intakeCollecting;
 
-        if (collecting) {
-            intake.in();
-        } else {
-            intake.stop();
+            intake.toggle(coef);
         }
 
         if (gamepad1.yWasPressed()) {
@@ -84,9 +82,9 @@ public class teleop_BLUE_TOP extends OpMode {
         }
 
         if (gamepad1.right_trigger_pressed) {
-            shooter.powerUp();
+            shooter.setAlvo(Constants.ShooterCoefficients.ALVO_TPS);
         } else {
-            shooter.stop();
+            shooter.setAlvo(0);
         }
 
         if (gamepad1.right_trigger > 0.5) {

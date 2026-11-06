@@ -25,8 +25,14 @@ public class Constants {
     public static class VoltageConstants {
         public static double NOMINAL_VOLTAGE = 11.50;
     }
+
+    public static class IntakeCoefficients {
+        public static double intakeShooting = 0.75;
+        public static double intakeCollecting = 1.0;
+        public static double intakeIdle = 0;
+    }
     @Config
-    public static class ShooterCoefficients { //valores chutados
+    public static class ShooterCoefficients {
 
         public static double kS = 0.1756102778;
         public static double kV = 0.0003752448739;

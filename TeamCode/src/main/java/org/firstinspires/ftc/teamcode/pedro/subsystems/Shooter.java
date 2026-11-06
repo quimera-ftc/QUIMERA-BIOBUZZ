@@ -31,6 +31,7 @@ public class Shooter {
     public double maxpower = 0.86, minpower = 0;
     public double start, now;
     boolean isOn = false;
+    public boolean isShooting = false;
     private VoltageSensor bateria;
 
     public Telemetry telemetry;
@@ -87,7 +88,7 @@ public class Shooter {
     public Command shootPP() {
         return sequential(
 //                instant(() -> powerUp()),
-                instant(() -> intake.in()),
+                instant(() -> intake.in(Constants.IntakeCoefficients.intakeShooting)),
                 waitMs(1000),
                 instant(() -> {
                     intake.stop();
@@ -105,6 +106,12 @@ public class Shooter {
 
     public void setAlvo(double tps) {
         alvoTps = tps;
+
+        if (tps > 0) {
+            isShooting = true;
+        } else {
+            isShooting = false;
+        }
 
     }
 
