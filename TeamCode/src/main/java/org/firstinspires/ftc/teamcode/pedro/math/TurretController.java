@@ -1,13 +1,13 @@
 package org.firstinspires.ftc.teamcode.pedro.math;
 
-import static org.firstinspires.ftc.teamcode.pedro.subsystems.TurretConstants.LIMIT_SPIN;
-import static org.firstinspires.ftc.teamcode.pedro.subsystems.TurretConstants.OFFSET_X;
-import static org.firstinspires.ftc.teamcode.pedro.subsystems.TurretConstants.OFFSET_Y;
-import static org.firstinspires.ftc.teamcode.pedro.subsystems.TurretConstants.TOLERANCE;
-import static org.firstinspires.ftc.teamcode.pedro.subsystems.TurretConstants.kD;
-import static org.firstinspires.ftc.teamcode.pedro.subsystems.TurretConstants.kI;
-import static org.firstinspires.ftc.teamcode.pedro.subsystems.TurretConstants.kP;
-import static org.firstinspires.ftc.teamcode.pedro.subsystems.TurretConstants.kS;
+import static org.firstinspires.ftc.teamcode.pedro.subsystems.subConstants.TurretConstants.LIMIT_SPIN;
+import static org.firstinspires.ftc.teamcode.pedro.subsystems.subConstants.TurretConstants.OFFSET_X;
+import static org.firstinspires.ftc.teamcode.pedro.subsystems.subConstants.TurretConstants.OFFSET_Y;
+import static org.firstinspires.ftc.teamcode.pedro.subsystems.subConstants.TurretConstants.TOLERANCE;
+import static org.firstinspires.ftc.teamcode.pedro.subsystems.subConstants.TurretConstants.kD;
+import static org.firstinspires.ftc.teamcode.pedro.subsystems.subConstants.TurretConstants.kI;
+import static org.firstinspires.ftc.teamcode.pedro.subsystems.subConstants.TurretConstants.kP;
+import static org.firstinspires.ftc.teamcode.pedro.subsystems.subConstants.TurretConstants.kS;
 
 import com.pedropathing.math.Pose;
 import com.qualcomm.robotcore.util.Range;
@@ -25,13 +25,11 @@ public class TurretController {
 
         return new Pose(turret_x, turret_y);
     }
-    public static double calculatePower(double dt, double integral, double error, double lastError) {
-
-        double derivative = (error - lastError) / dt;
+    public static double calculatePower(double integral, double error, double filteredDerivative) {
 
         double pOut = kP * error;
         double iOut = kI * integral;
-        double dOut = kD * derivative;
+        double dOut = kD * filteredDerivative;
 
 
         double errorMagnitude = Math.abs(error);
@@ -43,8 +41,7 @@ public class TurretController {
 
         double sOut = Math.signum(error) * kS * kSFraction;
 
-        double power = pOut + iOut + dOut + sOut;
-        return power;
+        return pOut + iOut + dOut + sOut;
     }
     public static double computeTargetAngle(Pose currentPose, Pose trackedPose) {
 

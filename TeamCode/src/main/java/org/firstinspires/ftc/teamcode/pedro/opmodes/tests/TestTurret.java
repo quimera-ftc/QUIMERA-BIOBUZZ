@@ -1,8 +1,8 @@
 package org.firstinspires.ftc.teamcode.pedro.opmodes.tests;
 
-import static org.firstinspires.ftc.teamcode.pedro.subsystems.TurretConstants.kD;
-import static org.firstinspires.ftc.teamcode.pedro.subsystems.TurretConstants.kI;
-import static org.firstinspires.ftc.teamcode.pedro.subsystems.TurretConstants.kP;
+import static org.firstinspires.ftc.teamcode.pedro.subsystems.subConstants.TurretConstants.kD;
+import static org.firstinspires.ftc.teamcode.pedro.subsystems.subConstants.TurretConstants.kI;
+import static org.firstinspires.ftc.teamcode.pedro.subsystems.subConstants.TurretConstants.kP;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
@@ -16,7 +16,6 @@ import org.firstinspires.ftc.teamcode.pedro.math.TurretController;
 import org.firstinspires.ftc.teamcode.pedro.math.VoltageCompensator;
 import org.firstinspires.ftc.teamcode.pedro.subsystems.Agropecuaria;
 import org.firstinspires.ftc.teamcode.pedro.subsystems.DriveTrain;
-import org.firstinspires.ftc.teamcode.pedro.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.pedro.subsystems.Turret;
 
 @TeleOp(name="CALIBRATE TURRET", group="Tests")

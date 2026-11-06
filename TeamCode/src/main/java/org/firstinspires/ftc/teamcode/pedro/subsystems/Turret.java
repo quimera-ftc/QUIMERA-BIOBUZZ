@@ -1,18 +1,18 @@
 package org.firstinspires.ftc.teamcode.pedro.subsystems;
 
 import static org.firstinspires.ftc.teamcode.pedro.math.TurretController.clampToLimits;
-import static org.firstinspires.ftc.teamcode.pedro.math.TurretController.computeTargetAngle;
-import static org.firstinspires.ftc.teamcode.pedro.subsystems.TurretConstants.LIMIT_BUFFER;
-import static org.firstinspires.ftc.teamcode.pedro.subsystems.TurretConstants.LIMIT_SPIN;
-import static org.firstinspires.ftc.teamcode.pedro.subsystems.TurretConstants.LL_PIPELINE;
-import static org.firstinspires.ftc.teamcode.pedro.subsystems.TurretConstants.MAX_OFFSET_LL;
-import static org.firstinspires.ftc.teamcode.pedro.subsystems.TurretConstants.TOLERANCE;
-import static org.firstinspires.ftc.teamcode.pedro.subsystems.TurretConstants.angleToleranceLL;
-import static org.firstinspires.ftc.teamcode.pedro.subsystems.TurretConstants.goalX;
-import static org.firstinspires.ftc.teamcode.pedro.subsystems.TurretConstants.kLL;
-import static org.firstinspires.ftc.teamcode.pedro.subsystems.TurretConstants.maxIntegral;
-import static org.firstinspires.ftc.teamcode.pedro.subsystems.TurretConstants.maxPower;
-import static org.firstinspires.ftc.teamcode.pedro.subsystems.TurretConstants.ticksPerDegree;
+import static org.firstinspires.ftc.teamcode.pedro.subsystems.subConstants.TurretConstants.LIMIT_BUFFER;
+import static org.firstinspires.ftc.teamcode.pedro.subsystems.subConstants.TurretConstants.LIMIT_SPIN;
+import static org.firstinspires.ftc.teamcode.pedro.subsystems.subConstants.TurretConstants.LL_PIPELINE;
+import static org.firstinspires.ftc.teamcode.pedro.subsystems.subConstants.TurretConstants.MAX_OFFSET_LL;
+import static org.firstinspires.ftc.teamcode.pedro.subsystems.subConstants.TurretConstants.TOLERANCE;
+import static org.firstinspires.ftc.teamcode.pedro.subsystems.subConstants.TurretConstants.alpha;
+import static org.firstinspires.ftc.teamcode.pedro.subsystems.subConstants.TurretConstants.angleToleranceLL;
+import static org.firstinspires.ftc.teamcode.pedro.subsystems.subConstants.TurretConstants.goalX;
+import static org.firstinspires.ftc.teamcode.pedro.subsystems.subConstants.TurretConstants.kLL;
+import static org.firstinspires.ftc.teamcode.pedro.subsystems.subConstants.TurretConstants.maxIntegral;
+import static org.firstinspires.ftc.teamcode.pedro.subsystems.subConstants.TurretConstants.maxPower;
+import static org.firstinspires.ftc.teamcode.pedro.subsystems.subConstants.TurretConstants.ticksPerDegree;
 
 import androidx.annotation.NonNull;
 
@@ -35,7 +35,7 @@ import java.util.function.Supplier;
 public class Turret{
     double manualPower = 0;
     DcMotorEx motor;
-    double lastError = 0, lastTime = 0;
+    double lastError = 0, lastTime = 0, lastFilteredDerivative = 0;
     double integral = 0;
     final Constants.Alliance alliance;
     Pose currentPose;
@@ -83,7 +83,7 @@ public class Turret{
         currentPose = pose;
 
         currentTime = timer.seconds();
-        double dt = currentTime - lastTime;
+        double dt = (currentTime - lastTime) / 1e9;
         if (dt <= 0.002 || dt > 0.1) dt = 0.02;
         lastTime = currentTime;
 
@@ -95,9 +95,14 @@ public class Turret{
                 } else {
 
                 double error = clampToLimits(getDistanceToTarget() + getLimeLightOffset());
+
                 integral += error * dt;
                 integral = Range.clip(integral, -maxIntegral, maxIntegral);
-                setPower(TurretController.calculatePower(dt, integral, error, lastError));
+                double derivative = (error - lastError) / dt;
+                double filteredDerivative = (alpha * derivative) + ((1.0 - alpha) * lastFilteredDerivative);
+
+                lastFilteredDerivative = filteredDerivative;
+                setPower(TurretController.calculatePower(integral, error, filteredDerivative));
                 lastError = error;
                 }
                 break;

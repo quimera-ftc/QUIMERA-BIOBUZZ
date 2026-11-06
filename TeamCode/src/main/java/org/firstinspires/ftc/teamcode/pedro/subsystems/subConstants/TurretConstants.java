@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.pedro.subsystems;
+package org.firstinspires.ftc.teamcode.pedro.subsystems.subConstants;
 
 import com.acmerobotics.dashboard.config.Config;
 
@@ -16,10 +16,10 @@ public class TurretConstants {
     public static double TOLERANCE = 2.5;
     public static volatile double kP = 0.04921222;
     public static volatile double kI = 0.0000;
-    public static volatile double kD = 0.00321222; // 0.067921222
+    public static volatile double kD = 0.00321222;
     public static volatile double kS = 0.25;
+    public static volatile double alpha = 0.45; // entre 0 - 1
     public static double kV = 3.927; // rad/s
-    public static double D_ALPHA = 0.25;
     // --------- limelight -----------
     public static int LL_PIPELINE = 0;
     public static double goalX = 0;
