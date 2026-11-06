@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.pedro.opmodes.tests;
+package org.firstinspires.ftc.teamcode.pedro.opmodes.blue;
 
 import static com.pedropathing.api.Paths.curve;
 import static com.pedropathing.api.Paths.line;

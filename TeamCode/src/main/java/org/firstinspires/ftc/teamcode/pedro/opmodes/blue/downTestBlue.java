@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.pedro.opmodes.tests;
+package org.firstinspires.ftc.teamcode.pedro.opmodes.blue;
 
 import static com.pedropathing.api.Paths.curve;
 import static com.pedropathing.api.Paths.line;
@@ -61,7 +61,6 @@ public class downTestBlue extends OpMode {
         return line(shootStart, shoot).linear(shootStart, shoot);
     }
     public Path FIM(){
-
         return line(fimStart,fim).linear(fimStart, fim);
     }
 
@@ -97,7 +96,7 @@ public class downTestBlue extends OpMode {
     public Command routine() {
         return parallel(
                 sequential(
-                waitMs(2000),
+                        waitMs(5000),
                 shooter.shootPP(),
                 follow(follower, START()),
                 parallel(
