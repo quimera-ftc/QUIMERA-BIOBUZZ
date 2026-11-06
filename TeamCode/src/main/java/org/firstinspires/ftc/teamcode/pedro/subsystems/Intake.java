@@ -10,12 +10,15 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.pedro.Constants;
+import org.firstinspires.ftc.teamcode.pedro.math.RampaPotencia;
 import org.firstinspires.ftc.teamcode.pedro.subsystems.subConstants.IntakeConstants;
 
 public class Intake {
 
     public final DcMotorEx intake;
     public Agropecuaria agro;
+    double alvo = 0;
+    private final RampaPotencia rampa = new RampaPotencia(3.3, 10.0);  // 0→1 em 0,3 s
 //    double maxPower = 0.75;
     private boolean isOn = false;
     public Intake(HardwareMap hardwareMap) {
@@ -26,19 +29,21 @@ public class Intake {
 
     public void in(double power) {
         isOn = true;
-        intake.setPower(power);
-
+        alvo = power;
     }
 
     public void out(double power) {
         isOn = true;
-        intake.setPower(power);
+        alvo = power;
     }
 
     public void stop() {
         isOn = false;
-        intake.setPower(0);
+        alvo = 0;
+    }
 
+    public void update() {
+        intake.setPower(rampa.calcular(alvo));
     }
 
     public void toggle(double wantedCoefficient) {
