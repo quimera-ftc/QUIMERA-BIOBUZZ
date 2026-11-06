@@ -158,6 +158,11 @@ public class Turret{
         double target = TurretController.computeTargetAngle(currentPose, getTrackingPose());
         return target - getRawAngle();
     }
+
+    public double getDistanciaGol() {
+        return TurretController.getTurretPose(currentPose).distance(getTrackingPose());
+    }
+
     public Pose getTrackingPose() {
 
         if (alliance == Constants.Alliance.BLUE) {
