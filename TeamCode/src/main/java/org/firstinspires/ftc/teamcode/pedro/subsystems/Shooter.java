@@ -15,6 +15,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.pedro.Constants;
+import org.firstinspires.ftc.teamcode.pedro.math.RampaPotencia;
 import org.firstinspires.ftc.teamcode.pedro.math.VoltageCompensator;
 import org.firstinspires.ftc.teamcode.pedro.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.pedro.subsystems.subConstants.IntakeConstants;
@@ -38,6 +39,7 @@ public class Shooter {
 
     public Telemetry telemetry;
     public ElapsedTime runtime = new ElapsedTime();
+    private final RampaPotencia rampa = new RampaPotencia(2.0, 2.0);  // 0→1 em 0,5 s
     //-- GnHk28 has left the Commits
 
     public Shooter(HardwareMap hardwareMap, Telemetry telemetry) {
@@ -119,18 +121,17 @@ public class Shooter {
 
     public void update() {
         medidoTps = readVelocity();
-
+        double pedido;
         if (alvoTps <= 0) {
-            ls.setPower(0);
-            rs.setPower(0);
-            return;
+            pedido = 0;
+        } else {
+            double ff = ShooterCoefficients.kS + ShooterCoefficients.kV * alvoTps; //potencia q se pa vai ser
+            double fb = ShooterCoefficients.kP * (alvoTps - medidoTps); //correção do erro usando o p proporcional
+            double compTensao = Constants.VoltageConstants.NOMINAL_VOLTAGE / Math.max(getTensao(), 9.0); //ajuste de tudo pela bateriaa
+            pedido = Range.clip((ff + fb) * compTensao, 0, 1);
         }
 
-        double ff = ShooterCoefficients.kS + ShooterCoefficients.kV * alvoTps; //potencia q se pa vai ser
-        double fb = ShooterCoefficients.kP * (alvoTps - medidoTps); //correção do erro usando o p proporcional
-        double compTensao = Constants.VoltageConstants.NOMINAL_VOLTAGE / Math.max(getTensao(), 9.0); //ajuste de tudo pela bateriaa
-
-        potenciaUpdate = Range.clip((ff + fb) * compTensao, 0, 1);
+        potenciaUpdate = rampa.calcular(pedido);
         ls.setPower(potenciaUpdate);
         rs.setPower(potenciaUpdate);
     }
