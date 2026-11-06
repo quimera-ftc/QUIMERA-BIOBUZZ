@@ -83,7 +83,7 @@ public class Turret{
         currentPose = pose;
 
         currentTime = timer.seconds();
-        double dt = (currentTime - lastTime) / 1e9;
+        double dt = (currentTime - lastTime);
         if (dt <= 0.002 || dt > 0.1) dt = 0.02;
         lastTime = currentTime;
 
