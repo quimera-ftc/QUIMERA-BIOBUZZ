@@ -13,6 +13,7 @@ import org.firstinspires.ftc.teamcode.pedro.subsystems.DriveTrain;
 import org.firstinspires.ftc.teamcode.pedro.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.pedro.subsystems.Shooter;
 import org.firstinspires.ftc.teamcode.pedro.subsystems.Turret;
+import org.firstinspires.ftc.teamcode.pedro.subsystems.Zones;
 
 import java.util.List;
 
@@ -42,6 +43,16 @@ public class TestMechanisms extends OpMode {
         agro = new Agropecuaria(hardwareMap);
         agro.up();
         follower.setPose(new Pose(132.6505617977528, 133.92247191011242, Math.toRadians(270)));
+
+        Zones zones = new Zones(Constants.ShooterCoefficients.ALVO_TPS)
+                .addZone(50.96, 91.14, 105.14, 137.71, Constants.ShooterCoefficients.ALVO_TPS)
+                .addZone(9.14, 50.96, 105.14, 137.71, Constants.ShooterCoefficients.ALVO_TPS_LADO)
+                .addZone(91.14, 132.96, 105.14, 137.71, Constants.ShooterCoefficients.ALVO_TPS_LADO)
+
+                .addZone(50.96, 91.14, 6.29, 38.86, Constants.ShooterCoefficients.ALVO_TPS)
+                .addZone(9.14, 50.96, 6.29, 38.86, Constants.ShooterCoefficients.ALVO_TPS_LADO)
+                .addZone(91.14, 132.96, 6.29, 38.86, Constants.ShooterCoefficients.ALVO_TPS_LADO);
+
 
         allHubs = hardwareMap.getAll(LynxModule.class);
         for (LynxModule hub : allHubs) {
@@ -86,7 +97,7 @@ public class TestMechanisms extends OpMode {
         if (gamepad1.right_trigger > 0.5) {
             shooter.setAlvo(Constants.ShooterCoefficients.ALVO_TPS);
         } else {
-            shooter.setAlvo(Constants.ShooterCoefficients.IDLE_TPS);
+            shooter.setAlvo(0);
         }
 
         if (gamepad1.right_bumper) {
@@ -102,17 +113,6 @@ public class TestMechanisms extends OpMode {
             } else turret.setMode(Turret.Mode.MANUAL);
 
         }
-//
-//        if (gamepad1.dpad_up && !dpadCimaAntes) {
-//            potenciaTeste += 0.1;
-//        }
-//        if (gamepad1.dpad_down && !dpadBaixoAntes) {
-//            potenciaTeste -= 0.1;
-//        }
-//        dpadCimaAntes = gamepad1.dpad_up;
-//        dpadBaixoAntes = gamepad1.dpad_down;
-//        potenciaTeste = Math.max(0, Math.min(1, potenciaTeste));
-//        shooter.setPotenciaDireta(potenciaTeste);
 
         shooter.update();
         driveTrain.driveStick();
