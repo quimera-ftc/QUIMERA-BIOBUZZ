@@ -40,6 +40,7 @@ public class Constants {
         public static double READY_TOL = 50;
         public static double IDLE_TPS = 900;
         public static double ALVO_TPS = 1210;
+        public static double ALVO_TPS_LADO = 1235;
     }
 
     public static class FieldPoses {
