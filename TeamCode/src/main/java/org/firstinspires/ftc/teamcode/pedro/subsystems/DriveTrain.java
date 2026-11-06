@@ -14,8 +14,8 @@ public class DriveTrain {
 
         frontLeft = hardwareMap.get(DcMotorEx.class, "fl");
         frontRight = hardwareMap.get(DcMotorEx.class, "fr");
-        backLeft = hardwareMap.get(DcMotorEx.class, "br");
-        backRight = hardwareMap.get(DcMotorEx.class, "bl");
+        backLeft = hardwareMap.get(DcMotorEx.class, "bl");
+        backRight = hardwareMap.get(DcMotorEx.class, "br");
 
         frontLeft.setDirection(DcMotor.Direction.REVERSE);
         backLeft.setDirection(DcMotor.Direction.REVERSE);
@@ -39,8 +39,8 @@ public class DriveTrain {
     public void driveStick() {
 
         drive = -gamepad1.left_stick_y;
-        strafe = gamepad1.right_stick_x;
-        spin = gamepad1.left_stick_x;
+        strafe = gamepad1.left_stick_x * 1.1f; // inputs invertidos
+        spin = gamepad1.right_stick_x;
 
         if (Math.abs(drive) < 0.1) {
             drive = 0.0;
@@ -51,11 +51,12 @@ public class DriveTrain {
         if (Math.abs(spin) < 0.1) {
             spin = 0.0;
         }
+        double denominator = Math.max(Math.abs(drive) + Math.abs(strafe) + Math.abs(spin), 1);
 
-        double frontLeftPower = drive + strafe + spin;
-        double backLeftPower = drive - strafe + spin;
-        double frontRightPower = drive - strafe - spin;
-        double backRightPower = drive + strafe - spin;
+        double frontLeftPower  = (drive + strafe + spin) / denominator;
+        double backLeftPower   = (drive - strafe + spin) / denominator;
+        double frontRightPower = (drive - strafe - spin) / denominator;
+        double backRightPower  = (drive + strafe - spin) / denominator;
 
         frontLeft.setPower(frontLeftPower);
         frontRight.setPower(frontRightPower);
