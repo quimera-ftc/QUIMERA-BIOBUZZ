@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 import org.firstinspires.ftc.teamcode.pedro.Constants;
+import org.firstinspires.ftc.teamcode.pedro.math.TabelaDisparo;
 import org.firstinspires.ftc.teamcode.pedro.subsystems.Agropecuaria;
 import org.firstinspires.ftc.teamcode.pedro.subsystems.DriveTrain;
 import org.firstinspires.ftc.teamcode.pedro.subsystems.Intake;
@@ -45,16 +46,6 @@ public class TestMechanisms extends OpMode {
         agro = new Agropecuaria(hardwareMap);
         agro.up();
         follower.setPose(new Pose(132.6505617977528, 133.92247191011242, Math.toRadians(270)));
-
-        Zones zones = new Zones(ShooterCoefficients.ALVO_TPS)
-                .addZone(50.96, 91.14, 105.14, 137.71,  ShooterCoefficients.ALVO_TPS)
-                .addZone(9.14, 50.96, 105.14, 137.71,   ShooterCoefficients.ALVO_TPS_LADO)
-                .addZone(91.14, 132.96, 105.14, 137.71, ShooterCoefficients.ALVO_TPS_LADO)
-
-                .addZone(50.96, 91.14, 6.29, 38.86,  ShooterCoefficients.ALVO_TPS)
-                .addZone(9.14, 50.96, 6.29, 38.86,   ShooterCoefficients.ALVO_TPS_LADO)
-                .addZone(91.14, 132.96, 6.29, 38.86, ShooterCoefficients.ALVO_TPS_LADO);
-
 
         allHubs = hardwareMap.getAll(LynxModule.class);
         for (LynxModule hub : allHubs) {
@@ -96,8 +87,11 @@ public class TestMechanisms extends OpMode {
 
         }
 
+        double distanciaGol = turret.getDistanciaGol();
+        double alvoTabela = TabelaDisparo.tpsParaDistancia(distanciaGol);
+
         if (gamepad1.right_trigger > 0.5) {
-            shooter.setAlvo(ShooterCoefficients.ALVO_TPS);
+            shooter.setAlvo(alvoTabela);
         } else {
             shooter.setAlvo(0);
         }
@@ -123,6 +117,8 @@ public class TestMechanisms extends OpMode {
         telemetry.addData("intake", intake.isOn() ? "LIGADO" : "DESLIGADO");
         telemetry.addData("shooter", shooter.isOn() ? "LIGADO" : "DESLIGADO");
         telemetry.addData("turret", turret.getMode());
+        telemetry.addData("distancia gol (in)", "%.1f", distanciaGol);
+        telemetry.addData("alvo da tabela (tps)", "%.0f", alvoTabela);
         telemetry.addLine("--ODOMETRIA--");
         telemetry.addData("x", currentPose.x());
         telemetry.addData("y", currentPose.y());

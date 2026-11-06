@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.pedro.opmodes.tests;
 
+import static org.firstinspires.ftc.teamcode.pedro.robot.PoseStorage.currentPose;
+
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.pedropathing.follower.Follower;
@@ -19,6 +21,7 @@ import org.firstinspires.ftc.teamcode.pedro.subsystems.DriveTrain;
 import org.firstinspires.ftc.teamcode.pedro.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.pedro.math.RampaPotencia;
 import org.firstinspires.ftc.teamcode.pedro.subsystems.Shooter;
+import org.firstinspires.ftc.teamcode.pedro.subsystems.Zones;
 import org.firstinspires.ftc.teamcode.pedro.subsystems.subConstants.IntakeConstants;
 import org.firstinspires.ftc.teamcode.pedro.subsystems.subConstants.ShooterCoefficients;
 
@@ -32,8 +35,8 @@ public class TestTeleopBase extends OpMode {
     Follower follower;
     List<LynxModule> allHubs;
     VoltageCompensator voltageCompensator;
-    DcMotorEx backLeft, backRight, frontLeft, frontRight;
     RampaPotencia rampaPotencia;
+    Zones zones;
 
     @Override
     public void init() {
@@ -42,35 +45,21 @@ public class TestTeleopBase extends OpMode {
         driveTrain = new DriveTrain(hardwareMap, gamepad1);
         intake = new Intake(hardwareMap);
         shooter = new Shooter(hardwareMap);
-        follower.setPose(PoseStorage.currentPose);
+        follower.setPose(currentPose);
         voltageCompensator = new VoltageCompensator(hardwareMap);
         allHubs = hardwareMap.getAll(LynxModule.class);
         for (LynxModule hub : allHubs) {
             hub.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
         }
 
+        zones = new Zones(Constants.ShooterCoefficients.ALVO_TPS)
+                .addZone(50.96, 91.14, 105.14, 137.71, ShooterCoefficients.ALVO_TPS)
+                .addZone(9.14, 50.96, 105.14, 137.71, ShooterCoefficients.ALVO_TPS_LADO)
+                .addZone(91.14, 132.96, 105.14, 137.71, ShooterCoefficients.ALVO_TPS_LADO);
+
         rampaPotencia = new RampaPotencia(5, 6);
 
-        frontLeft = hardwareMap.get(DcMotorEx.class, "fl");
-        frontRight = hardwareMap.get(DcMotorEx.class, "fr");
-        backLeft = hardwareMap.get(DcMotorEx.class, "bl");
-        backRight = hardwareMap.get(DcMotorEx.class, "br");
 
-        frontLeft.setDirection(DcMotor.Direction.REVERSE);
-        backLeft.setDirection(DcMotor.Direction.FORWARD);
-        frontRight.setDirection(DcMotor.Direction.REVERSE);
-        backRight.setDirection(DcMotor.Direction.REVERSE);
-
-
-        backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
-        frontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        frontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        backLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        backRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
     @Override
@@ -92,7 +81,7 @@ public class TestTeleopBase extends OpMode {
         }
 
         if (gamepad1.right_trigger > 0.3) {
-            shooter.setAlvo(ShooterCoefficients.ALVO_TPS);
+            shooter.setAlvo(zones.getTPS(currentPose.x(), currentPose.y()));
         } else {
             shooter.setAlvo(0);
         }
