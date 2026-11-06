@@ -25,6 +25,7 @@ public class TestMechanisms extends OpMode {
     Shooter shooter;
     Agropecuaria agro;
     Follower follower;
+    Zones zones;
     Pose startPose = new Pose(132.6505617977528, 133.92247191011242, Math.toRadians(270));
     boolean flower = true;
 
@@ -44,7 +45,7 @@ public class TestMechanisms extends OpMode {
         agro.up();
         follower.setPose(new Pose(132.6505617977528, 133.92247191011242, Math.toRadians(270)));
 
-        Zones zones = new Zones(Constants.ShooterCoefficients.ALVO_TPS)
+        zones = new Zones(Constants.ShooterCoefficients.ALVO_TPS)
                 .addZone(50.96, 91.14, 105.14, 137.71, Constants.ShooterCoefficients.ALVO_TPS)
                 .addZone(9.14, 50.96, 105.14, 137.71, Constants.ShooterCoefficients.ALVO_TPS_LADO)
                 .addZone(91.14, 132.96, 105.14, 137.71, Constants.ShooterCoefficients.ALVO_TPS_LADO)
@@ -65,6 +66,7 @@ public class TestMechanisms extends OpMode {
         for (LynxModule hub : allHubs) {
             hub.clearBulkCache();
         }
+        Pose pose = follower.pose();
 
         follower.update();
 
@@ -95,7 +97,7 @@ public class TestMechanisms extends OpMode {
         }
 
         if (gamepad1.right_trigger > 0.5) {
-            shooter.setAlvo(Constants.ShooterCoefficients.ALVO_TPS);
+            shooter.setAlvo(zones.getTPS(currentPose.x(), currentPose.y()));
         } else {
             shooter.setAlvo(0);
         }
