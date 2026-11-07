@@ -56,13 +56,14 @@ public class Intake {
         isOn = !isOn;
     }
 
-    public void toggleReversed() {
+    public void toggleReversed(double wantedCoefficient) {
         if (isOn) {
             stop();
         } else {
-            out(IntakeConstants.intakeIdle);
+            out(-wantedCoefficient);
         }
 
+        isOn = !isOn;
     }
 
     public boolean isOn(){
