@@ -75,7 +75,7 @@ public class AutoRedDown extends OpMode {
         follower = Constants.create(hardwareMap);
         follower.setPose(start);
 
-        shooter = new Shooter(hardwareMap);
+        shooter = new Shooter(hardwareMap, intake);
         intake = new Intake(hardwareMap);
 
         allHubs = hardwareMap.getAll(LynxModule.class);
@@ -94,6 +94,7 @@ public class AutoRedDown extends OpMode {
     public void loop() {
         follower.update();
         Scheduler.execute();
+        intake.update();
 
         for (LynxModule hub : allHubs) {
             hub.clearBulkCache();

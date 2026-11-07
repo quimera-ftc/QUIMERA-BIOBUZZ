@@ -71,7 +71,7 @@ public class downTestBlue extends OpMode {
         follower = Constants.create(hardwareMap);
         follower.setPose(torre);
 
-        shooter = new Shooter(hardwareMap);
+        shooter = new Shooter(hardwareMap, intake);
         intake = new Intake(hardwareMap);
         turret = new Turret(hardwareMap, torre, Constants.Alliance.BLUE);
 
@@ -90,7 +90,7 @@ public class downTestBlue extends OpMode {
     public void loop() {
         follower.update();
         Scheduler.execute();
-
+        intake.update();
     }
 
     public Command routine() {

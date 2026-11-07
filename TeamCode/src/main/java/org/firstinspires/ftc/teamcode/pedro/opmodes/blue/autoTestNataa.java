@@ -80,7 +80,7 @@ public class autoTestNataa extends OpMode {
         follower = Constants.create(hardwareMap);
         follower.setPose(startingPoint);
 
-        shooter = new Shooter(hardwareMap);
+        shooter = new Shooter(hardwareMap, intake);
         intake = new Intake(hardwareMap);
         agro = new Agropecuaria(hardwareMap);
         turret = new Turret(hardwareMap, startingPoint, Constants.Alliance.BLUE);
@@ -99,6 +99,7 @@ public class autoTestNataa extends OpMode {
 
         follower.update();
         Scheduler.execute();
+        intake.update();
 
         Pose currentPose = follower.pose();
         turret.update(currentPose);

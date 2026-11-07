@@ -66,7 +66,7 @@ public class autoBlueTest extends OpMode {
         follower = Constants.create(hardwareMap);
         follower.setPose(startingPoint);
 
-        shooter = new Shooter(hardwareMap);
+        shooter = new Shooter(hardwareMap, intake);
         intake = new Intake(hardwareMap);
 
         allHubs = hardwareMap.getAll(LynxModule.class);
@@ -90,7 +90,7 @@ public class autoBlueTest extends OpMode {
 
         follower.update();
         Scheduler.execute();
-
+        intake.update();
     }
 
     public Command routine() {
