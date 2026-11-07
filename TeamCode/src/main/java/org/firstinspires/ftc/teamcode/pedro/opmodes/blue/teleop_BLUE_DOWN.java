@@ -6,12 +6,14 @@ import com.pedropathing.math.Pose;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.pedro.Constants;
 import org.firstinspires.ftc.teamcode.pedro.math.VoltageCompensator;
 import org.firstinspires.ftc.teamcode.pedro.subsystems.Agropecuaria;
 import org.firstinspires.ftc.teamcode.pedro.subsystems.DriveTrain;
 import org.firstinspires.ftc.teamcode.pedro.subsystems.Intake;
+import org.firstinspires.ftc.teamcode.pedro.subsystems.Servos;
 import org.firstinspires.ftc.teamcode.pedro.subsystems.Shooter;
 import org.firstinspires.ftc.teamcode.pedro.subsystems.Turret;
 import org.firstinspires.ftc.teamcode.pedro.subsystems.Zones;
@@ -27,6 +29,7 @@ public class teleop_BLUE_DOWN extends OpMode {
     DriveTrain driveTrain;
     Shooter shooter;
     Turret turret;
+    Servos servos;
     VoltageCompensator voltageController;
     Pose startPose = new Pose(129.45, 17.79, Math.toRadians(90));
     Follower follower;
@@ -43,6 +46,8 @@ public class teleop_BLUE_DOWN extends OpMode {
         intake = new Intake(hardwareMap);
         shooter = new Shooter(hardwareMap, intake);
         voltageController = new VoltageCompensator(hardwareMap);
+        servos = new Servos(hardwareMap);
+
         turret.resetEncoder();
         agro.up();
         follower.setPose(startPose);
@@ -91,8 +96,10 @@ public class teleop_BLUE_DOWN extends OpMode {
 
         if (gamepad1.right_trigger > 0.5) {
             shooter.setAlvo(zones.getTPS(currentPose.x(), currentPose.y()));
+            servos.notLocking();
         } else {
             shooter.setAlvo(0);
+            servos.locking();
         }
 
 
