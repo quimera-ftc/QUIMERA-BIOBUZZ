@@ -17,11 +17,11 @@ public class RampaPotencia {
 
     public double calcular(double alvo) {
         double dt;
-        if (primeiraChamada) {             // evita salto se o OpMode demorou para começar
+        if (primeiraChamada) {
             dt = 0.02;
             primeiraChamada = false;
         } else {
-            dt = Math.min(timer.seconds(), 0.1);   // loop travado não vira salto grande
+            dt = Math.min(timer.seconds(), 0.1);
         }
         timer.reset();
 
@@ -33,7 +33,7 @@ public class RampaPotencia {
         return atual;
     }
 
-    public void reset() {                  // usar ao trocar de modo ou ao parar de emergência
+    public void reset() {
         atual = 0;
         primeiraChamada = true;
     }
