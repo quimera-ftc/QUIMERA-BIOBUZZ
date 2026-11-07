@@ -14,7 +14,7 @@ public class TurretConstants {
     public static double maxPower = 1;
     public static double LIMIT_BUFFER = 90;
     public static double TOLERANCE = 2.5;
-    public static volatile double kP = 0.04921222;
+    public static volatile double kP = 0.05121222;
     public static volatile double kI = 0.0000;
     public static volatile double kD = 0.00321222;
     public static volatile double kS = 0.25;
