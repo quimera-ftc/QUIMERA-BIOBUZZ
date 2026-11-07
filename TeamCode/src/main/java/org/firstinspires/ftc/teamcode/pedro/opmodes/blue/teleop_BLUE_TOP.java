@@ -44,7 +44,7 @@ public class teleop_BLUE_TOP extends OpMode {
         driveTrain = new DriveTrain(hardwareMap, gamepad1);
         agro = new Agropecuaria(hardwareMap);
         intake = new Intake(hardwareMap);
-        shooter = new Shooter(hardwareMap);
+        shooter = new Shooter(hardwareMap, intake);
         voltageController = new VoltageCompensator(hardwareMap);
         turret.resetEncoder();
         agro.up();
@@ -88,7 +88,7 @@ public class teleop_BLUE_TOP extends OpMode {
         }
 
         if (gamepad1.yWasPressed()) {
-            intake.toggleReversed();
+            intake.toggleReversed(IntakeConstants.intakeCollecting);
         }
 
         double distanciaGol = turret.getDistanciaGol();
@@ -117,10 +117,11 @@ public class teleop_BLUE_TOP extends OpMode {
 
 
         shooter.update();
-
+        intake.update();
         shooter.telemetriaTeste(telemetry);
         telemetry.addData("distancia gol (in)", "%.1f", distanciaGol);
         telemetry.addData("alvo da tabela (tps)", "%.0f", alvoTabela);
+        telemetry.addData("intake", "%s (potência %.2f)", intake.isOn() ? "LIGADO" : "DESLIGADO", intake.intake.getPower());
         telemetry.update();
     }
 

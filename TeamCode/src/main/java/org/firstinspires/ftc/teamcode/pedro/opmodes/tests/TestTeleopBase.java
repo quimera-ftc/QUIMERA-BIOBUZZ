@@ -44,7 +44,7 @@ public class TestTeleopBase extends OpMode {
         follower = Constants.create(hardwareMap);
         driveTrain = new DriveTrain(hardwareMap, gamepad1);
         intake = new Intake(hardwareMap);
-        shooter = new Shooter(hardwareMap);
+        shooter = new Shooter(hardwareMap, intake);
         follower.setPose(currentPose);
         voltageCompensator = new VoltageCompensator(hardwareMap);
         allHubs = hardwareMap.getAll(LynxModule.class);

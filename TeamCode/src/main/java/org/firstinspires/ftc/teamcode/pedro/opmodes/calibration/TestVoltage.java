@@ -22,7 +22,7 @@ public class TestVoltage extends OpMode {
     public void init() {
         intake = new Intake(hardwareMap);
         driveTrain = new DriveTrain(hardwareMap, gamepad1);
-        shooter = new Shooter(hardwareMap);
+        shooter = new Shooter(hardwareMap, intake);
     }
 
     @Override
@@ -39,6 +39,7 @@ public class TestVoltage extends OpMode {
 
 
         driveTrain.driveStick();
+        intake.update();
         telemetry.update();
     }
 }

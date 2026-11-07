@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.pedro.opmodes.calibration;
 
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.math.Pose;
 import com.qualcomm.hardware.lynx.LynxModule;
@@ -28,6 +30,7 @@ public class TestMechanisms extends OpMode {
     Shooter shooter;
     Agropecuaria agro;
     Follower follower;
+    Zones zones;
     Pose startPose = new Pose(132.6505617977528, 133.92247191011242, Math.toRadians(270));
     boolean flower = true;
 
@@ -38,14 +41,25 @@ public class TestMechanisms extends OpMode {
 
     @Override
     public void init() {
+        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         follower = Constants.create(hardwareMap);
         intake = new Intake(hardwareMap);
         driveTrain = new DriveTrain(hardwareMap, gamepad1);
-        shooter = new Shooter(hardwareMap, telemetry);
+        shooter = new Shooter(hardwareMap, telemetry, intake);
         turret = new Turret(hardwareMap, startPose, Constants.Alliance.BLUE);
         agro = new Agropecuaria(hardwareMap);
         agro.up();
         follower.setPose(new Pose(132.6505617977528, 133.92247191011242, Math.toRadians(270)));
+        turret.resetEncoder();
+
+        zones = new Zones(ShooterCoefficients.IDLE_TPS)
+                .addZone(50.96,  91.14, 105.14, 137.71, ShooterCoefficients.ALVO_TPS)
+                .addZone( 9.14,  50.96, 105.14, 137.71, ShooterCoefficients.ALVO_TPS_LADO)
+                .addZone(91.14, 132.96, 105.14, 137.71, ShooterCoefficients.ALVO_TPS_LADO)
+
+                .addZone(50.96,  91.14, 6.29, 38.86, ShooterCoefficients.ALVO_TPS)
+                .addZone( 9.14,  50.96, 6.29, 38.86, ShooterCoefficients.ALVO_TPS_LADO)
+                .addZone(91.14, 132.96, 6.29, 38.86, ShooterCoefficients.ALVO_TPS_LADO);
 
         allHubs = hardwareMap.getAll(LynxModule.class);
         for (LynxModule hub : allHubs) {
@@ -58,8 +72,6 @@ public class TestMechanisms extends OpMode {
         for (LynxModule hub : allHubs) {
             hub.clearBulkCache();
         }
-
-        follower.update();
 
         Pose currentPose = follower.pose();
         turret.update(currentPose);
@@ -74,7 +86,7 @@ public class TestMechanisms extends OpMode {
         }
 
         if (gamepad1.yWasPressed()) {
-            intake.toggleReversed();
+            intake.toggleReversed(IntakeConstants.intakeCollecting);
         }
 
         if (gamepad1.xWasPressed()) {
@@ -87,11 +99,8 @@ public class TestMechanisms extends OpMode {
 
         }
 
-        double distanciaGol = turret.getDistanciaGol();
-        double alvoTabela = TabelaDisparo.tpsParaDistancia(distanciaGol);
-
         if (gamepad1.right_trigger > 0.5) {
-            shooter.setAlvo(alvoTabela);
+            shooter.setAlvo(zones.getTPS(currentPose.x(), currentPose.y()));
         } else {
             shooter.setAlvo(0);
         }
@@ -112,13 +121,13 @@ public class TestMechanisms extends OpMode {
 
         shooter.update();
         driveTrain.driveStick();
+        intake.update();
+        follower.update();
 
         shooter.telemetriaTeste(telemetry); // TELEMETRIA PRA ANOTAR COISAS DE TESTE DO SHOOTER
-        telemetry.addData("intake", intake.isOn() ? "LIGADO" : "DESLIGADO");
+        telemetry.addData("intake", "%s (potência %.2f)", intake.isOn() ? "LIGADO" : "DESLIGADO", intake.intake.getPower());
         telemetry.addData("shooter", shooter.isOn() ? "LIGADO" : "DESLIGADO");
         telemetry.addData("turret", turret.getMode());
-        telemetry.addData("distancia gol (in)", "%.1f", distanciaGol);
-        telemetry.addData("alvo da tabela (tps)", "%.0f", alvoTabela);
         telemetry.addLine("--ODOMETRIA--");
         telemetry.addData("x", currentPose.x());
         telemetry.addData("y", currentPose.y());
