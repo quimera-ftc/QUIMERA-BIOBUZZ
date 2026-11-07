@@ -4,20 +4,20 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import static com.pedropathing.ivy.commands.Commands.*;
 import static com.pedropathing.ivy.groups.Groups.*;
+
+import androidx.annotation.NonNull;
+
 import com.pedropathing.ivy.Command;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.util.Range;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.pedro.Constants;
 import org.firstinspires.ftc.teamcode.pedro.math.RampaPotencia;
 import org.firstinspires.ftc.teamcode.pedro.math.VoltageCompensator;
-import org.firstinspires.ftc.teamcode.pedro.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.pedro.subsystems.subConstants.IntakeConstants;
 import org.firstinspires.ftc.teamcode.pedro.subsystems.subConstants.ShooterCoefficients;
 
@@ -42,7 +42,7 @@ public class Shooter {
     private final RampaPotencia rampa = new RampaPotencia(2.0, 2.0);  // 0→1 em 0,5 s
     //-- GnHk28 has left the Commits
 
-    public Shooter(HardwareMap hardwareMap, Telemetry telemetry) {
+    public Shooter(@NonNull HardwareMap hardwareMap, Telemetry telemetry) {
         ls = hardwareMap.get(DcMotorEx.class, "ls");
         rs = hardwareMap.get(DcMotorEx.class, "rs");
 
@@ -59,6 +59,16 @@ public class Shooter {
 
         intake = new Intake(hardwareMap);
         bateria = hardwareMap.voltageSensor.iterator().next();
+    }
+
+    public Shooter(HardwareMap hardwareMap, Telemetry telemetry, Intake intake) {
+        this(hardwareMap, telemetry);
+        this.intake = intake;
+    }
+
+    public Shooter(HardwareMap hardwareMap, Intake intake) {
+        this(hardwareMap);
+        this.intake = intake;
     }
 
     public Shooter(HardwareMap hardwareMap) {
