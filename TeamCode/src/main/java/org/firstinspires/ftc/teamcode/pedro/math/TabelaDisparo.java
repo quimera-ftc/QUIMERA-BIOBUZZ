@@ -18,19 +18,17 @@ import com.acmerobotics.dashboard.config.Config;
  */
 @Config
 public class TabelaDisparo {
-    public static double DIST_1 = 30,  TPS_1 = 1210;
-    public static double DIST_2 = 50,  TPS_2 = 1210;
-    public static double DIST_3 = 70,  TPS_3 = 1210;
-    public static double DIST_4 = 90,  TPS_4 = 1210;
-    public static double DIST_5 = 110, TPS_5 = 1210;
-    public static double DIST_6 = 130, TPS_6 = 1210;
+    public static double DIST_1 = 30.5,  TPS_1 = 1525;
+    public static double DIST_2 = 50.6,  TPS_2 = 1225;
+    public static double DIST_3 = 53.2,  TPS_3 = 1290;
+    public static double DIST_4 = 60.6,  TPS_4 = 1360;
 
     private TabelaDisparo() {}
 
     public static double tpsParaDistancia(double distancia) {
         // lido a cada chamada para refletir mudanças feitas pelo Dashboard
-        double[] dist = {DIST_1, DIST_2, DIST_3, DIST_4, DIST_5, DIST_6};
-        double[] tps  = {TPS_1,  TPS_2,  TPS_3,  TPS_4,  TPS_5,  TPS_6};
+        double[] dist = {DIST_1, DIST_2, DIST_3, DIST_4};
+        double[] tps  = {TPS_1,  TPS_2,  TPS_3,  TPS_4};
 
         if (Double.isNaN(distancia) || distancia <= dist[0]) return tps[0];
 
