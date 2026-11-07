@@ -22,6 +22,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 public class Constants {
     private static PoseFactory p = PoseFactory.degrees();
 
+    public static double movimentSpeed = 0.7;
+
     public static class VoltageConstants {
         public static double NOMINAL_VOLTAGE = 11.50;
     }

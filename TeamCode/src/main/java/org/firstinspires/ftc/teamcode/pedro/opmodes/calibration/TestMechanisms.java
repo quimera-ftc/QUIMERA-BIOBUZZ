@@ -13,6 +13,8 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 
+import org.ejml.dense.row.decomposition.BaseDecomposition_DDRB_to_DDRM;
+import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.pedro.Constants;
 import org.firstinspires.ftc.teamcode.pedro.math.TabelaDisparo;
 import org.firstinspires.ftc.teamcode.pedro.math.TurretController;
@@ -52,8 +54,8 @@ public class TestMechanisms extends OpMode {
         driveTrain = new DriveTrain(hardwareMap, gamepad1);
         shooter = new Shooter(hardwareMap, telemetry, intake);
         turret = new Turret(hardwareMap, startPose, Constants.Alliance.BLUE);
-        agro = new Agropecuaria(hardwareMap);
-        agro.up();
+//        agro = new Agropecuaria(hardwareMap);
+//        agro.up();
         follower.setPose(new Pose(132.6505617977528, 133.92247191011242, Math.toRadians(270)));
         turret.resetEncoder();
 
@@ -132,15 +134,15 @@ public class TestMechanisms extends OpMode {
         Pose turretPose = TurretController.getTurretPose(currentPose);
         double target = TurretController.computeTargetAngle(turretPose, TurretController.getTurretPose(turretPose));
 
-        shooter.telemetriaTeste(telemetry); // TELEMETRIA PRA ANOTAR COISAS DE TESTE DO SHOOTER
-        telemetry.addData("intake", "%s (potência %.2f)", intake.isOn() ? "LIGADO" : "DESLIGADO", intake.intake.getPower());
-        telemetry.addData("shooter", shooter.isOn() ? "LIGADO" : "DESLIGADO");
-        telemetry.addData("turret", turret.getMode());
+        //shooter.telemetriaTeste(telemetry); // TELEMETRIA PRA ANOTAR COISAS DE TESTE DO SHOOTER
+        telemetry.addData("intake current", intake.intake.getCurrent(CurrentUnit.AMPS));
+        telemetry.addData("rs", shooter.rs.getCurrent(CurrentUnit.AMPS));
+        telemetry.addData("ls", shooter.ls.getCurrent(CurrentUnit.AMPS));
+        telemetry.addData("voltage","%.2f V", getVoltage());
         telemetry.addLine("----------ODOMETRIA-----------");
         telemetry.addData("x", currentPose.x());
         telemetry.addData("y", currentPose.y());
         telemetry.addData("heading", Math.toDegrees(currentPose.heading()));
-        telemetry.addData("voltage","%.2f V", getVoltage());
         telemetry.addLine("------------TURRET------------");
         telemetry.addData("mode", turret.getMode());
         telemetry.addData("Turret X", turretPose.x());
@@ -151,6 +153,11 @@ public class TestMechanisms extends OpMode {
         telemetry.addData("lime offset", turret.getLimeLightOffset());
         telemetry.addData("na mosca", turret.aligned() ? "sim" : "nao");
         telemetry.addData("tempo de ciclo (dt)", turret.getDt());
+        telemetry.addLine("------------DRIVETRAIN------------");
+        telemetry.addData("fl", driveTrain.frontLeft.getCurrent(CurrentUnit.AMPS));
+        telemetry.addData("fr", driveTrain.frontRight.getCurrent(CurrentUnit.AMPS));
+        telemetry.addData("fl", driveTrain.backLeft.getCurrent(CurrentUnit.AMPS));
+        telemetry.addData("fl", driveTrain.backRight.getCurrent(CurrentUnit.AMPS));
 
         telemetry.update();
     }

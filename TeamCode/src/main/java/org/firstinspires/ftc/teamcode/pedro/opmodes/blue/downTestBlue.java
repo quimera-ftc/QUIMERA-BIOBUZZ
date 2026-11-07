@@ -81,7 +81,7 @@ public class downTestBlue extends OpMode {
     }
 
     public void start(){
-        shooter.powerUp();
+//        shooter.powerUp();
         Scheduler.schedule(routine());
     }
 
