@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.pedro.opmodes.tests;
 
 import static com.pedropathing.api.Paths.line;
+import static com.pedropathing.ivy.commands.Commands.instant;
 import static com.pedropathing.ivy.commands.Commands.waitMs;
 import static com.pedropathing.ivy.groups.Groups.parallel;
 import static com.pedropathing.ivy.groups.Groups.sequential;
@@ -21,6 +22,8 @@ import org.firstinspires.ftc.teamcode.pedro.subsystems.Agropecuaria;
 import org.firstinspires.ftc.teamcode.pedro.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.pedro.subsystems.Shooter;
 import org.firstinspires.ftc.teamcode.pedro.subsystems.Turret;
+import org.firstinspires.ftc.teamcode.pedro.subsystems.Zones;
+import org.firstinspires.ftc.teamcode.pedro.subsystems.subConstants.ShooterCoefficients;
 
 import java.util.List;
 @Autonomous
@@ -30,8 +33,10 @@ public class autoAllianceTest extends OpMode {
     Intake intake;
     Agropecuaria agro;
     Turret turret;
-
+    Zones zones;
     private Follower follower;
+    Pose currentPoseLocal;
+    boolean shooterLigado = false;
     List<LynxModule> allHubs;
 
     PoseFactory poseFactory = PoseFactory.degrees();
@@ -60,16 +65,21 @@ public class autoAllianceTest extends OpMode {
     }
 
     public void loop(){
+        for (LynxModule hub : allHubs) {
+            hub.clearBulkCache();
+        }
+
         follower.update();
         Scheduler.execute();
         intake.update();
 
-        Pose currentPose = follower.pose();
-        turret.update(currentPose);
+        currentPoseLocal = follower.pose();
+        turret.update(currentPoseLocal);
 
-        for (LynxModule hub : allHubs) {
-            hub.clearBulkCache();
-        }
+        shooter.setAlvo(shooterLigado
+                ? zones.getTPS(currentPoseLocal.x(), currentPoseLocal.y())
+                : 0);
+        shooter.update();
 
     }
 
@@ -78,10 +88,19 @@ public class autoAllianceTest extends OpMode {
         follower = Constants.create(hardwareMap);
         follower.setPose(startingPoint);
 
-        shooter = new Shooter(hardwareMap, intake);
         intake = new Intake(hardwareMap);
+        shooter = new Shooter(hardwareMap, intake);
         agro = new Agropecuaria(hardwareMap);
         turret = new Turret(hardwareMap, startingPoint, Constants.Alliance.BLUE);
+
+        zones = new Zones(ShooterCoefficients.ALVO_TPS)
+                .addZone(50.96, 91.14, 105.14, 137.71, ShooterCoefficients.ALVO_TPS)
+                .addZone(9.14, 50.96, 105.14, 137.71, ShooterCoefficients.ALVO_TPS_LADO)
+                .addZone(91.14, 132.96, 105.14, 137.71, ShooterCoefficients.ALVO_TPS_LADO)
+
+                .addZone(50.96, 91.14, 6.29, 38.86, ShooterCoefficients.ALVO_TPS)
+                .addZone(9.14, 50.96, 6.29, 38.86, ShooterCoefficients.ALVO_TPS_LADO)
+                .addZone(91.14, 132.96, 6.29, 38.86, ShooterCoefficients.ALVO_TPS_LADO);
 
         allHubs = hardwareMap.getAll(LynxModule.class);
         for (LynxModule hub : allHubs) {
@@ -90,7 +109,7 @@ public class autoAllianceTest extends OpMode {
     }
 
     public void start() {
-        shooter.powerUp();
+        shooterLigado = true;
         Scheduler.schedule(routine());
 
     }
@@ -104,17 +123,21 @@ public class autoAllianceTest extends OpMode {
                                 follow(follower, START_TO_COLLECT1()),
                                 intake.intakePP()
                                 ),
+                        waitMs(1500),
                         intake.intakestopPP(),
                         follow(follower, COLLECT1_TO_SHOOT2()),
+                        waitMs(12000),
                         shooter.shootPP(),
                         parallel(
                                 follow(follower, SHOOT2_TO_COLLECT2()),
                                 intake.intakePP()
                         ),
+                        waitMs(1500),
                         intake.intakestopPP(),
                         follow(follower, COLLECT2_TO_SHOOT3()),
                         shooter.shootPP(),
-                        follow(follower, SHOOT3_TO_PARK())
+                        follow(follower, SHOOT3_TO_PARK()),
+                        instant(() -> shooterLigado = false)
                 ),
                 turret.autoaim(follower::pose)
 

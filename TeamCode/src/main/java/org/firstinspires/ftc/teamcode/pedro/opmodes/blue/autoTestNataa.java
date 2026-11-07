@@ -24,6 +24,7 @@ import org.firstinspires.ftc.teamcode.pedro.subsystems.Agropecuaria;
 import org.firstinspires.ftc.teamcode.pedro.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.pedro.subsystems.Shooter;
 import org.firstinspires.ftc.teamcode.pedro.subsystems.Turret;
+import org.firstinspires.ftc.teamcode.pedro.subsystems.Zones;
 import org.firstinspires.ftc.teamcode.pedro.subsystems.subConstants.ShooterCoefficients;
 
 import java.util.List;
@@ -31,15 +32,16 @@ import java.util.List;
 @Autonomous
 public class autoTestNataa extends OpMode {
 
+    boolean shooterLigado = false;
+
     Shooter shooter;
     Intake intake;
     Agropecuaria agro;
     Turret turret;
-
-
     PoseFactory poseFactory = PoseFactory.degrees();
     private Follower follower;
-
+    Zones zones;
+    Pose currentPoseLocal;
     List<LynxModule> allHubs;
 
     Pose startingPoint = poseFactory.of(86.06466512702079,134.1431469720298,0);
@@ -80,10 +82,19 @@ public class autoTestNataa extends OpMode {
         follower = Constants.create(hardwareMap);
         follower.setPose(startingPoint);
 
-        shooter = new Shooter(hardwareMap, intake);
         intake = new Intake(hardwareMap);
+        shooter = new Shooter(hardwareMap, intake);
         agro = new Agropecuaria(hardwareMap);
         turret = new Turret(hardwareMap, startingPoint, Constants.Alliance.BLUE);
+
+        zones = new Zones(ShooterCoefficients.ALVO_TPS)
+                .addZone(50.96, 91.14, 105.14, 137.71, ShooterCoefficients.ALVO_TPS)
+                .addZone(9.14, 50.96, 105.14, 137.71, ShooterCoefficients.ALVO_TPS_LADO)
+                .addZone(91.14, 132.96, 105.14, 137.71, ShooterCoefficients.ALVO_TPS_LADO)
+
+                .addZone(50.96, 91.14, 6.29, 38.86, ShooterCoefficients.ALVO_TPS)
+                .addZone(9.14, 50.96, 6.29, 38.86, ShooterCoefficients.ALVO_TPS_LADO)
+                .addZone(91.14, 132.96, 6.29, 38.86, ShooterCoefficients.ALVO_TPS_LADO);
 
         allHubs = hardwareMap.getAll(LynxModule.class);
         for (LynxModule hub : allHubs) {
@@ -101,56 +112,53 @@ public class autoTestNataa extends OpMode {
         Scheduler.execute();
         intake.update();
 
-        Pose currentPose = follower.pose();
-        turret.update(currentPose);
+        currentPoseLocal = follower.pose();
+        turret.update(currentPoseLocal);
+
+        shooter.setAlvo(shooterLigado
+                ? zones.getTPS(currentPoseLocal.x(), currentPoseLocal.y())
+                : 0);
         shooter.update();
-        PoseStorage.currentPose = follower.pose();
+
     }
 
     public void start() {
-        shooter.powerUp();
+        shooterLigado = true;
         Scheduler.schedule(routine());
 
     }
-
-    @Override
-    public void stop() {
-        PoseStorage.currentPose = follower.pose();
-    }
-
     public Command routine() {
         return parallel(
-                instant(() -> shooter.setAlvo(ShooterCoefficients.ALVO_TPS)),
                 sequential(
-                waitMs(2000),
-                shooter.shootPP(),
-                parallel(
-                        follow(follower, START_TO_COLLECT1()),
-                        intake.intakePP()
+                        waitMs(2000),
+                        shooter.shootPP(),
+                        parallel(
+                                follow(follower, START_TO_COLLECT1()),
+                                intake.intakePP()
+                        ),
+                        waitMs(1500),
+                        intake.intakestopPP(),
+                        follow(follower, COLLECT1_TO_SHOOT2()),
+                        shooter.shootPP(),
+                        parallel(
+                                follow(follower, SHOOT2_TO_COLLECT2()),
+                                intake.intakePP()
+                        ),
+                        waitMs(1500),
+                        intake.intakestopPP(),
+                        follow(follower, COLLECT2_TO_SHOOT3()),
+                        shooter.shootPP(),
+                        parallel(
+                                follow(follower, SHOOT3_TO_COLLECT3()),
+                                intake.intakePP()
+                        ),
+                        waitMs(1500),
+                        intake.intakestopPP(),
+                        follow(follower, COLLECT3_TO_SHOOT4()),
+                        shooter.shootPP(),
+                        follow(follower, SHOOT4_TO_PARK()),
+                        instant(() -> shooterLigado = false)
                 ),
-                waitMs(1500),
-                intake.intakestopPP(),
-                follow(follower, COLLECT1_TO_SHOOT2()),
-                shooter.shootPP(),
-                parallel(
-                        follow(follower, SHOOT2_TO_COLLECT2()),
-                        intake.intakePP()
-                ),
-                waitMs(1500),
-                intake.intakestopPP(),
-                follow(follower, COLLECT2_TO_SHOOT3()),
-                shooter.shootPP(),
-                parallel(
-                        follow(follower, SHOOT3_TO_COLLECT3()),
-                        intake.intakePP()
-                ),
-                waitMs(1500),
-                intake.intakestopPP(),
-                follow(follower, COLLECT3_TO_SHOOT4()),
-                shooter.shootPP(),
-                follow(follower, SHOOT4_TO_PARK())
-                ),
-                instant(() -> shooter.setAlvo(ShooterCoefficients.IDLE_TPS)),
                 turret.autoaim(follower::pose));
 
 
