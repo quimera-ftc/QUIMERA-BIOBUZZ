@@ -1,5 +1,9 @@
 package org.firstinspires.ftc.teamcode.pedro.opmodes.calibration;
 
+import static org.firstinspires.ftc.teamcode.pedro.subsystems.subConstants.TurretConstants.kD;
+import static org.firstinspires.ftc.teamcode.pedro.subsystems.subConstants.TurretConstants.kI;
+import static org.firstinspires.ftc.teamcode.pedro.subsystems.subConstants.TurretConstants.kP;
+
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.pedropathing.follower.Follower;
@@ -11,6 +15,7 @@ import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 import org.firstinspires.ftc.teamcode.pedro.Constants;
 import org.firstinspires.ftc.teamcode.pedro.math.TabelaDisparo;
+import org.firstinspires.ftc.teamcode.pedro.math.TurretController;
 import org.firstinspires.ftc.teamcode.pedro.subsystems.Agropecuaria;
 import org.firstinspires.ftc.teamcode.pedro.subsystems.DriveTrain;
 import org.firstinspires.ftc.teamcode.pedro.subsystems.Intake;
@@ -124,15 +129,28 @@ public class TestMechanisms extends OpMode {
         intake.update();
         follower.update();
 
+        Pose turretPose = TurretController.getTurretPose(currentPose);
+        double target = TurretController.computeTargetAngle(turretPose, TurretController.getTurretPose(turretPose));
+
         shooter.telemetriaTeste(telemetry); // TELEMETRIA PRA ANOTAR COISAS DE TESTE DO SHOOTER
         telemetry.addData("intake", "%s (potência %.2f)", intake.isOn() ? "LIGADO" : "DESLIGADO", intake.intake.getPower());
         telemetry.addData("shooter", shooter.isOn() ? "LIGADO" : "DESLIGADO");
         telemetry.addData("turret", turret.getMode());
-        telemetry.addLine("--ODOMETRIA--");
+        telemetry.addLine("----------ODOMETRIA-----------");
         telemetry.addData("x", currentPose.x());
         telemetry.addData("y", currentPose.y());
         telemetry.addData("heading", Math.toDegrees(currentPose.heading()));
         telemetry.addData("voltage","%.2f V", getVoltage());
+        telemetry.addLine("------------TURRET------------");
+        telemetry.addData("mode", turret.getMode());
+        telemetry.addData("Turret X", turretPose.x());
+        telemetry.addData("Turret Y", turretPose.y());
+        telemetry.addData("target", target);
+        telemetry.addData("deslocamento (Raw)", turret.getRawAngle());
+        telemetry.addData("Erro Atual", turret.getDistanceToTarget());
+        telemetry.addData("lime offset", turret.getLimeLightOffset());
+        telemetry.addData("na mosca", turret.aligned() ? "sim" : "nao");
+        telemetry.addData("tempo de ciclo (dt)", turret.getDt());
 
         telemetry.update();
     }
