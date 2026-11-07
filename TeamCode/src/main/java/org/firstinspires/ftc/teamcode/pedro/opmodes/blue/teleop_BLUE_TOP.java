@@ -8,7 +8,6 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.pedro.Constants;
-import org.firstinspires.ftc.teamcode.pedro.math.TabelaDisparo;
 import org.firstinspires.ftc.teamcode.pedro.math.VoltageCompensator;
 import org.firstinspires.ftc.teamcode.pedro.subsystems.Agropecuaria;
 import org.firstinspires.ftc.teamcode.pedro.subsystems.DriveTrain;
@@ -29,8 +28,6 @@ public class teleop_BLUE_TOP extends OpMode {
     Shooter shooter;
     Turret turret;
     VoltageCompensator voltageController;
-    boolean flower = false;
-    boolean collecting = false;
     Pose startPose = new Pose(132.12, 51.28, Math.toRadians(270));
     Follower follower;
     List<LynxModule> allHubs;
@@ -53,7 +50,11 @@ public class teleop_BLUE_TOP extends OpMode {
         zones = new Zones(Constants.ShooterCoefficients.ALVO_TPS)
                 .addZone(50.96, 91.14, 105.14, 137.71, ShooterCoefficients.ALVO_TPS)
                 .addZone(9.14, 50.96, 105.14, 137.71, ShooterCoefficients.ALVO_TPS_LADO)
-                .addZone(91.14, 132.96, 105.14, 137.71, ShooterCoefficients.ALVO_TPS_LADO);
+                .addZone(91.14, 132.96, 105.14, 137.71, ShooterCoefficients.ALVO_TPS_LADO)
+
+                .addZone(50.96, 91.14, 6.29, 38.86, ShooterCoefficients.ALVO_TPS)
+                .addZone(9.14, 50.96, 6.29, 38.86, ShooterCoefficients.ALVO_TPS_LADO)
+                .addZone(91.14, 132.96, 6.29, 38.86, ShooterCoefficients.ALVO_TPS_LADO);
 
         allHubs = hardwareMap.getAll(LynxModule.class);
         for (LynxModule hub : allHubs) {
@@ -72,10 +73,6 @@ public class teleop_BLUE_TOP extends OpMode {
             hub.clearBulkCache();
         }
 
-        follower.update();
-
-        driveTrain.driveStick();
-
         Pose currentPose = follower.pose();
         turret.update(currentPose);
 
@@ -91,11 +88,9 @@ public class teleop_BLUE_TOP extends OpMode {
             intake.toggleReversed(IntakeConstants.intakeCollecting);
         }
 
-        double distanciaGol = turret.getDistanciaGol();
-        double alvoTabela = TabelaDisparo.tpsParaDistancia(distanciaGol);
 
         if (gamepad1.right_trigger > 0.5) {
-            shooter.setAlvo(alvoTabela);
+            shooter.setAlvo(zones.getTPS(currentPose.x(), currentPose.y()));
         } else {
             shooter.setAlvo(0);
         }
@@ -115,12 +110,12 @@ public class teleop_BLUE_TOP extends OpMode {
 
         }
 
-
+        follower.update();
+        driveTrain.driveStick();
         shooter.update();
         intake.update();
+
         shooter.telemetriaTeste(telemetry);
-        telemetry.addData("distancia gol (in)", "%.1f", distanciaGol);
-        telemetry.addData("alvo da tabela (tps)", "%.0f", alvoTabela);
         telemetry.addData("intake", "%s (potência %.2f)", intake.isOn() ? "LIGADO" : "DESLIGADO", intake.intake.getPower());
         telemetry.update();
     }
