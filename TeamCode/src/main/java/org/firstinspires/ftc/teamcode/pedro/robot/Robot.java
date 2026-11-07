@@ -19,7 +19,7 @@ public class Robot {
     public Robot(@NonNull HardwareMap hardwareMap, @NonNull Constants.Alliance alliance) {
         intake = new Intake(hardwareMap);
         turret = new Turret(hardwareMap, PoseStorage.getPose(), alliance);
-        shooter = new Shooter(hardwareMap);
+        shooter = new Shooter(hardwareMap, intake);
 //        driveTrain = new DriveTrain(hardwareMap);
     }
 }
