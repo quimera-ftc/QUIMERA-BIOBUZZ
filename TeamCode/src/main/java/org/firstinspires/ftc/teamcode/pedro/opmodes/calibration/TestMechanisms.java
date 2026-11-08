@@ -75,6 +75,11 @@ public class TestMechanisms extends OpMode {
     }
 
     @Override
+    public void start() {
+        turret.setMode(Turret.Mode.MANUAL);
+    }
+
+    @Override
     public void loop() {
         for (LynxModule hub : allHubs) {
             hub.clearBulkCache();
