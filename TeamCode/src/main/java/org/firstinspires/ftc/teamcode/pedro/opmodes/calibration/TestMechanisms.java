@@ -32,7 +32,7 @@ public class TestMechanisms extends OpMode {
     Servos servos;
     Follower follower;
     Zones zones;
-    Pose startPose = new Pose(132.6505617977528, 133.92247191011242, Math.toRadians(270));
+    Pose startPose = new Pose(132.6505617977528, 130.92247191011242, Math.toRadians(270));
     boolean flower = true;
 
     double potenciaTeste = 0.0;
