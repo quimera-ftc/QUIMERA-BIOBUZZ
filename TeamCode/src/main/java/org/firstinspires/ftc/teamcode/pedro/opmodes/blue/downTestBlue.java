@@ -40,7 +40,7 @@ public class downTestBlue extends OpMode {
     private final Pose collectStart = poseFactory.of(93.86, 16.61, 270);
     private  final Pose collect = poseFactory.of(94.04,26.23,270);
     private final  Pose turneStart = poseFactory .of(94.04,26.23,270);
-    private final Pose turne = poseFactory.of(93.86,16.61,270);
+    private final Pose turne = poseFactory.of(91.0176,37.9776,270);
 
     private final Pose shootStart = poseFactory.of(93.8607, 16.6075, 270);
    private final Pose  shoot = poseFactory.of(78.63,9.73,90);

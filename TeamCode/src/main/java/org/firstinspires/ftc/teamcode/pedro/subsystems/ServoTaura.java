@@ -35,16 +35,24 @@ public class ServoTaura {
 
 
 
-    public void setPosition(double position) { baseServo.setPosition(position); }
+    public void setPosition(double position) {
+        baseServo.setPosition(position);
+    }
 
 
-    public double getPosition() { return baseServo.getPosition(); }
+    public double getPosition() {
+        return baseServo.getPosition();
+    }
 
 
-    public void scaleRange(double min, double max) { baseServo.scaleRange(min, max); }
+    public void scaleRange(double min, double max) {
+        baseServo.scaleRange(min, max);
+    }
 
 
-    public void setDirection(Servo.Direction direction) { baseServo.setDirection(direction); }
+    public void setDirection(Servo.Direction direction) {
+        baseServo.setDirection(direction);
+    }
 
 
     public void setAnalogFeedbackSensor(AnalogInput analogFeedbackSensor) {
@@ -75,6 +83,7 @@ public class ServoTaura {
 
 
     public double getUniversalPosition() {
+
         return A + B * getVoltageFromAnalogSensor();
     }
 

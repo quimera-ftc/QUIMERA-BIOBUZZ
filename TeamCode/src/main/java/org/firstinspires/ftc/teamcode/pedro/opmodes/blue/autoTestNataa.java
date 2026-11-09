@@ -19,8 +19,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.teamcode.pedro.Constants;
-import org.firstinspires.ftc.teamcode.pedro.robot.PoseStorage;
-import org.firstinspires.ftc.teamcode.pedro.subsystems.Agropecuaria;
+import org.firstinspires.ftc.teamcode.pedro.subsystems.Servos;
 import org.firstinspires.ftc.teamcode.pedro.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.pedro.subsystems.Shooter;
 import org.firstinspires.ftc.teamcode.pedro.subsystems.Turret;
@@ -36,7 +35,7 @@ public class autoTestNataa extends OpMode {
 
     Shooter shooter;
     Intake intake;
-    Agropecuaria agro;
+    Servos agro;
     Turret turret;
     PoseFactory poseFactory = PoseFactory.degrees();
     private Follower follower;
@@ -84,7 +83,7 @@ public class autoTestNataa extends OpMode {
 
         intake = new Intake(hardwareMap);
         shooter = new Shooter(hardwareMap, intake);
-        agro = new Agropecuaria(hardwareMap);
+        agro = new Servos(hardwareMap);
         turret = new Turret(hardwareMap, startingPoint, Constants.Alliance.BLUE);
 
         zones = new Zones(ShooterCoefficients.ALVO_TPS)

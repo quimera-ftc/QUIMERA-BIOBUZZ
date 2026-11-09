@@ -2,28 +2,25 @@ package org.firstinspires.ftc.teamcode.pedro.subsystems;
 
 import static com.pedropathing.ivy.commands.Commands.instant;
 import static com.pedropathing.ivy.groups.Groups.parallel;
-import static com.pedropathing.ivy.groups.Groups.sequential;
 
 import com.pedropathing.ivy.Command;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import org.firstinspires.ftc.teamcode.pedro.Constants;
 import org.firstinspires.ftc.teamcode.pedro.math.RampaPotencia;
 import org.firstinspires.ftc.teamcode.pedro.subsystems.subConstants.IntakeConstants;
 
 public class Intake {
 
     public final DcMotorEx intake;
-    public Agropecuaria agro;
+    public Servos agro;
     double alvo = 0;
     private final RampaPotencia rampa = new RampaPotencia(3.3, 10.0);  // 0→1 em 0,3 s
 //    double maxPower = 0.75;
     private boolean isOn = false;
     public Intake(HardwareMap hardwareMap) {
         intake = hardwareMap.get(DcMotorEx.class, "intake");
-        agro = new Agropecuaria(hardwareMap);
+        agro = new Servos(hardwareMap);
 
     }
 

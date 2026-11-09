@@ -9,10 +9,9 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.pedro.Constants;
 import org.firstinspires.ftc.teamcode.pedro.math.VoltageCompensator;
-import org.firstinspires.ftc.teamcode.pedro.subsystems.Agropecuaria;
+import org.firstinspires.ftc.teamcode.pedro.subsystems.Servos;
 import org.firstinspires.ftc.teamcode.pedro.subsystems.DriveTrain;
 import org.firstinspires.ftc.teamcode.pedro.subsystems.Intake;
-import org.firstinspires.ftc.teamcode.pedro.subsystems.Servos;
 import org.firstinspires.ftc.teamcode.pedro.subsystems.Shooter;
 import org.firstinspires.ftc.teamcode.pedro.subsystems.Turret;
 import org.firstinspires.ftc.teamcode.pedro.subsystems.Zones;
@@ -24,11 +23,10 @@ import java.util.List;
 @TeleOp(name="TELEOP_RED_DOWN", group="Red")
 public class teleop_RED_DOWN extends OpMode {
     Intake intake;
-    Agropecuaria agro;
+    Servos agro;
     DriveTrain driveTrain;
     Shooter shooter;
     Turret turret;
-    Servos servos;
     VoltageCompensator voltageController;
     Pose startPose = new Pose(132.12, 51.28, Math.toRadians(270));
     Follower follower;
@@ -41,14 +39,13 @@ public class teleop_RED_DOWN extends OpMode {
         follower = Constants.create(hardwareMap);
         turret = new Turret(hardwareMap, startPose, Constants.Alliance.BLUE);
         driveTrain = new DriveTrain(hardwareMap, gamepad1);
-        agro = new Agropecuaria(hardwareMap);
+        agro = new Servos(hardwareMap);
         intake = new Intake(hardwareMap);
         shooter = new Shooter(hardwareMap, intake);
         voltageController = new VoltageCompensator(hardwareMap);
-        servos = new Servos(hardwareMap);
 
         turret.resetEncoder();
-        agro.up();
+        agro.open();
         follower.setPose(startPose);
 
         zones = new Zones(Constants.ShooterCoefficients.ALVO_TPS)
@@ -95,10 +92,10 @@ public class teleop_RED_DOWN extends OpMode {
 
         if (gamepad1.right_trigger > 0.5) {
             shooter.setAlvo(zones.getTPS(currentPose.x(), currentPose.y()));
-            servos.notLocking();
+
         } else {
             shooter.setAlvo(0);
-            servos.locking();
+
         }
 
 

@@ -1,9 +1,5 @@
 package org.firstinspires.ftc.teamcode.pedro.opmodes.calibration;
 
-import static org.firstinspires.ftc.teamcode.pedro.subsystems.subConstants.TurretConstants.kD;
-import static org.firstinspires.ftc.teamcode.pedro.subsystems.subConstants.TurretConstants.kI;
-import static org.firstinspires.ftc.teamcode.pedro.subsystems.subConstants.TurretConstants.kP;
-
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.pedropathing.follower.Follower;
@@ -14,9 +10,9 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 import org.firstinspires.ftc.teamcode.pedro.Constants;
-import org.firstinspires.ftc.teamcode.pedro.math.TabelaDisparo;
 import org.firstinspires.ftc.teamcode.pedro.math.TurretController;
-import org.firstinspires.ftc.teamcode.pedro.subsystems.Agropecuaria;
+import org.firstinspires.ftc.teamcode.pedro.subsystems.Servos;
+import org.firstinspires.ftc.teamcode.pedro.subsystems.Servos;
 import org.firstinspires.ftc.teamcode.pedro.subsystems.DriveTrain;
 import org.firstinspires.ftc.teamcode.pedro.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.pedro.subsystems.Shooter;
@@ -33,7 +29,7 @@ public class TestMechanisms extends OpMode {
     DriveTrain driveTrain;
     Turret turret;
     Shooter shooter;
-    Agropecuaria agro;
+    Servos agro;
     Follower follower;
     Zones zones;
     Pose startPose = new Pose(132.6505617977528, 133.92247191011242, Math.toRadians(270));
@@ -52,8 +48,8 @@ public class TestMechanisms extends OpMode {
         driveTrain = new DriveTrain(hardwareMap, gamepad1);
         shooter = new Shooter(hardwareMap, telemetry, intake);
         turret = new Turret(hardwareMap, startPose, Constants.Alliance.BLUE);
-        agro = new Agropecuaria(hardwareMap);
-        agro.up();
+        agro = new Servos(hardwareMap);
+       agro.open();
         follower.setPose(new Pose(132.6505617977528, 133.92247191011242, Math.toRadians(270)));
         turret.resetEncoder();
 
@@ -97,8 +93,10 @@ public class TestMechanisms extends OpMode {
         if (gamepad1.xWasPressed()) {
 
             if (!flower) {
-                agro.up();
-            } else agro.down();
+                agro.open();
+            } else {
+                agro.close();
+            }
 
             flower = !flower;
 
