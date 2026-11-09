@@ -13,7 +13,7 @@ public class Servos {
     ServoTaura trava;
     Servo t1;
 
-    public final double  DOWN_RIGHT = 0.75;
+    public final double  DOWN_RIGHT = 0.80;
     public final double UP_RIGHT = 0;
 
 
@@ -39,10 +39,10 @@ public class Servos {
 
     }
     public void open(){
-        trava.setPosition(0);
+        trava.setPosition(1);
     }
     public void close(){
-        trava.setPosition(1);
+        trava.setPosition(0);
     }
 
 }
