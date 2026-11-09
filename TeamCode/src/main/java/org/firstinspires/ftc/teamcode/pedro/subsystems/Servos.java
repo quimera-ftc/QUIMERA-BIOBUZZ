@@ -1,30 +1,35 @@
 package org.firstinspires.ftc.teamcode.pedro.subsystems;
 
+import androidx.annotation.NonNull;
+
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
 public class Servos {
-    //right = 1 = bolinha nao passa
-    //left = 0 = bolinha passa nao colocar como 0 pra nenhum robo bater e quebrar
-    Servo servoLocker;
-    public final double LOCKING = 1;
-    public final double NOT_LOCKING = 0.60;
+    ServoTaura trava;
 
-    public Servos(HardwareMap hardwareMap) {
-        servoLocker = hardwareMap.get(Servo.class, "locker");
+    public Servos(@NonNull HardwareMap hardwareMap) {
+
+        Servo s1;
+
+        s1 = hardwareMap.get(Servo.class, "trava");
+
+
+        trava = new ServoTaura(s1);
+
+        s1.setDirection(Servo.Direction.FORWARD);
+
 
     }
 
-    public void locking() {
-        servoLocker.setPosition(LOCKING);
+    public void open() {
+
+        trava.setPosition(0);
     }
 
-    public void notLocking() {
-        servoLocker.setPosition(NOT_LOCKING);
-    }
+    public void close() {
+        trava.setPosition(0.50);
 
-    public double getPosition() {
-        return servoLocker.getPosition();
     }
 
 }
