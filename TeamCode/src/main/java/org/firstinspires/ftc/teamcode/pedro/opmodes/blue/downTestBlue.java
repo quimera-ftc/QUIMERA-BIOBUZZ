@@ -14,20 +14,32 @@ import com.pedropathing.ivy.Command;
 import com.pedropathing.ivy.Scheduler;
 import com.pedropathing.math.Pose;
 import com.pedropathing.paths.Path;
+import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.pedro.Constants;
 import org.firstinspires.ftc.teamcode.pedro.subsystems.Intake;
+import org.firstinspires.ftc.teamcode.pedro.subsystems.Servos;
 import org.firstinspires.ftc.teamcode.pedro.subsystems.Shooter;
 import org.firstinspires.ftc.teamcode.pedro.subsystems.Turret;
+import org.firstinspires.ftc.teamcode.pedro.subsystems.Zones;
+import org.firstinspires.ftc.teamcode.pedro.subsystems.subConstants.ShooterCoefficients;
+
+import java.util.List;
 
 @Autonomous
 public class downTestBlue extends OpMode {
 
+    boolean shooterLigado = false;
     Shooter shooter;
     Intake intake;
     Turret turret;
+    Servos servos;
+    Zones zones;
+    Pose currentPoseLocal;
+    List<LynxModule> allHubs;
 
     PoseFactory poseFactory =  PoseFactory.degrees();
 
@@ -38,7 +50,7 @@ public class downTestBlue extends OpMode {
     private final Pose torre = poseFactory.of(78.5051, 8.889, 90);
     private final Pose start =  poseFactory.of(91.0176, 37.9776, 270);
     private final Pose collectStart = poseFactory.of(93.86, 16.61, 270);
-    private  final Pose collect = poseFactory.of(94.04,26.23,270);
+    private  final Pose collect = poseFactory.of(95.11,15.72,270);
     private final  Pose turneStart = poseFactory .of(94.04,26.23,270);
     private final Pose turne = poseFactory.of(91.0176,37.9776,270);
 
@@ -52,9 +64,6 @@ public class downTestBlue extends OpMode {
     }
     public Path COLLECT(){
         return line(collectStart,collect).linear(collectStart,collect);
-    }
-    public  Path TURNE(){
-        return line(turneStart,turne).linear(turneStart,turne);
     }
 
     public Path SHOOT() {
@@ -71,26 +80,52 @@ public class downTestBlue extends OpMode {
         follower = Constants.create(hardwareMap);
         follower.setPose(torre);
 
-        shooter = new Shooter(hardwareMap, intake);
         intake = new Intake(hardwareMap);
+        shooter = new Shooter(hardwareMap, intake);
+        servos = new Servos(hardwareMap);
+
+
         turret = new Turret(hardwareMap, torre, Constants.Alliance.BLUE);
 
+        zones = new Zones(ShooterCoefficients.ALVO_TPS)
+                .addZone(50.96, 91.14, 105.14, 137.71, ShooterCoefficients.ALVO_TPS)
+                .addZone(9.14, 50.96, 105.14, 137.71, ShooterCoefficients.ALVO_TPS_LADO)
+                .addZone(91.14, 132.96, 105.14, 137.71, ShooterCoefficients.ALVO_TPS_LADO)
 
+                .addZone(50.96, 91.14, 6.29, 38.86, ShooterCoefficients.ALVO_TPS)
+                .addZone(9.14, 50.96, 6.29, 38.86, ShooterCoefficients.ALVO_TPS_LADO)
+                .addZone(91.14, 132.96, 6.29, 38.86, ShooterCoefficients.ALVO_TPS_LADO);
 
-
+        allHubs = hardwareMap.getAll(LynxModule.class);
+        for (LynxModule hub : allHubs) {
+            hub.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
+        }
     }
 
-    public void start(){
-//        shooter.powerUp();
+    public void start() {
+        shooterLigado = true;
         Scheduler.schedule(routine());
-    }
+        }
 
 
     @Override
     public void loop() {
+        for (LynxModule hub : allHubs) {
+            hub.clearBulkCache();
+        }
+
         follower.update();
         Scheduler.execute();
         intake.update();
+
+        currentPoseLocal = follower.pose();
+        turret.update(currentPoseLocal);
+
+        shooter.setAlvo(shooterLigado
+                ? zones.getTPS(currentPoseLocal.x(), currentPoseLocal.y())
+                : 0);
+        shooter.update();
+
     }
 
     public Command routine() {
@@ -101,10 +136,13 @@ public class downTestBlue extends OpMode {
                 follow(follower, START()),
                 parallel(
                         follow(follower, COLLECT()),
+                        instant(()-> servos.agroDown()),
+                        waitMs(1000),
                         intake.intakePP()
                 ),
+                instant(()-> servos.agroUp()),
                 instant(() -> intake.stop()),
-                follow(follower,TURNE()),
+
                 follow(follower,SHOOT()),
                         shooter.shootPP(),
                         follow(follower, FIM())
