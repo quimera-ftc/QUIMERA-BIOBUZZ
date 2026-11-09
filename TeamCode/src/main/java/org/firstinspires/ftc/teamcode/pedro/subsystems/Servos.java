@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 public class Servos {
     //right = 1 = bolinha nao passa
     //left = 0 = bolinha passa nao colocar como 0 pra nenhum robo bater e quebrar
-    Servo servoLocker;
+
     Servo flowerRight;
     ServoTaura trava;
     Servo t1;
@@ -19,7 +19,6 @@ public class Servos {
 
 
     public Servos(@NonNull HardwareMap hardwareMap) {
-        servoLocker = hardwareMap.get(Servo.class, "locker");
         flowerRight = hardwareMap.get(Servo.class, "flowerRight");
         t1 = hardwareMap.get(Servo.class, "trava");
 
@@ -32,17 +31,11 @@ public class Servos {
     }
 
 
-    public void locking() {
-        servoLocker.setPosition(LOCKING);
-    }
 
-    public void notLocking() {
-        servoLocker.setPosition(NOT_LOCKING);
-    }
 
-    public double getPosition() {
-        return servoLocker.getPosition();
-    }
+
+
+
 
     public void agroUp() {
         flowerRight.setPosition(UP_RIGHT);

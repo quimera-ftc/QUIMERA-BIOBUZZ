@@ -24,6 +24,7 @@ import org.firstinspires.ftc.teamcode.pedro.subsystems.subConstants.ShooterCoeff
 public class Shooter {
 
     Intake intake;
+    Servos servos;
 
     public DcMotorEx rs, ls;
     VoltageCompensator voltageController;
@@ -43,6 +44,7 @@ public class Shooter {
     public Shooter(@NonNull HardwareMap hardwareMap, Telemetry telemetry) {
         ls = hardwareMap.get(DcMotorEx.class, "ls");
         rs = hardwareMap.get(DcMotorEx.class, "rs");
+        servos = new Servos(hardwareMap);
 
         ls.setDirection(DcMotorSimple.Direction.REVERSE);
         rs.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -62,6 +64,7 @@ public class Shooter {
     public Shooter(HardwareMap hardwareMap, Telemetry telemetry, Intake intake) {
         this(hardwareMap, telemetry);
         this.intake = intake;
+        servos = new Servos(hardwareMap);
 
         ls.setDirection(DcMotorEx.Direction.REVERSE);
         rs.setDirection(DcMotorEx.Direction.FORWARD);
@@ -77,6 +80,7 @@ public class Shooter {
 
     public Shooter(HardwareMap hardwareMap, Intake intake) {
         this(hardwareMap);
+        servos = new Servos(hardwareMap);
         this.intake = intake;
 
         ls.setDirection(DcMotorEx.Direction.REVERSE);
@@ -94,6 +98,7 @@ public class Shooter {
     public Shooter(HardwareMap hardwareMap) {
         ls = hardwareMap.get(DcMotorEx.class, "ls");
         rs = hardwareMap.get(DcMotorEx.class, "rs");
+        servos = new Servos(hardwareMap);
 
         ls.setDirection(DcMotorEx.Direction.REVERSE);
         rs.setDirection(DcMotorEx.Direction.FORWARD);
@@ -115,11 +120,12 @@ public class Shooter {
     //metodo p shootar no autooooo
     public Command shootPP() {
         return sequential(
+                instant(()-> servos.open()),
                 instant(() -> intake.in(IntakeConstants.intakeShooting)),
                 waitMs(1000),
-                instant(() -> {
-                    intake.stop();
-                })
+
+
+                instant(() -> intake.stop())
         );
     }
 
@@ -128,10 +134,13 @@ public class Shooter {
     public void stop() {
         rs.setPower(0);
         ls.setPower(0);
+        servos.close();
+
         isOn = false;
     }
 
     public void setAlvo(double tps) {
+        servos.open();
         alvoTps = tps;
 
         if (tps > 0) {

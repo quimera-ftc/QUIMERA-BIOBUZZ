@@ -12,20 +12,8 @@ public class servoTesting extends OpMode {
 
     @Override
     public void loop() {
-        if (gamepad1.aWasPressed()) {
-            locker.locking();
-        }
-
-        if (gamepad1.bWasPressed()) {
-            locker.notLocking();
-        }
     }
-
-    @Override
-    public void init() {
-
-        locker = new Servos(hardwareMap);
-
+    public void init(){
 
     }
 }
