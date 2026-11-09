@@ -50,7 +50,7 @@ public class downTestBlue extends OpMode {
     private final Pose torre = poseFactory.of(78.5051, 8.889, 90);
     private final Pose start =  poseFactory.of(91.0176, 37.9776, 270);
     private final Pose collectStart = poseFactory.of(93.86, 16.61, 270);
-    private  final Pose collect = poseFactory.of(95.11,15.72,270);
+    private  final Pose collect = poseFactory.of(94.75,22.49,270);
     private final  Pose turneStart = poseFactory .of(94.04,26.23,270);
     private final Pose turne = poseFactory.of(91.0176,37.9776,270);
 
@@ -137,7 +137,6 @@ public class downTestBlue extends OpMode {
                 parallel(
                         follow(follower, COLLECT()),
                         instant(()-> servos.agroDown()),
-                        waitMs(1000),
                         intake.intakePP()
                 ),
                 instant(()-> servos.agroUp()),
