@@ -36,7 +36,8 @@ public class downTestBlue extends OpMode {
     Shooter shooter;
     Intake intake;
     Turret turret;
-    Servos servos;
+    Servos agro;
+
     Zones zones;
     Pose currentPoseLocal;
     List<LynxModule> allHubs;
@@ -48,43 +49,46 @@ public class downTestBlue extends OpMode {
     private Follower follower;
 
     private final Pose torre = poseFactory.of(78.5051, 8.889, 90);
-    private final Pose start =  poseFactory.of(91.0176, 37.9776, 270);
-    private final Pose collectStart = poseFactory.of(93.86, 16.61, 270);
-    private  final Pose collect = poseFactory.of(94.75,22.49,270);
-    private final  Pose turneStart = poseFactory .of(94.04,26.23,270);
-    private final Pose turne = poseFactory.of(91.0176,37.9776,270);
 
-    private final Pose shootStart = poseFactory.of(93.8607, 16.6075, 270);
+    private final Pose start =  poseFactory.of(91.0176, 37.9776, 270);
+
+//    private final Pose collectStart = poseFactory.of(93.86, 16.61, 270);
+    private  final Pose collect = poseFactory.of(94.9311,20.5272,270);
+
+//    private final  Pose turneStart = poseFactory .of(94.04,26.23,270);
+
+//    private final Pose turne = poseFactory.of(91.0176,37.9776,270);
+
+//    private final Pose shootStart = poseFactory.of(93.8607, 16.6075, 270);
    private final Pose  shoot = poseFactory.of(78.63,9.73,90);
-    private final Pose fimStart = poseFactory.of(78.6305, 9.7349, 90);
+
+//    private final Pose fimStart = poseFactory.of(78.6305, 9.7349, 90);
    private final Pose fim = poseFactory.of(129.45,17.79,90);
 
     public Path START(){
         return line(torre,start).linear(torre,start);
     }
     public Path COLLECT(){
-        return line(collectStart,collect).linear(collectStart,collect);
+        return line(start,collect).linear(start,collect);
     }
 
     public Path SHOOT() {
-        return line(shootStart, shoot).linear(shootStart, shoot);
+        return line(collect, shoot).linear(collect, shoot);
     }
     public Path FIM(){
-        return line(fimStart,fim).linear(fimStart, fim);
+        return line(shoot,fim).linear(shoot, fim);
     }
 
 
 
-    public void init(){
+    public void init() {
         Scheduler.reset();
         follower = Constants.create(hardwareMap);
         follower.setPose(torre);
 
         intake = new Intake(hardwareMap);
         shooter = new Shooter(hardwareMap, intake);
-        servos = new Servos(hardwareMap);
-
-
+        agro = new Servos(hardwareMap);
         turret = new Turret(hardwareMap, torre, Constants.Alliance.BLUE);
 
         zones = new Zones(ShooterCoefficients.ALVO_TPS)
@@ -136,15 +140,15 @@ public class downTestBlue extends OpMode {
                 follow(follower, START()),
                 parallel(
                         follow(follower, COLLECT()),
-                        instant(()-> servos.agroDown()),
                         intake.intakePP()
                 ),
-                instant(()-> servos.agroUp()),
-                instant(() -> intake.stop()),
+                waitMs(1500),
+                intake.intakestopPP(),
 
                 follow(follower,SHOOT()),
                         shooter.shootPP(),
-                        follow(follower, FIM())
+                        follow(follower, FIM()),
+                        instant(() -> shooterLigado = false)
 
                 ), turret.autoaim(follower::pose));
     }
