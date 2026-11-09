@@ -23,7 +23,7 @@ import java.util.List;
 @TeleOp(name="TELEOP_RED_TOP", group="Red")
 public class teleop_RED_TOP extends OpMode {
     Intake intake;
-    Servos agro;
+    Servos servos;
     DriveTrain driveTrain;
     Shooter shooter;
     Turret turret;
@@ -39,14 +39,14 @@ public class teleop_RED_TOP extends OpMode {
         follower = Constants.create(hardwareMap);
         turret = new Turret(hardwareMap, startPose, Constants.Alliance.BLUE);
         driveTrain = new DriveTrain(hardwareMap, gamepad1);
-        agro = new Servos(hardwareMap);
+        servos = new Servos(hardwareMap);
         intake = new Intake(hardwareMap);
         shooter = new Shooter(hardwareMap, intake);
         voltageController = new VoltageCompensator(hardwareMap);
 
 
         turret.resetEncoder();
-        agro.open();
+        servos.agroUp();
         follower.setPose(startPose);
 
         zones = new Zones(Constants.ShooterCoefficients.ALVO_TPS)

@@ -29,7 +29,7 @@ public class TestMechanisms extends OpMode {
     DriveTrain driveTrain;
     Turret turret;
     Shooter shooter;
-    Servos agro;
+    Servos servos;
     Follower follower;
     Zones zones;
     Pose startPose = new Pose(132.6505617977528, 133.92247191011242, Math.toRadians(270));
@@ -48,8 +48,8 @@ public class TestMechanisms extends OpMode {
         driveTrain = new DriveTrain(hardwareMap, gamepad1);
         shooter = new Shooter(hardwareMap, telemetry, intake);
         turret = new Turret(hardwareMap, startPose, Constants.Alliance.BLUE);
-        agro = new Servos(hardwareMap);
-       agro.open();
+        servos = new Servos(hardwareMap);
+
         follower.setPose(new Pose(132.6505617977528, 133.92247191011242, Math.toRadians(270)));
         turret.resetEncoder();
 
@@ -66,6 +66,10 @@ public class TestMechanisms extends OpMode {
         for (LynxModule hub : allHubs) {
             hub.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
         }
+    }
+
+    public void start() {
+        servos.agroUp();
     }
 
     @Override
@@ -93,9 +97,9 @@ public class TestMechanisms extends OpMode {
         if (gamepad1.xWasPressed()) {
 
             if (!flower) {
-                agro.open();
+                servos.agroUp();
             } else {
-                agro.close();
+                servos.agroDown();
             }
 
             flower = !flower;
