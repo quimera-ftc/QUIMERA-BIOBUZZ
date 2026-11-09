@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.teamcode.pedro.subsystems.subConstants;
 
 public class IntakeConstants {
-    public static double intakeShooting = 0.85;
+    public static double intakeShooting = 0.95;
     public static double intakeCollecting = 1.0;
     public static double intakeIdle = 0;
 }
