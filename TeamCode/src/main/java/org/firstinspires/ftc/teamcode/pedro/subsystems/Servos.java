@@ -8,7 +8,7 @@ public class Servos {
     //left = 0 = bolinha passa nao colocar como 0 pra nenhum robo bater e quebrar
     Servo servoLocker;
     Servo flowerRight;
-    public final double LOCKING = 1, DOWN_RIGHT = 0.75;
+    public final double LOCKING = 1, DOWN_RIGHT = 0.70;
     public final double UP_RIGHT = 0;
     public final double NOT_LOCKING = 0.60;
 
