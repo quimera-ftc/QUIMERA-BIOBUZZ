@@ -49,13 +49,13 @@ public class teleop_RED_DOWN extends OpMode {
         follower.setPose(startPose);
 
         zones = new Zones(Constants.ShooterCoefficients.ALVO_TPS)
-                .addZone(50.96, 91.14, 105.14, 137.71, ShooterCoefficients.ALVO_TPS)
-                .addZone(9.14, 50.96, 105.14, 137.71, ShooterCoefficients.ALVO_TPS_LADO)
-                .addZone(91.14, 132.96, 105.14, 137.71, ShooterCoefficients.ALVO_TPS_LADO)
+                .addZone(34.20, 83.24, 96.00, 144.00, ShooterCoefficients.ALVO_TPS)
+                .addZone(0.00, 34.20, 96.00, 144.00, ShooterCoefficients.ALVO_TPS_LADO)
+                .addZone(83.63, 144.00, 96.00, 144.00, ShooterCoefficients.ALVO_TPS_AWAY)
 
-                .addZone(50.96, 91.14, 6.29, 38.86, ShooterCoefficients.ALVO_TPS)
-                .addZone(9.14, 50.96, 6.29, 38.86, ShooterCoefficients.ALVO_TPS_LADO)
-                .addZone(91.14, 132.96, 6.29, 38.86, ShooterCoefficients.ALVO_TPS_LADO);
+                .addZone(60.76, 109.80, 96.00, 144.00, ShooterCoefficients.ALVO_TPS)
+                .addZone(109.80, 144.00, 96.00, 144.00, ShooterCoefficients.ALVO_TPS_LADO)
+                .addZone(0.00, 60.37, 96.00, 144.00, ShooterCoefficients.ALVO_TPS_AWAY);
 
         allHubs = hardwareMap.getAll(LynxModule.class);
         for (LynxModule hub : allHubs) {

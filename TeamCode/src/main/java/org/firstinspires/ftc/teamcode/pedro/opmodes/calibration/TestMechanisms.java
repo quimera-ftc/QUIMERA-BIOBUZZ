@@ -54,13 +54,13 @@ public class TestMechanisms extends OpMode {
         turret.resetEncoder();
 
         zones = new Zones(ShooterCoefficients.IDLE_TPS)
-                .addZone(50.96,  91.14, 105.14, 137.71, ShooterCoefficients.ALVO_TPS)
-                .addZone( 9.14,  50.96, 105.14, 137.71, ShooterCoefficients.ALVO_TPS_LADO)
-                .addZone(91.14, 132.96, 105.14, 137.71, ShooterCoefficients.ALVO_TPS_LADO)
+                .addZone(57.88,107.45,95.41,144.00, ShooterCoefficients.ALVO_TPS)
+                .addZone(107.45,141.50,95.41,138.87, ShooterCoefficients.ALVO_TPS_LADO)
+                .addZone(0.00, 57.88, 95.41, 144.00, ShooterCoefficients.ALVO_TPS_AWAY)
 
-                .addZone(50.96,  91.14, 6.29, 38.86, ShooterCoefficients.ALVO_TPS)
-                .addZone( 9.14,  50.96, 6.29, 38.86, ShooterCoefficients.ALVO_TPS_LADO)
-                .addZone(91.14, 132.96, 6.29, 38.86, ShooterCoefficients.ALVO_TPS_LADO);
+                .addZone(57.88, 107.45, 0.00, 48.59, ShooterCoefficients.ALVO_TPS)
+                .addZone(107.45, 141.50, 5.13, 48.59, ShooterCoefficients.ALVO_TPS_LADO)
+                .addZone(0.00, 57.88, 0.00, 48.59, ShooterCoefficients.ALVO_TPS_AWAY);
 
         allHubs = hardwareMap.getAll(LynxModule.class);
         for (LynxModule hub : allHubs) {
@@ -104,6 +104,10 @@ public class TestMechanisms extends OpMode {
 
             flower = !flower;
 
+        }
+
+        if (gamepad1.yWasPressed()) {
+            intake.toggleReversed(IntakeConstants.intakeCollecting);
         }
 
         if (gamepad1.right_trigger > 0.5) {
