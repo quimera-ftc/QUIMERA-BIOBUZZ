@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.pedro.subsystems;
 
+import static org.firstinspires.ftc.teamcode.pedro.Constants.movimentSpeed;
+
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -92,10 +94,10 @@ public class DriveTrain {
         strafe = rampaStrafe.calcular(strafe);    // NOVO
         spin   = rampaSpin.calcular(spin);
 
-        frontLeft.setPower(frontLeftPower);
-        frontRight.setPower(frontRightPower);
-        backLeft.setPower(backLeftPower);
-        backRight.setPower(backRightPower);
+        frontLeft.setPower(frontLeftPower * movimentSpeed);
+        frontRight.setPower(frontRightPower * movimentSpeed);
+        backLeft.setPower(backLeftPower * movimentSpeed);
+        backRight.setPower(backRightPower * movimentSpeed);
 
         telemetry.addData("current fl", frontLeft.getCurrent(CurrentUnit.AMPS));
         telemetry.addData("current fr", frontRight.getCurrent(CurrentUnit.AMPS));

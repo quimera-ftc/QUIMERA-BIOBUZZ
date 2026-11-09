@@ -31,8 +31,6 @@ public class Shooter {
     private double alvoTps = 0;
     private double medidoTps = 0;
     private boolean encoderOff = false;
-    public double maxpower = 0.86, minpower = 0;
-    public double start, now;
     boolean isOn = false;
     public boolean isShooting = false;
     private VoltageSensor bateria;
@@ -64,25 +62,47 @@ public class Shooter {
     public Shooter(HardwareMap hardwareMap, Telemetry telemetry, Intake intake) {
         this(hardwareMap, telemetry);
         this.intake = intake;
+
+        ls.setDirection(DcMotorEx.Direction.REVERSE);
+        rs.setDirection(DcMotorEx.Direction.FORWARD);
+
+        ls.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+        rs.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+
+        ls.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.FLOAT);
+        rs.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.FLOAT);
+
+        voltageController = new VoltageCompensator(hardwareMap);
     }
 
     public Shooter(HardwareMap hardwareMap, Intake intake) {
         this(hardwareMap);
         this.intake = intake;
+
+        ls.setDirection(DcMotorEx.Direction.REVERSE);
+        rs.setDirection(DcMotorEx.Direction.FORWARD);
+
+        ls.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+        rs.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+
+        ls.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.FLOAT);
+        rs.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.FLOAT);
+
+        voltageController = new VoltageCompensator(hardwareMap);
     }
 
     public Shooter(HardwareMap hardwareMap) {
         ls = hardwareMap.get(DcMotorEx.class, "ls");
         rs = hardwareMap.get(DcMotorEx.class, "rs");
 
-        ls.setDirection(DcMotorSimple.Direction.REVERSE);
-        rs.setDirection(DcMotorSimple.Direction.REVERSE);
+        ls.setDirection(DcMotorEx.Direction.REVERSE);
+        rs.setDirection(DcMotorEx.Direction.FORWARD);
 
-        ls.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        rs.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        ls.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+        rs.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
 
-        ls.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-        rs.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        ls.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.FLOAT);
+        rs.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.FLOAT);
 
         intake = new Intake(hardwareMap);
         voltageController = new VoltageCompensator(hardwareMap);
@@ -91,12 +111,6 @@ public class Shooter {
         return isOn;
     }
 
-    public void powerUp() {
-        rs.setPower(maxpower);
-        ls.setPower(maxpower);
-
-        isOn = true;
-    }
 
     //metodo p shootar no autooooo
     public Command shootPP() {

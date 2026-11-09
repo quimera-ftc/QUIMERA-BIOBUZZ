@@ -9,6 +9,6 @@ public class ShooterCoefficients {
     public static double kP = 0.0005;
     public static double READY_TOL = 50;
     public static double IDLE_TPS = 900;
-    public static double ALVO_TPS = 1310;
+    public static double ALVO_TPS = 1910;  //1310
     public static double ALVO_TPS_LADO = 1475;
 }
