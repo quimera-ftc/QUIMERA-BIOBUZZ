@@ -35,7 +35,7 @@ public class autoTestNataa extends OpMode {
 
     Shooter shooter;
     Intake intake;
-    Servos agro;
+    Servos servo;
     Turret turret;
     PoseFactory poseFactory = PoseFactory.degrees();
     private Follower follower;
@@ -44,11 +44,11 @@ public class autoTestNataa extends OpMode {
     List<LynxModule> allHubs;
 
     Pose startingPoint = poseFactory.of(86.06466512702079,134.1431469720298,0);
-    Pose collect1 = poseFactory.of(127.97337962962962, 131.97106481481478, 0);
+    Pose collect1 = poseFactory.of(128.97337962962962, 132.37106481481478, 0);
     Pose shoot2 = poseFactory.of(114.01981481481482, 17.932870370370395, 72);
-    Pose collect2 = poseFactory.of(103.44675925925927, 15.232638888888886, 250);
+    Pose collect2 = poseFactory.of(103.44675925925927, 13.832638888888886, 250);
     Pose shoot3 = poseFactory.of(114.01981481481482, 17.932870370370395, 70);
-    Pose collect3 = poseFactory.of(127.5388888888889, 96.13055555555556, 0);
+    Pose collect3 = poseFactory.of(128.0388888888889, 96.13055555555556, 0);
     Pose shoot4 = poseFactory.of(104.5462962962963, 125.4074074074074, 300);
     Pose park = poseFactory.of(132.12685185185188, 51.289675925925924, 270);
 
@@ -83,8 +83,9 @@ public class autoTestNataa extends OpMode {
 
         intake = new Intake(hardwareMap);
         shooter = new Shooter(hardwareMap, intake);
-        agro = new Servos(hardwareMap);
+        servo = new Servos(hardwareMap);
         turret = new Turret(hardwareMap, startingPoint, Constants.Alliance.BLUE);
+        turret.resetEncoder();
 
         zones = new Zones(ShooterCoefficients.ALVO_TPS)
                 .addZone(50.96, 91.14, 105.14, 137.71, ShooterCoefficients.ALVO_TPS)
@@ -129,7 +130,8 @@ public class autoTestNataa extends OpMode {
     public Command routine() {
         return parallel(
                 sequential(
-                        waitMs(2000),
+                        instant(() ->servo.agroDown()),
+                        waitMs(3000),
                         shooter.shootPP(),
                         parallel(
                                 follow(follower, START_TO_COLLECT1()),
