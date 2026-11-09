@@ -20,6 +20,7 @@ import androidx.annotation.NonNull;
 import com.pedropathing.ivy.Command;
 import com.pedropathing.math.Pose;
 import com.qualcomm.hardware.limelightvision.LLResult;
+import com.qualcomm.hardware.limelightvision.LLResultTypes;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -27,9 +28,11 @@ import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.teamcode.pedro.Constants;
 import org.firstinspires.ftc.teamcode.pedro.math.TurretController;
+import org.firstinspires.ftc.teamcode.pedro.subsystems.subConstants.TurretConstants;
 
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 
+import java.util.List;
 import java.util.function.Supplier;
 
 public class Turret{
@@ -42,6 +45,7 @@ public class Turret{
     ElapsedTime timer = new ElapsedTime();
     double currentTime = 0;
     Mode mode = Mode.IDLE;
+    int[] aprilTags;
     public enum Mode {
         IDLE,
         TRACKING,
@@ -49,6 +53,10 @@ public class Turret{
     }
     public Turret(@NonNull HardwareMap hardwareMap, @NonNull Pose startPose, @NonNull Constants.Alliance alliance) {
         motor = hardwareMap.get(DcMotorEx.class, "tower");
+
+        if (alliance == Constants.Alliance.BLUE) {
+            aprilTags = TurretConstants.tagsBLUE;
+        } else aprilTags = TurretConstants.tagsRED;
 
         currentPose = startPose;
         this.alliance = alliance;
@@ -234,6 +242,15 @@ public class Turret{
         LLResult result = limelight.getLatestResult();
 
         if (result != null && result.isValid() && dtLL > 0) {
+
+            List<LLResultTypes.FiducialResult> fiducialResults = result.getFiducialResults();
+
+            for (LLResultTypes.FiducialResult res: fiducialResults) {
+                if (!validAprilTag(res.getFiducialId())) {
+                    return 0;
+                }
+            }
+
             double errorLL = result.getTx() - goalX;
 
             if (Math.abs(errorLL) > angleToleranceLL) {
@@ -243,6 +260,15 @@ public class Turret{
             }
         }
         return offsetLL;
+    }
+
+    public boolean validAprilTag(int id) {
+        for (int tag: aprilTags) {
+            if (tag == id) {
+                return true;
+            };
+        }
+        return  false;
     }
 
     public void resetLimelightOffset() {

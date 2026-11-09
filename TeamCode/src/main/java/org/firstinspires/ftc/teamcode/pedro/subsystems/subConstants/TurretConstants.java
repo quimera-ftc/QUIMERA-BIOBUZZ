@@ -4,6 +4,10 @@ import com.acmerobotics.dashboard.config.Config;
 
 @Config
 public class TurretConstants {
+
+    public static int[] tagsBLUE = {38, 39, 40, 41, 42, 43, 44, 45};
+    public static int[] tagsRED = {32, 33, 31, 30, 34, 35, 36, 37};
+
     public static double OFFSET_Y = -1.772;
     public static double OFFSET_X = 0.000;
     public static double LIMIT_SPIN = 130;
