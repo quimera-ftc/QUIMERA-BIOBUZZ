@@ -44,7 +44,6 @@ public class teleop_BLUE_TOP extends OpMode {
         shooter = new Shooter(hardwareMap, intake);
         voltageController = new VoltageCompensator(hardwareMap);
 
-        turret.resetEncoder();
         servos.agroUp();
         follower.setPose(startPose);
 
