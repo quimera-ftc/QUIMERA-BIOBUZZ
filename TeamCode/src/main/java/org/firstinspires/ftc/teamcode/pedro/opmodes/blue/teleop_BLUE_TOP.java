@@ -1,6 +1,8 @@
 
 package org.firstinspires.ftc.teamcode.pedro.opmodes.blue;
 
+import static org.firstinspires.ftc.teamcode.pedro.subsystems.subConstants.TurretConstants.MANUAL_POWER;
+
 import com.pedropathing.follower.Follower;
 import com.pedropathing.math.Pose;
 import com.qualcomm.hardware.lynx.LynxModule;
@@ -99,9 +101,9 @@ public class teleop_BLUE_TOP extends OpMode {
 
 
         if (gamepad1.right_bumper) {
-            turret.setManualPower(0.75);
+            turret.setManualPower(MANUAL_POWER);
         } else if (gamepad1.left_bumper) {
-            turret.setManualPower(-0.75);
+            turret.setManualPower(-MANUAL_POWER);
         } else turret.setManualPower(0);
 
         if (gamepad1.dpadRightWasPressed()) {
@@ -117,8 +119,6 @@ public class teleop_BLUE_TOP extends OpMode {
         shooter.update();
         intake.update();
 
-        shooter.telemetriaTeste(telemetry);
-        telemetry.addData("intake", "%s (potência %.2f)", intake.isOn() ? "LIGADO" : "DESLIGADO", intake.intake.getPower());
         telemetry.update();
     }
 

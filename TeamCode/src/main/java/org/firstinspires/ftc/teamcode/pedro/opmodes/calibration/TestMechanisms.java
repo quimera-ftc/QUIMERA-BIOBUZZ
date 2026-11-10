@@ -69,6 +69,7 @@ public class TestMechanisms extends OpMode {
     }
 
     public void start() {
+        turret.setMode(Turret.Mode.MANUAL);
         servos.agroUp();
     }
 
@@ -125,12 +126,18 @@ public class TestMechanisms extends OpMode {
             turret.setManualPower(-0.75);
         } else turret.setManualPower(0);
 
-        if (gamepad1.dpadRightWasPressed()) {
+        if (gamepad1.dpadDownWasPressed()) {
 
             if (turret.getMode() == Turret.Mode.MANUAL) {
                 turret.setMode(Turret.Mode.TRACKING);
             } else turret.setMode(Turret.Mode.MANUAL);
 
+        }
+
+        if (gamepad1.dpad_right) {
+            turret.correct(1);
+        } else if (gamepad1.dpad_left) {
+            turret.correct(-1);
         }
 
         shooter.update();
@@ -155,6 +162,7 @@ public class TestMechanisms extends OpMode {
         telemetry.addData("Turret X", turretPose.x());
         telemetry.addData("Turret Y", turretPose.y());
         telemetry.addData("target", target);
+        telemetry.addData("correction", turret.getZeroTicks());
         telemetry.addData("deslocamento (Raw)", turret.getRawAngle());
         telemetry.addData("Erro Atual", turret.getDistanceToTarget());
         telemetry.addData("lime offset", turret.getLimeLightOffset());
