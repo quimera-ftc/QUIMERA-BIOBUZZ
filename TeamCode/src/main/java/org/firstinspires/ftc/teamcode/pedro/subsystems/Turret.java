@@ -40,7 +40,7 @@ public class Turret{
     public final DcMotorEx motor;
     private double lastError = 0, lastTime = 0, lastFilteredDerivative = 0;
     private double integral = 0;
-    private int zeroTicks = 0;
+    private double zeroTicks = 0;
     private final Constants.Alliance alliance;
     private Pose currentPose;
     private final ElapsedTime timer = new ElapsedTime();
@@ -194,15 +194,15 @@ public class Turret{
     }
 
     public void setReference(double deg) {
-        zeroTicks = motor.getCurrentPosition() - (int) (deg * ticksPerDegree);
+        zeroTicks = motor.getCurrentPosition() - (deg * ticksPerDegree);
     }
 
     public void correct(double deg) {
-        zeroTicks -= (int) (deg * ticksPerDegree);
+        zeroTicks -= deg * ticksPerDegree;
     }
 
-    public double getAbsoluteAngle() {
-        return Math.toDegrees(currentPose.heading()) + getRawAngle();
+    public double getZeroTicks() {
+        return zeroTicks;
     }
 
     public void resetEncoder() {
