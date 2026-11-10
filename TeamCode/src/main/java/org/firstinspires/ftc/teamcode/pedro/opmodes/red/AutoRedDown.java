@@ -1,3 +1,4 @@
+
 package org.firstinspires.ftc.teamcode.pedro.opmodes.red;
 
 import static com.pedropathing.api.Paths.curve;
@@ -17,123 +18,147 @@ import com.pedropathing.paths.Path;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.pedro.Constants;
 import org.firstinspires.ftc.teamcode.pedro.subsystems.Intake;
+import org.firstinspires.ftc.teamcode.pedro.subsystems.Servos;
 import org.firstinspires.ftc.teamcode.pedro.subsystems.Shooter;
+import org.firstinspires.ftc.teamcode.pedro.subsystems.Turret;
+import org.firstinspires.ftc.teamcode.pedro.subsystems.Zones;
+import org.firstinspires.ftc.teamcode.pedro.subsystems.subConstants.ShooterCoefficients;
 
 import java.util.List;
 
-@Autonomous
+    @Autonomous
+    public class AutoRedDown extends OpMode {
 
-public class AutoRedDown extends OpMode {
+        boolean shooterLigado = false;
+        Shooter shooter;
+        Intake intake;
+        Turret turret;
+        Servos agro;
 
-    Shooter shooter;
-    Intake intake;
+        Zones zones;
+        Pose currentPoseLocal;
+        List<LynxModule> allHubs;
 
-    PoseFactory poseFactory = PoseFactory.degrees().mirrorX(70.75).mirrorY(70.75);
-    private Follower follower;
-
-    List<LynxModule> allHubs;
-
-
-    Pose start = poseFactory.of(83.58,103.36,270);
-    Pose collect = poseFactory.of(47.08,128.10,90);
-    Pose  shoot = poseFactory.of(47.71,111.39,270);
-    Pose front = poseFactory.of(58.67,10.22,180);
-    Pose collect2 = poseFactory.of(8.912,7.02,180);
-    Pose  diagonal  = poseFactory.of(26.32,47.38,180);
-    Pose collect3 = poseFactory.of(12.06,47.23,180);
-    Pose shoot2 = poseFactory.of(8.912,7.02,180);
-
-    public Path START_TO_COLLECT(){
-        return line(start,collect).linear(start,collect);
-    }
-    public Path COLLECT_TO_SHOOT(){
-        return line(collect,shoot).linear(collect,shoot);
-    }
-
-    public Path SHOOT_TO_FRONT(){
-        return line(shoot,front).linear(shoot,front);
-    }
-    public Path FRONT_TO_COLLECT2(){
-        return line(front,collect2).linear(front,collect2);
-    }
-    public Path COLLECT2_TO_DIAGONAL(){
-        return line(collect2,diagonal).linear(collect2,diagonal);
-    }
-    public  Path DIAGONAL_TO_COLLECT3(){
-        return line(diagonal,collect3).linear(diagonal,collect3);
-    }
-    public Path COLLECT_TO_SHOOT2(){
-        return line(collect3,shoot2).linear(collect3,shoot2);
-    }
+        PoseFactory poseFactory =  PoseFactory.degrees();
 
 
-    public void init(){
-        Scheduler.reset();
-        follower = Constants.create(hardwareMap);
-        follower.setPose(start);
 
-        shooter = new Shooter(hardwareMap, intake);
-        intake = new Intake(hardwareMap);
+        private Follower follower;
 
-        allHubs = hardwareMap.getAll(LynxModule.class);
-        for (LynxModule hub : allHubs) {
-            hub.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
+        private final Pose torre = poseFactory.of(8.889, 78.5051, 0);
+
+        private final Pose start = poseFactory.of(37.9776, 91.0176, 180);
+
+  //    private final Pose collectStart = poseFactory.of(16.61, 93.86, 180);
+        private final Pose collect = poseFactory.of(20.5272, 94.9311, 180);
+
+//      private final Pose turneStart = poseFactory.of(26.23, 94.04, 180);
+
+//      private final Pose turne = poseFactory.of(37.9776, 91.0176, 180);
+
+  //    private final Pose shootStart = poseFactory.of(16.6075, 93.8607, 180);
+        private final Pose shoot = poseFactory.of(9.73, 78.63, 0);
+
+  //    private final Pose fimStart = poseFactory.of(9.7349, 78.6305, 0);
+        private final Pose fim = poseFactory.of(17.79, 129.45, 0);
+
+        public Path START(){
+            return line(torre,start).linear(torre,start);
+        }
+        public Path COLLECT(){
+            return line(start,collect).linear(start,collect);
+        }
+
+        public Path SHOOT() {
+            return line(collect, shoot).linear(collect, shoot);
+        }
+        public Path FIM(){
+            return line(shoot,fim).linear(shoot, fim);
+        }
+
+
+
+        public void init() {
+            Scheduler.reset();
+            follower = Constants.create(hardwareMap);
+            follower.setPose(torre);
+
+            intake = new Intake(hardwareMap);
+            shooter = new Shooter(hardwareMap, intake);
+            agro = new Servos(hardwareMap);
+            turret = new Turret(hardwareMap, torre, Constants.Alliance.RED);
+
+            zones = new Zones(ShooterCoefficients.ALVO_TPS)
+                    .addZone(50.96, 91.14, 105.14, 137.71, ShooterCoefficients.ALVO_TPS)
+                    .addZone(9.14, 50.96, 105.14, 137.71, ShooterCoefficients.ALVO_TPS_LADO)
+                    .addZone(91.14, 132.96, 105.14, 137.71, ShooterCoefficients.ALVO_TPS_LADO)
+
+                    .addZone(50.96, 91.14, 6.29, 38.86, ShooterCoefficients.ALVO_TPS)
+                    .addZone(9.14, 50.96, 6.29, 38.86, ShooterCoefficients.ALVO_TPS_LADO)
+                    .addZone(91.14, 132.96, 6.29, 38.86, ShooterCoefficients.ALVO_TPS_LADO);
+
+            allHubs = hardwareMap.getAll(LynxModule.class);
+            for (LynxModule hub : allHubs) {
+                hub.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
+            }
+        }
+
+        public void start() {
+            shooterLigado = true;
+            Scheduler.schedule(routine());
+        }
+
+
+        @Override
+        public void loop() {
+            for (LynxModule hub : allHubs) {
+                hub.clearBulkCache();
+            }
+
+            follower.update();
+            Scheduler.execute();
+            intake.update();
+
+            currentPoseLocal = follower.pose();
+            turret.update(currentPoseLocal);
+
+            shooter.setAlvo(shooterLigado
+                    ? zones.getTPS(currentPoseLocal.x(), currentPoseLocal.y())
+                    : 0);
+            shooter.update();
+
+        }
+
+        public Command routine() {
+            return parallel(
+                    sequential(
+                            waitMs(5000),
+                            shooter.shootPP(),
+                            follow(follower, START()),
+                            parallel(
+                                    follow(follower, COLLECT()),
+                                    intake.intakePP()
+                            ),
+                            waitMs(1500),
+                            intake.intakestopPP(),
+
+                            follow(follower,SHOOT()),
+                            shooter.shootPP(),
+                            follow(follower, FIM()),
+                            instant(() -> shooterLigado = false)
+
+                    ), turret.autoaim(follower::pose));
         }
     }
 
-    public void start(){
-//        shooter.powerUp();
-        Scheduler.schedule(routine());
-    }
 
 
-    @Override
-    public void loop() {
-        follower.update();
-        Scheduler.execute();
-        intake.update();
 
-        for (LynxModule hub : allHubs) {
-            hub.clearBulkCache();
-        }
-    }
 
-    public Command routine() {
-        return sequential(
-                waitMs(2000),
-                shooter.shootPP(),
-                follow(follower, START_TO_COLLECT()),
-                parallel(
-                        follow(follower, COLLECT_TO_SHOOT()),
-                        intake.intakePP()
-                ),
-                instant(() -> intake.stop()),
-                follow(follower,SHOOT_TO_FRONT()),
-                shooter.shootPP(),
 
-                follow(follower,SHOOT_TO_FRONT()),
-                parallel(
-                        follow(follower,FRONT_TO_COLLECT2()),
-                        intake.intakePP()
-                ),
-                instant(() -> intake.stop()),
-                shooter.shootPP(),
-
-                follow(follower,COLLECT2_TO_DIAGONAL()),
-                parallel(
-                        follow(follower,DIAGONAL_TO_COLLECT3()),
-                        intake.intakePP()
-                ),
-                instant(() -> intake.stop()),
-                shooter.shootPP(),
-                follow(follower,COLLECT_TO_SHOOT2())
-
-        );
-    }
-
-}
 
 

@@ -1,8 +1,14 @@
 package org.firstinspires.ftc.teamcode.pedro.opmodes.calibration;
 
+import static com.pedropathing.ivy.commands.Commands.instant;
+import static com.pedropathing.ivy.commands.Commands.waitMs;
+import static com.pedropathing.ivy.groups.Groups.race;
+import static com.pedropathing.ivy.groups.Groups.sequential;
+
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.pedropathing.follower.Follower;
+import com.pedropathing.ivy.Scheduler;
 import com.pedropathing.math.Pose;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
@@ -75,6 +81,7 @@ public class TestMechanisms extends OpMode {
 
     @Override
     public void loop() {
+        Scheduler.execute();
         for (LynxModule hub : allHubs) {
             hub.clearBulkCache();
         }
@@ -93,6 +100,28 @@ public class TestMechanisms extends OpMode {
 
         if (gamepad1.yWasPressed()) {
             intake.toggleReversed(IntakeConstants.intakeCollecting);
+        }
+
+        if(gamepad1.bWasPressed()){
+            if (!servos.mixed) {
+
+                Scheduler.schedule(
+                        sequential(
+                                instant(() -> servos.contup()),
+                                waitMs(1850),
+                                instant(() -> servos.contstop())
+                        )
+                );
+            } else {
+
+                Scheduler.schedule(
+                        sequential(
+                                instant(() -> servos.contdown()),
+                                waitMs(1800),
+                                instant(() -> servos.contstop())
+                        )
+                );
+            }
         }
 
         if (gamepad1.xWasPressed()) {
