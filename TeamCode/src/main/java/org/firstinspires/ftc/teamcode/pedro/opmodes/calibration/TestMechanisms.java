@@ -38,7 +38,7 @@ public class TestMechanisms extends OpMode {
     Servos servos;
     Follower follower;
     Zones zones;
-    Pose startPose = new Pose(132.6505617977528, 130.92247191011242, Math.toRadians(270));
+    Pose startPose = new Pose(132.6505617977528, 133.92247191011242, Math.toRadians(270));
     boolean flower = true;
 
     double potenciaTeste = 0.0;
@@ -60,13 +60,13 @@ public class TestMechanisms extends OpMode {
         turret.resetEncoder();
 
         zones = new Zones(ShooterCoefficients.IDLE_TPS)
-                .addZone(57.88,107.45,95.41,144.00, ShooterCoefficients.ALVO_TPS)
-                .addZone(107.45,141.50,95.41,138.87, ShooterCoefficients.ALVO_TPS_LADO)
-                .addZone(0.00, 57.88, 95.41, 144.00, ShooterCoefficients.ALVO_TPS_AWAY)
+                .addZone(50.96,  91.14, 105.14, 137.71, ShooterCoefficients.ALVO_TPS)
+                .addZone( 9.14,  50.96, 105.14, 137.71, ShooterCoefficients.ALVO_TPS_LADO)
+                .addZone(91.14, 132.96, 105.14, 137.71, ShooterCoefficients.ALVO_TPS_LADO)
 
-                .addZone(57.88, 107.45, 0.00, 48.59, ShooterCoefficients.ALVO_TPS)
-                .addZone(107.45, 141.50, 5.13, 48.59, ShooterCoefficients.ALVO_TPS_LADO)
-                .addZone(0.00, 57.88, 0.00, 48.59, ShooterCoefficients.ALVO_TPS_AWAY);
+                .addZone(50.96,  91.14, 6.29, 38.86, ShooterCoefficients.ALVO_TPS)
+                .addZone( 9.14,  50.96, 6.29, 38.86, ShooterCoefficients.ALVO_TPS_LADO)
+                .addZone(91.14, 132.96, 6.29, 38.86, ShooterCoefficients.ALVO_TPS_LADO);
 
         allHubs = hardwareMap.getAll(LynxModule.class);
         for (LynxModule hub : allHubs) {
@@ -75,7 +75,6 @@ public class TestMechanisms extends OpMode {
     }
 
     public void start() {
-        turret.setMode(Turret.Mode.MANUAL);
         servos.agroUp();
     }
 
@@ -136,10 +135,6 @@ public class TestMechanisms extends OpMode {
 
         }
 
-        if (gamepad1.yWasPressed()) {
-            intake.toggleReversed(IntakeConstants.intakeCollecting);
-        }
-
         if (gamepad1.right_trigger > 0.5) {
             shooter.setAlvo(zones.getTPS(currentPose.x(), currentPose.y()));
             servos.open();
@@ -155,18 +150,12 @@ public class TestMechanisms extends OpMode {
             turret.setManualPower(-0.75);
         } else turret.setManualPower(0);
 
-        if (gamepad1.dpadDownWasPressed()) {
+        if (gamepad1.dpadRightWasPressed()) {
 
             if (turret.getMode() == Turret.Mode.MANUAL) {
                 turret.setMode(Turret.Mode.TRACKING);
             } else turret.setMode(Turret.Mode.MANUAL);
 
-        }
-
-        if (gamepad1.dpad_right) {
-            turret.correct(1);
-        } else if (gamepad1.dpad_left) {
-            turret.correct(-1);
         }
 
         shooter.update();
@@ -191,7 +180,6 @@ public class TestMechanisms extends OpMode {
         telemetry.addData("Turret X", turretPose.x());
         telemetry.addData("Turret Y", turretPose.y());
         telemetry.addData("target", target);
-        telemetry.addData("correction", turret.getZeroTicks());
         telemetry.addData("deslocamento (Raw)", turret.getRawAngle());
         telemetry.addData("Erro Atual", turret.getDistanceToTarget());
         telemetry.addData("lime offset", turret.getLimeLightOffset());

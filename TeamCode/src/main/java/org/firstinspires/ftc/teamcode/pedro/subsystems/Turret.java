@@ -37,16 +37,16 @@ import java.util.function.Supplier;
 
 public class Turret{
     double manualPower = 0;
-    DcMotorEx motor;
-    double lastError = 0, lastTime = 0, lastFilteredDerivative = 0;
-    double integral = 0;
-    double zeroTicks = 0;
-    final Constants.Alliance alliance;
-    Pose currentPose;
-    ElapsedTime timer = new ElapsedTime();
-    double currentTime = 0;
-    Mode mode = Mode.IDLE;
-    int[] aprilTags;
+    public final DcMotorEx motor;
+    private double lastError = 0, lastTime = 0, lastFilteredDerivative = 0;
+    private double integral = 0;
+    private int zeroTicks = 0;
+    private final Constants.Alliance alliance;
+    private Pose currentPose;
+    private final ElapsedTime timer = new ElapsedTime();
+    private double currentTime = 0;
+    private Mode mode = Mode.IDLE;
+    private final int[] aprilTags;
     public enum Mode {
         IDLE,
         TRACKING,
@@ -168,6 +168,10 @@ public class Turret{
         return target - getRawAngle();
     }
 
+    public double getDistanciaGol() {
+        return TurretController.getTurretPose(currentPose).distance(getTrackingPose());
+    }
+
     public Pose getTrackingPose() {
 
         if (alliance == Constants.Alliance.BLUE) {
@@ -189,13 +193,14 @@ public class Turret{
         return (motor.getCurrentPosition() - zeroTicks) / ticksPerDegree;
     }
 
-    public void correct(double deg) {
-        zeroTicks += (deg * ticksPerDegree);
+    public void setReference(double deg) {
+        zeroTicks = motor.getCurrentPosition() - (int) (deg * ticksPerDegree);
     }
 
-    public double getZeroTicks() {
-        return zeroTicks;
+    public void correct(double deg) {
+        zeroTicks -= (int) (deg * ticksPerDegree);
     }
+
     public double getAbsoluteAngle() {
         return Math.toDegrees(currentPose.heading()) + getRawAngle();
     }

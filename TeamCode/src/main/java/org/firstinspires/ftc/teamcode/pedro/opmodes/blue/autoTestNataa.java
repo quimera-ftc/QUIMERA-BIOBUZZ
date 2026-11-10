@@ -28,7 +28,7 @@ import org.firstinspires.ftc.teamcode.pedro.subsystems.subConstants.ShooterCoeff
 
 import java.util.List;
 
-@Autonomous
+@Autonomous(name="AUTO_BLUE_TOP", group="Blue")
 public class autoTestNataa extends OpMode {
 
     boolean shooterLigado = false;
@@ -161,8 +161,8 @@ public class autoTestNataa extends OpMode {
                         instant(() -> shooterLigado = false)
                 ),
                 turret.autoaim(follower::pose),
-                instant(() -> servo.close()));
-
+                instant(() -> servo.close())
+        );
 
     }
 }
