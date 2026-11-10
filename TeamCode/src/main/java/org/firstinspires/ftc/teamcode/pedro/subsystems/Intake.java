@@ -57,9 +57,9 @@ public class Intake {
 
     public void toggleReversed(double wantedCoefficient) {
         if (isOn) {
-            stop();
-        } else {
             out(-wantedCoefficient);
+        } else {
+            stop();
         }
 
         isOn = !isOn;
