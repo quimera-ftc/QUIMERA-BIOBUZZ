@@ -12,13 +12,13 @@ public class Servos {
     //left = 0 = bolinha passa nao colocar como 0 pra nenhum robo bater e quebrar
 
     Servo flowerRight;
-    ServoTaura trava;
-    Servo t1;
+    ServoTaura trava,agro;
+    Servo t1, t2;
     private CRServo continuo;
     public boolean mixed = false;
 
     public final double  DOWN_RIGHT = 0.80;
-    public final double UP_RIGHT = 0;
+    public final double UP_RIGHT = 0.1;
     public final double CONST_UP = 1;
     public final double CONST_DOWN = -1;
     public final double TRAVA_OPEN = 1;
@@ -29,24 +29,29 @@ public class Servos {
         flowerRight = hardwareMap.get(Servo.class, "flowerRight");
         t1 = hardwareMap.get(Servo.class, "trava");
         continuo = hardwareMap.get(CRServo.class,"cremalheira");
+        t2 = hardwareMap.get(Servo.class,"agro");
 
 
 
         t1.setDirection(Servo.Direction.FORWARD);
-        flowerRight.setDirection(Servo.Direction.FORWARD);
+        flowerRight.setDirection(Servo.Direction.REVERSE);
+
 
 
         trava = new ServoTaura(t1);
+        agro = new ServoTaura(t2);
 
     }
 
 
     public void agroUp() {
         flowerRight.setPosition(UP_RIGHT);
+        agro.setPosition(0.25);
     }
 
     public void agroDown() {
         flowerRight.setPosition(DOWN_RIGHT);
+        agro.setPosition(1);
     }
 
     public void open(){trava.setPosition(TRAVA_OPEN);}
