@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.pedro.opmodes.tests;
+package org.firstinspires.ftc.teamcode.pedro.opmodes.blue;
 
 import static com.pedropathing.api.Paths.line;
 import static com.pedropathing.ivy.commands.Commands.instant;
@@ -26,26 +26,26 @@ import org.firstinspires.ftc.teamcode.pedro.subsystems.Zones;
 import org.firstinspires.ftc.teamcode.pedro.subsystems.subConstants.ShooterCoefficients;
 
 import java.util.List;
-@Autonomous
+@Autonomous(name="AUTO_BLUE_TOP_ALLIANCE", group="Blue")
 public class autoAllianceTest extends OpMode {
+    boolean shooterLigado = false;
 
     Shooter shooter;
     Intake intake;
-    Servos agro;
+    Servos servo;
     Turret turret;
     Zones zones;
     private Follower follower;
     Pose currentPoseLocal;
-    boolean shooterLigado = false;
     List<LynxModule> allHubs;
 
     PoseFactory poseFactory = PoseFactory.degrees();
 
     Pose startingPoint = poseFactory.of(86.06466512702079, 134.1431469720298, 0);
     Pose collect1 = poseFactory.of(130.97, 131.97, 0);
-    Pose shoot2 = poseFactory.of(104.9, 113.2, 300); //(104.9, 113.2, 300)
-    Pose collect2 = poseFactory.of(130.53, 95.13, 0); //(130.53, 95.13, 0)
-    Pose shoot3 = poseFactory.of(102.93, 111.97, 330); //(102.93, 111.97, 330)
+    Pose shoot2 = poseFactory.of(104.9, 113.2, 300);
+    Pose collect2 = poseFactory.of(130.53, 95.13, 0);
+    Pose shoot3 = poseFactory.of(102.93, 111.97, 330);
     Pose park = poseFactory.of(132.12685185185188, 51.289675925925924, 270);
 
     Path START_TO_COLLECT1() {
@@ -90,17 +90,18 @@ public class autoAllianceTest extends OpMode {
 
         intake = new Intake(hardwareMap);
         shooter = new Shooter(hardwareMap, intake);
-        agro = new Servos(hardwareMap);
+        servo = new Servos(hardwareMap);
         turret = new Turret(hardwareMap, startingPoint, Constants.Alliance.BLUE);
+        turret.resetEncoder();
 
-        zones = new Zones(ShooterCoefficients.ALVO_TPS)
-                .addZone(50.96, 91.14, 105.14, 137.71, ShooterCoefficients.ALVO_TPS)
-                .addZone(9.14, 50.96, 105.14, 137.71, ShooterCoefficients.ALVO_TPS_LADO)
-                .addZone(91.14, 132.96, 105.14, 137.71, ShooterCoefficients.ALVO_TPS_LADO)
+        zones = new Zones(ShooterCoefficients.IDLE_TPS)
+                .addZone(57.88,107.45,95.41,144.00, ShooterCoefficients.ALVO_TPS)
+                .addZone(107.45,141.50,95.41,138.87, ShooterCoefficients.ALVO_TPS_LADO)
+                .addZone(0.00, 57.88, 95.41, 144.00, ShooterCoefficients.ALVO_TPS_AWAY)
 
-                .addZone(50.96, 91.14, 6.29, 38.86, ShooterCoefficients.ALVO_TPS)
-                .addZone(9.14, 50.96, 6.29, 38.86, ShooterCoefficients.ALVO_TPS_LADO)
-                .addZone(91.14, 132.96, 6.29, 38.86, ShooterCoefficients.ALVO_TPS_LADO);
+                .addZone(57.88, 107.45, 0.00, 48.59, ShooterCoefficients.ALVO_TPS)
+                .addZone(107.45, 141.50, 5.13, 48.59, ShooterCoefficients.ALVO_TPS_LADO)
+                .addZone(0.00, 57.88, 0.00, 48.59, ShooterCoefficients.ALVO_TPS_AWAY);
 
         allHubs = hardwareMap.getAll(LynxModule.class);
         for (LynxModule hub : allHubs) {
@@ -139,7 +140,8 @@ public class autoAllianceTest extends OpMode {
                         follow(follower, SHOOT3_TO_PARK()),
                         instant(() -> shooterLigado = false)
                 ),
-                turret.autoaim(follower::pose)
+                turret.autoaim(follower::pose),
+                instant(() -> servo.close())
 
         );
     }
