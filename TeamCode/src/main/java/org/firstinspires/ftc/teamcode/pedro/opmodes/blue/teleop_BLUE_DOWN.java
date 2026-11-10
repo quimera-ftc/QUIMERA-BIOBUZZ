@@ -99,6 +99,7 @@ public class teleop_BLUE_DOWN extends OpMode {
         }
 
 
+
         if (gamepad1.right_bumper) {
             turret.setManualPower(0.75);
         } else if (gamepad1.left_bumper) {
