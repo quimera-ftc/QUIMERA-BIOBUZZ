@@ -40,6 +40,7 @@ public class Turret{
     DcMotorEx motor;
     double lastError = 0, lastTime = 0, lastFilteredDerivative = 0;
     double integral = 0;
+    double zeroTicks = 0;
     final Constants.Alliance alliance;
     Pose currentPose;
     ElapsedTime timer = new ElapsedTime();
@@ -167,10 +168,6 @@ public class Turret{
         return target - getRawAngle();
     }
 
-    public double getDistanciaGol() {
-        return TurretController.getTurretPose(currentPose).distance(getTrackingPose());
-    }
-
     public Pose getTrackingPose() {
 
         if (alliance == Constants.Alliance.BLUE) {
@@ -189,7 +186,15 @@ public class Turret{
     }
 
     public double getRawAngle() {
-        return motor.getCurrentPosition() / ticksPerDegree;
+        return (motor.getCurrentPosition() - zeroTicks) / ticksPerDegree;
+    }
+
+    public void correct(double deg) {
+        zeroTicks += (deg * ticksPerDegree);
+    }
+
+    public double getZeroTicks() {
+        return zeroTicks;
     }
     public double getAbsoluteAngle() {
         return Math.toDegrees(currentPose.heading()) + getRawAngle();
