@@ -39,7 +39,7 @@ public class Servos {
 
     }
     public void open(){
-        trava.setPosition(1);
+        trava.setPosition(0.5);
     }
     public void close(){
         trava.setPosition(0);
