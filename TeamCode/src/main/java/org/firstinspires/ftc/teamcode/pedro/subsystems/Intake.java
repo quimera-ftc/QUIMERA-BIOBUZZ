@@ -5,6 +5,7 @@ import static com.pedropathing.ivy.groups.Groups.parallel;
 
 import com.pedropathing.ivy.Command;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.pedro.math.RampaPotencia;
@@ -13,14 +14,15 @@ import org.firstinspires.ftc.teamcode.pedro.subsystems.subConstants.IntakeConsta
 public class Intake {
 
     public final DcMotorEx intake;
-    public Servos agro;
+    public Servos servos;
     double alvo = 0;
-    private final RampaPotencia rampa = new RampaPotencia(3.3, 10.0);  // 0→1 em 0,3 s
-//    double maxPower = 0.75;
+    private final RampaPotencia rampa = new RampaPotencia(3.3, 10.0);
     private boolean isOn = false;
     public Intake(HardwareMap hardwareMap) {
         intake = hardwareMap.get(DcMotorEx.class, "intake");
-        agro = new Servos(hardwareMap);
+        servos = new Servos(hardwareMap);
+
+        intake.setDirection(DcMotorSimple.Direction.REVERSE);
 
     }
 
@@ -55,9 +57,9 @@ public class Intake {
 
     public void toggleReversed(double wantedCoefficient) {
         if (isOn) {
-            stop();
-        } else {
             out(-wantedCoefficient);
+        } else {
+            stop();
         }
 
         isOn = !isOn;
@@ -72,16 +74,16 @@ public class Intake {
     //metodo p intake no autoooo
     public Command intakePP() {
         return parallel(
-                instant(() -> in(IntakeConstants.intakeCollecting))//,
-                //instant(() -> agro.down())
+                instant(() -> in(IntakeConstants.intakeCollecting)),
+                instant(() -> servos.agroDown())
         );
 
     }
 
     public Command intakestopPP() {
         return parallel(
-                instant(() -> stop())//,
-                //instant(() -> agro.up())
+                instant(() -> stop()),
+                instant(() -> servos.agroUp())
         );
     }
 

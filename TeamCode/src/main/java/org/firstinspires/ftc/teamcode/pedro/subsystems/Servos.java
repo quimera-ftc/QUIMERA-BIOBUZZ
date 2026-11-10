@@ -13,9 +13,8 @@ public class Servos {
     ServoTaura trava;
     Servo t1;
 
-    public final double LOCKING = 1, DOWN_RIGHT = 0.75;
+    public final double  DOWN_RIGHT = 0.80;
     public final double UP_RIGHT = 0;
-    public final double NOT_LOCKING = 0.60;
 
 
     public Servos(@NonNull HardwareMap hardwareMap) {
@@ -31,12 +30,6 @@ public class Servos {
     }
 
 
-
-
-
-
-
-
     public void agroUp() {
         flowerRight.setPosition(UP_RIGHT);
     }
@@ -46,10 +39,10 @@ public class Servos {
 
     }
     public void open(){
-        trava.setPosition(0);
+        trava.setPosition(0.5);
     }
     public void close(){
-        trava.setPosition(1);
+        trava.setPosition(0);
     }
 
 }

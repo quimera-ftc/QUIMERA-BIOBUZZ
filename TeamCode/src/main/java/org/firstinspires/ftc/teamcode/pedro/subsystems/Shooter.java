@@ -140,7 +140,6 @@ public class Shooter {
     }
 
     public void setAlvo(double tps) {
-        servos.open();
         alvoTps = tps;
 
         if (tps > 0) {

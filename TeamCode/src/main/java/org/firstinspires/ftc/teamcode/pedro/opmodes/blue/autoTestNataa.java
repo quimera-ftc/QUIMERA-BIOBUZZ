@@ -35,7 +35,7 @@ public class autoTestNataa extends OpMode {
 
     Shooter shooter;
     Intake intake;
-    Servos agro;
+    Servos servo;
     Turret turret;
     PoseFactory poseFactory = PoseFactory.degrees();
     private Follower follower;
@@ -44,11 +44,11 @@ public class autoTestNataa extends OpMode {
     List<LynxModule> allHubs;
 
     Pose startingPoint = poseFactory.of(86.06466512702079,134.1431469720298,0);
-    Pose collect1 = poseFactory.of(127.97337962962962, 131.97106481481478, 0);
+    Pose collect1 = poseFactory.of(128.97337962962962, 132.37106481481478, 0);
     Pose shoot2 = poseFactory.of(114.01981481481482, 17.932870370370395, 72);
-    Pose collect2 = poseFactory.of(103.44675925925927, 15.232638888888886, 250);
+    Pose collect2 = poseFactory.of(102.44675925925927, 11.832638888888886, 250);
     Pose shoot3 = poseFactory.of(114.01981481481482, 17.932870370370395, 70);
-    Pose collect3 = poseFactory.of(127.5388888888889, 96.13055555555556, 0);
+    Pose collect3 = poseFactory.of(129.0388888888889, 97.13055555555556, 0);
     Pose shoot4 = poseFactory.of(104.5462962962963, 125.4074074074074, 300);
     Pose park = poseFactory.of(132.12685185185188, 51.289675925925924, 270);
 
@@ -83,17 +83,18 @@ public class autoTestNataa extends OpMode {
 
         intake = new Intake(hardwareMap);
         shooter = new Shooter(hardwareMap, intake);
-        agro = new Servos(hardwareMap);
+        servo = new Servos(hardwareMap);
         turret = new Turret(hardwareMap, startingPoint, Constants.Alliance.BLUE);
+        turret.resetEncoder();
 
-        zones = new Zones(ShooterCoefficients.ALVO_TPS)
-                .addZone(50.96, 91.14, 105.14, 137.71, ShooterCoefficients.ALVO_TPS)
-                .addZone(9.14, 50.96, 105.14, 137.71, ShooterCoefficients.ALVO_TPS_LADO)
-                .addZone(91.14, 132.96, 105.14, 137.71, ShooterCoefficients.ALVO_TPS_LADO)
+        zones = new Zones(ShooterCoefficients.IDLE_TPS)
+                .addZone(57.88,107.45,95.41,144.00, ShooterCoefficients.ALVO_TPS)
+                .addZone(107.45,141.50,95.41,138.87, ShooterCoefficients.ALVO_TPS_LADO)
+                .addZone(0.00, 57.88, 95.41, 144.00, ShooterCoefficients.ALVO_TPS_AWAY)
 
-                .addZone(50.96, 91.14, 6.29, 38.86, ShooterCoefficients.ALVO_TPS)
-                .addZone(9.14, 50.96, 6.29, 38.86, ShooterCoefficients.ALVO_TPS_LADO)
-                .addZone(91.14, 132.96, 6.29, 38.86, ShooterCoefficients.ALVO_TPS_LADO);
+                .addZone(57.88, 107.45, 0.00, 48.59, ShooterCoefficients.ALVO_TPS)
+                .addZone(107.45, 141.50, 5.13, 48.59, ShooterCoefficients.ALVO_TPS_LADO)
+                .addZone(0.00, 57.88, 0.00, 48.59, ShooterCoefficients.ALVO_TPS_AWAY);
 
         allHubs = hardwareMap.getAll(LynxModule.class);
         for (LynxModule hub : allHubs) {
@@ -129,7 +130,8 @@ public class autoTestNataa extends OpMode {
     public Command routine() {
         return parallel(
                 sequential(
-                        waitMs(2000),
+                        instant(() ->servo.agroDown()),
+                        waitMs(3000),
                         shooter.shootPP(),
                         parallel(
                                 follow(follower, START_TO_COLLECT1()),
@@ -158,7 +160,8 @@ public class autoTestNataa extends OpMode {
                         follow(follower, SHOOT4_TO_PARK()),
                         instant(() -> shooterLigado = false)
                 ),
-                turret.autoaim(follower::pose));
+                turret.autoaim(follower::pose),
+                instant(() -> servo.close()));
 
 
     }
