@@ -20,8 +20,8 @@ public class Servos {
 
     public final double  DOWN_RIGHT = 0.80;
     public final double UP_RIGHT = 0;
-    public final double CONST_UP = -1;
-    public final double CONST_DOWN = 1;
+    public final double CONST_UP = 1;
+    public final double CONST_DOWN = -1;
     public final double TRAVA_OPEN = 1;
     public final double TRAVA_CLOSE = 0;
 
