@@ -15,7 +15,6 @@ public class Servos {
     ServoTaura trava;
     Servo t1;
     private CRServo continuo;
-    ElapsedTime timer = new ElapsedTime();
     public boolean mixed = false;
 
     public final double  DOWN_RIGHT = 0.80;
@@ -39,7 +38,6 @@ public class Servos {
 
         trava = new ServoTaura(t1);
 
-        timer.reset();
     }
 
 

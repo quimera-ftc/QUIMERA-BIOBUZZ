@@ -5,6 +5,9 @@ import static com.pedropathing.ivy.commands.Commands.waitMs;
 import static com.pedropathing.ivy.groups.Groups.race;
 import static com.pedropathing.ivy.groups.Groups.sequential;
 
+import static org.firstinspires.ftc.teamcode.pedro.subsystems.subConstants.TurretConstants.CORRECTION_RATIO;
+import static org.firstinspires.ftc.teamcode.pedro.subsystems.subConstants.TurretConstants.MANUAL_POWER;
+
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.pedropathing.follower.Follower;
@@ -124,15 +127,12 @@ public class TestMechanisms extends OpMode {
         }
 
         if (gamepad1.xWasPressed()) {
-
             if (!flower) {
                 servos.agroUp();
             } else {
                 servos.agroDown();
             }
-
             flower = !flower;
-
         }
 
         if (gamepad1.right_trigger > 0.5) {
@@ -145,17 +145,23 @@ public class TestMechanisms extends OpMode {
         }
 
         if (gamepad1.right_bumper) {
-            turret.setManualPower(0.75);
+            turret.setManualPower(MANUAL_POWER);
         } else if (gamepad1.left_bumper) {
-            turret.setManualPower(-0.75);
+            turret.setManualPower(-MANUAL_POWER);
         } else turret.setManualPower(0);
 
-        if (gamepad1.dpadRightWasPressed()) {
+        if (gamepad1.dpadDownWasPressed()) {
 
             if (turret.getMode() == Turret.Mode.MANUAL) {
                 turret.setMode(Turret.Mode.TRACKING);
             } else turret.setMode(Turret.Mode.MANUAL);
 
+        }
+
+        if (gamepad1.dpadRightWasPressed()) {
+            turret.correct(CORRECTION_RATIO);
+        } else if (gamepad1.dpadLeftWasPressed()) {
+            turret.correct(-CORRECTION_RATIO);
         }
 
         shooter.update();
@@ -179,6 +185,7 @@ public class TestMechanisms extends OpMode {
         telemetry.addData("mode", turret.getMode());
         telemetry.addData("Turret X", turretPose.x());
         telemetry.addData("Turret Y", turretPose.y());
+        telemetry.addData("correction", turret.getZeroTicks());
         telemetry.addData("target", target);
         telemetry.addData("deslocamento (Raw)", turret.getRawAngle());
         telemetry.addData("Erro Atual", turret.getDistanceToTarget());
