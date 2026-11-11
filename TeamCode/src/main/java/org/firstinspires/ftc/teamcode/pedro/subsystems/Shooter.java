@@ -49,6 +49,8 @@ public class Shooter {
         servos = new Servos(hardwareMap);
         this.intake = intake;
 
+        ls = hardwareMap.get(DcMotorEx.class, "ls");
+        rs = hardwareMap.get(DcMotorEx.class, "rs");
         Servo lockServo = hardwareMap.get(Servo.class, "trava");
         lock = new ServoTaura(lockServo);
         flow = hardwareMap.get(CRServo.class, "cremalheira");
