@@ -15,6 +15,6 @@ public class ShooterConstants {
     public static double ALVO_TPS_BIGBALL = 1565;
     public static double LOCKED_POS = 1;
     public static double UNLOCKED_POS = 0;
-    public static double FLOW_UP = 1;
-    public static double FLOW_DOWN = -1;
+    public static double FLOW_UP = -1;
+    public static double FLOW_DOWN = 1;
 }
