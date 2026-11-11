@@ -117,6 +117,15 @@ public class Shooter {
         );
     }
 
+    public Command shootPPMatesc() {
+        return sequential(
+                instant(()-> setLock(false)),
+                instant(() -> intake.in(IntakeConstants.intakeShooting)),
+                waitMs(913),
+                instant(() -> intake.stop()),
+                instant(() -> setLock(true))
+        );
+    }
     //metodo p shootar no telop
 
     public void stop() {

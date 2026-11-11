@@ -91,7 +91,7 @@ import java.util.List;
             shooter = new Shooter(hardwareMap, intake);
             agro = new Servos(hardwareMap);
             turret = new Turret(hardwareMap, torre, Constants.Alliance.BLUE);
-
+            turret.resetEncoder();
             zones = new Zones(ShooterConstants.IDLE_TPS)
                     .addZone(57.88,107.45,95.41,144.00, ShooterConstants.ALVO_TPS)
                     .addZone(107.45,141.50,95.41,138.87, ShooterConstants.ALVO_TPS_LADO)

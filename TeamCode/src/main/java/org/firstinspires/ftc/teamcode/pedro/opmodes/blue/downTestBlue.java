@@ -52,14 +52,14 @@ public class downTestBlue extends OpMode {
     private final Pose start =  poseFactory.of(91.0176, 37.9776, 270);
 
 //    private final Pose collectStart = poseFactory.of(93.86, 16.61, 270);
-    private  final Pose collect = poseFactory.of(91.9015,14.8245,270);
+    private  final Pose collect = poseFactory.of(92.2579,15.7155,270);
 
 //    private final  Pose turneStart = poseFactory .of(94.04,26.23,270);
 
   private final Pose turne = poseFactory.of(91.0176,37.9776,270);
 
 //    private final Pose shootStart = poseFactory.of(93.8607, 16.6075, 270);
-   private final Pose  shoot = poseFactory.of(82.0592,17.5201,90);
+   private final Pose  shoot = poseFactory.of(81.1682,17.5201,90);
 
 //    private final Pose fimStart = poseFactory.of(78.6305, 9.7349, 90);
    private final Pose fim = poseFactory.of(128.380745,20.8196,90);
@@ -90,13 +90,14 @@ public class downTestBlue extends OpMode {
         shooter = new Shooter(hardwareMap, intake);
         agro = new Servos(hardwareMap);
         turret = new Turret(hardwareMap, torre, Constants.Alliance.BLUE);
+        turret.resetEncoder();
 
         zones = new Zones(ShooterConstants.IDLE_TPS)
-                .addZone(57.88,107.45,95.41,144.00, ShooterConstants.ALVO_TPS)
+                .addZone(57.88,107.45,95.41,144.00, ShooterConstants.ALVO_TPS_MATESC)
                 .addZone(107.45,141.50,95.41,138.87, ShooterConstants.ALVO_TPS_LADO)
                 .addZone(0.00, 57.88, 95.41, 144.00, ShooterConstants.ALVO_TPS_AWAY)
 
-                .addZone(57.88, 107.45, 0.00, 48.59, ShooterConstants.ALVO_TPS)
+                .addZone(57.88, 107.45, 0.00, 48.59, ShooterConstants.ALVO_TPS_MATESC)
                 .addZone(107.45, 141.50, 5.13, 48.59, ShooterConstants.ALVO_TPS_LADO)
                 .addZone(0.00, 57.88, 0.00, 48.59, ShooterConstants.ALVO_TPS_AWAY);
 
@@ -137,7 +138,7 @@ public class downTestBlue extends OpMode {
         return parallel(
                 sequential(
                         waitMs(4000),
-                shooter.shootPP(),
+                shooter.shootPPMatesc(),
                 parallel(
                         follow(follower, START()),
                         intake.intakePP()
@@ -147,7 +148,7 @@ public class downTestBlue extends OpMode {
                 intake.intakestopPP(),
                 follow(follower, TURN()),
                 follow(follower,SHOOT()),
-                        shooter.shootPP(),
+                        shooter.shootPPMatesc(),
                         follow(follower, FIM()),
                         instant(() -> shooterLigado = false)
 
