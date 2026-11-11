@@ -44,9 +44,9 @@ public class autoTestNataa extends OpMode {
     List<LynxModule> allHubs;
 
     Pose startingPoint = poseFactory.of(86.06466512702079,134.1431469720298,0);
-    Pose collect1 = poseFactory.of(126.97337962962962, 134.87106481481478, 0);
-    Pose shoot2 = poseFactory.of(114.01981481481482, 17.932870370370395, 72);
-    Pose collect2 = poseFactory.of(99.44675925925927, 13.832638888888886, 250);
+    Pose collect1 = poseFactory.of(135.29337962962962, 130.47106481481478, 90);
+    Pose shoot2 = poseFactory.of(116.01981481481482, 20.932870370370395, 72);
+    Pose collect2 = poseFactory.of(100.94675925925927, 15.032638888888886, 250);
     Pose shoot3 = poseFactory.of(114.01981481481482, 17.932870370370395, 70);
     Pose collect3 = poseFactory.of(129.0388888888889, 97.13055555555556, 0);
     Pose shoot4 = poseFactory.of(104.5462962962963, 125.4074074074074, 300);
@@ -54,7 +54,7 @@ public class autoTestNataa extends OpMode {
 
 
     public Path START_TO_COLLECT1() {
-        return line(startingPoint, collect1).linear(startingPoint, collect1);
+        return curve(startingPoint, poseFactory.of(135.94, 96.9, 0),collect1).linear(startingPoint, collect1);
     }
     public Path COLLECT1_TO_SHOOT2() {
         return line(collect1, shoot2).linear(collect1, shoot2);
@@ -131,9 +131,8 @@ public class autoTestNataa extends OpMode {
     public Command routine() {
         return parallel(
                 sequential(
-                        waitMs(1000),
+                        waitMs(2300),
                         shooter.shootPP(),
-                        instant(() -> shooter.setLock(true)),
                         parallel(
                                 follow(follower, START_TO_COLLECT1()),
                                 intake.intakeOnlyUse()
@@ -142,7 +141,6 @@ public class autoTestNataa extends OpMode {
                         intake.intakestopPP(),
                         follow(follower, COLLECT1_TO_SHOOT2()),
                         shooter.shootPP(),
-                        instant(() -> shooter.setLock(true)),
                         parallel(
                                 follow(follower, SHOOT2_TO_COLLECT2()),
                                 intake.intakePP()
@@ -151,7 +149,6 @@ public class autoTestNataa extends OpMode {
                         intake.intakestopPP(),
                         follow(follower, COLLECT2_TO_SHOOT3()),
                         shooter.shootPP(),
-                        instant(() -> shooter.setLock(true)),
                         parallel(
                                 follow(follower, SHOOT3_TO_COLLECT3()),
                                 intake.intakePP()
@@ -160,7 +157,6 @@ public class autoTestNataa extends OpMode {
                         intake.intakestopPP(),
                         follow(follower, COLLECT3_TO_SHOOT4()),
                         shooter.shootPP(),
-                        instant(() -> shooter.setLock(true)),
                         follow(follower, SHOOT4_TO_PARK()),
                         instant(() -> shooterLigado = false)
                 ),

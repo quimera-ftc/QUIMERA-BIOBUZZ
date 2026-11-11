@@ -17,6 +17,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 
+import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.pedro.Constants;
 import org.firstinspires.ftc.teamcode.pedro.math.TurretController;
 import org.firstinspires.ftc.teamcode.pedro.subsystems.Servos;
@@ -40,7 +41,6 @@ public class TestMechanisms extends OpMode {
     Follower follower;
     Zones zones;
     Pose startPose = new Pose(132.6505617977528, 133.92247191011242, Math.toRadians(270));
-    boolean flower = false;
     List<LynxModule> allHubs;
 
     @Override
@@ -55,7 +55,7 @@ public class TestMechanisms extends OpMode {
 
         follower.setPose(new Pose(132.6505617977528, 133.92247191011242, Math.toRadians(270)));
         turret.resetEncoder();
-        intake.collectFlower(false);
+//        intake.collectFlower(false);
 
         zones = new Zones(ShooterConstants.IDLE_TPS)
                 .addZone(57.88,107.45,95.41,144.00, ShooterConstants.ALVO_TPS)
@@ -87,9 +87,7 @@ public class TestMechanisms extends OpMode {
         turret.update(currentPose);
 
         if (gamepad1.aWasPressed()) {
-
-            if (!servos.sas) {
-
+            if (!shooter.nectar) {
                 if(shooter.isShooting) {
                     intake.toggle(IntakeConstants.intakeShooting);
                 } else {
@@ -107,7 +105,6 @@ public class TestMechanisms extends OpMode {
         }
 
         if(gamepad1.bWasPressed()){
-
             shooter.shootNectar(!shooter.nectar);
 
         }
@@ -117,7 +114,7 @@ public class TestMechanisms extends OpMode {
         }
 
         if (gamepad1.right_trigger > 0.5) {
-            if (!servos.sas) {
+            if (!shooter.nectar) {
                 shooter.setAlvo(zones.getTPS(currentPose.x(), currentPose.y()));
                 shooter.setLock(false);
             } else {
@@ -176,6 +173,7 @@ public class TestMechanisms extends OpMode {
         telemetry.addData("lime offset", turret.getLimeLightOffset());
         telemetry.addData("na mosca", turret.aligned() ? "sim" : "nao");
         telemetry.addData("tempo de ciclo (dt)", turret.getDt());
+        telemetry.addData("turret amps", turret.motor.getCurrent(CurrentUnit.AMPS));
 
         telemetry.update();
     }

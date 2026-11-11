@@ -112,9 +112,8 @@ public class Shooter {
                 instant(()-> setLock(false)),
                 instant(() -> intake.in(IntakeConstants.intakeShooting)),
                 waitMs(1000),
-
-
-                instant(() -> intake.stop())
+                instant(() -> intake.stop()),
+                instant(() -> setLock(true))
         );
     }
 
