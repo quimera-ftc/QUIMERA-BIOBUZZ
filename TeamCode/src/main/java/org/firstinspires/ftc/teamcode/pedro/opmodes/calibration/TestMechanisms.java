@@ -60,13 +60,13 @@ public class TestMechanisms extends OpMode {
         turret.resetEncoder();
 
         zones = new Zones(ShooterCoefficients.IDLE_TPS)
-                .addZone(50.96,  91.14, 105.14, 137.71, ShooterCoefficients.ALVO_TPS)
-                .addZone( 9.14,  50.96, 105.14, 137.71, ShooterCoefficients.ALVO_TPS_LADO)
-                .addZone(91.14, 132.96, 105.14, 137.71, ShooterCoefficients.ALVO_TPS_LADO)
+                .addZone(57.88,107.45,95.41,144.00, ShooterCoefficients.ALVO_TPS)
+                .addZone(107.45,141.50,95.41,138.87, ShooterCoefficients.ALVO_TPS_LADO)
+                .addZone(0.00, 57.88, 95.41, 144.00, ShooterCoefficients.ALVO_TPS_AWAY)
 
-                .addZone(50.96,  91.14, 6.29, 38.86, ShooterCoefficients.ALVO_TPS)
-                .addZone( 9.14,  50.96, 6.29, 38.86, ShooterCoefficients.ALVO_TPS_LADO)
-                .addZone(91.14, 132.96, 6.29, 38.86, ShooterCoefficients.ALVO_TPS_LADO);
+                .addZone(57.88, 107.45, 0.00, 48.59, ShooterCoefficients.ALVO_TPS)
+                .addZone(107.45, 141.50, 5.13, 48.59, ShooterCoefficients.ALVO_TPS_LADO)
+                .addZone(0.00, 57.88, 0.00, 48.59, ShooterCoefficients.ALVO_TPS_AWAY);
 
         allHubs = hardwareMap.getAll(LynxModule.class);
         for (LynxModule hub : allHubs) {
@@ -89,11 +89,16 @@ public class TestMechanisms extends OpMode {
         turret.update(currentPose);
 
         if (gamepad1.aWasPressed()) {
-            if(shooter.isShooting) {
-                intake.toggle(IntakeConstants.intakeShooting);
+            if (!servos.sas) {
+                if(shooter.isShooting) {
+                    intake.toggle(IntakeConstants.intakeShooting);
+                } else {
+                    intake.toggle(IntakeConstants.intakeCollecting);
+                }
             } else {
-                intake.toggle(IntakeConstants.intakeCollecting);
+                intake.toggle(IntakeConstants.intakeBIGBALL);
             }
+
 
         }
 
@@ -124,20 +129,19 @@ public class TestMechanisms extends OpMode {
         }
 
         if (gamepad1.xWasPressed()) {
-
-            if (!flower) {
-                servos.agroUp();
-            } else {
-                servos.agroDown();
-            }
-
-            flower = !flower;
-
+            servos.agroDown();
+        } else {
+            servos.agroUp();
         }
 
         if (gamepad1.right_trigger > 0.5) {
-            shooter.setAlvo(zones.getTPS(currentPose.x(), currentPose.y()));
-            servos.open();
+            if (!servos.sas) {
+                shooter.setAlvo(zones.getTPS(currentPose.x(), currentPose.y()));
+                servos.open();
+            } else {
+                shooter.setAlvo(ShooterCoefficients.ALVO_TPS_BIGBALL);
+                servos.open();
+            }
         } else {
             shooter.setAlvo(0);
             servos.close();
