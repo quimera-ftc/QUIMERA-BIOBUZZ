@@ -51,7 +51,7 @@ public class Shooter {
 
         Servo lockServo = hardwareMap.get(Servo.class, "trava");
         lock = new ServoTaura(lockServo);
-        flow = hardwareMap.get(CRServo.class, "flow");
+        flow = hardwareMap.get(CRServo.class, "cremalheira");
 
         ls.setDirection(DcMotorEx.Direction.REVERSE);
         rs.setDirection(DcMotorEx.Direction.FORWARD);
