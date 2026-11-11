@@ -52,14 +52,14 @@ public class downTestBlue extends OpMode {
     private final Pose start =  poseFactory.of(91.0176, 37.9776, 270);
 
 //    private final Pose collectStart = poseFactory.of(93.86, 16.61, 270);
-    private  final Pose collect = poseFactory.of(94.9311,20.5272,270);
+    private  final Pose collect = poseFactory.of(91.9015,16.4284,270);
 
 //    private final  Pose turneStart = poseFactory .of(94.04,26.23,270);
 
 //    private final Pose turne = poseFactory.of(91.0176,37.9776,270);
 
 //    private final Pose shootStart = poseFactory.of(93.8607, 16.6075, 270);
-   private final Pose  shoot = poseFactory.of(82.0592,17.5201,90);
+   private final Pose  shoot = poseFactory.of(82.0592,17.5201,270);
 
 //    private final Pose fimStart = poseFactory.of(78.6305, 9.7349, 90);
    private final Pose fim = poseFactory.of(128.380745,20.8196,90);
@@ -90,14 +90,14 @@ public class downTestBlue extends OpMode {
         agro = new Servos(hardwareMap);
         turret = new Turret(hardwareMap, torre, Constants.Alliance.BLUE);
 
-        zones = new Zones(ShooterConstants.ALVO_TPS)
-                .addZone(50.96, 91.14, 105.14, 137.71, ShooterConstants.ALVO_TPS)
-                .addZone(9.14, 50.96, 105.14, 137.71, ShooterConstants.ALVO_TPS_LADO)
-                .addZone(91.14, 132.96, 105.14, 137.71, ShooterConstants.ALVO_TPS_LADO)
+        zones = new Zones(ShooterConstants.IDLE_TPS)
+                .addZone(57.88,107.45,95.41,144.00, ShooterConstants.ALVO_TPS)
+                .addZone(107.45,141.50,95.41,138.87, ShooterConstants.ALVO_TPS_LADO)
+                .addZone(0.00, 57.88, 95.41, 144.00, ShooterConstants.ALVO_TPS_AWAY)
 
-                .addZone(50.96, 91.14, 6.29, 38.86, ShooterConstants.ALVO_TPS)
-                .addZone(9.14, 50.96, 6.29, 38.86, ShooterConstants.ALVO_TPS_LADO)
-                .addZone(91.14, 132.96, 6.29, 38.86, ShooterConstants.ALVO_TPS_LADO);
+                .addZone(57.88, 107.45, 0.00, 48.59, ShooterConstants.ALVO_TPS)
+                .addZone(107.45, 141.50, 5.13, 48.59, ShooterConstants.ALVO_TPS_LADO)
+                .addZone(0.00, 57.88, 0.00, 48.59, ShooterConstants.ALVO_TPS_AWAY);
 
         allHubs = hardwareMap.getAll(LynxModule.class);
         for (LynxModule hub : allHubs) {
@@ -108,6 +108,7 @@ public class downTestBlue extends OpMode {
     public void start() {
         shooterLigado = true;
         Scheduler.schedule(routine());
+        shooter.setLock(true);
         }
 
 
@@ -134,13 +135,13 @@ public class downTestBlue extends OpMode {
     public Command routine() {
         return parallel(
                 sequential(
-                        waitMs(5000),
+                        waitMs(4000),
                 shooter.shootPP(),
-                follow(follower, START()),
                 parallel(
-                        follow(follower, COLLECT()),
+                        follow(follower, START()),
                         intake.intakePP()
                 ),
+                        follow(follower, COLLECT()),
                 waitMs(1500),
                 intake.intakestopPP(),
 
