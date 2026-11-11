@@ -49,6 +49,8 @@ public class Shooter {
         servos = new Servos(hardwareMap);
         this.intake = intake;
 
+        ls = hardwareMap.get(DcMotorEx.class, "ls");
+        rs = hardwareMap.get(DcMotorEx.class, "rs");
         Servo lockServo = hardwareMap.get(Servo.class, "trava");
         lock = new ServoTaura(lockServo);
         flow = hardwareMap.get(CRServo.class, "cremalheira");
@@ -71,7 +73,7 @@ public class Shooter {
     public void setLock(boolean locked) {
         isLocked = locked;
 
-        if (isLocked) {
+        if (!isLocked) {
             lock.setPosition(LOCKED_POS);
         } else {
             lock.setPosition(UNLOCKED_POS);
@@ -110,9 +112,8 @@ public class Shooter {
                 instant(()-> setLock(false)),
                 instant(() -> intake.in(IntakeConstants.intakeShooting)),
                 waitMs(1000),
-
-
-                instant(() -> intake.stop())
+                instant(() -> intake.stop()),
+                instant(() -> setLock(true))
         );
     }
 
