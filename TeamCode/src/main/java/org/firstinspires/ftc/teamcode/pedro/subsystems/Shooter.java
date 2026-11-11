@@ -1,12 +1,20 @@
 package org.firstinspires.ftc.teamcode.pedro.subsystems;
 
+import com.pedropathing.ivy.Scheduler;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import static com.pedropathing.ivy.commands.Commands.*;
 import static com.pedropathing.ivy.groups.Groups.*;
+
+import static org.firstinspires.ftc.teamcode.pedro.subsystems.subConstants.ShooterConstants.FLOW_DOWN;
+import static org.firstinspires.ftc.teamcode.pedro.subsystems.subConstants.ShooterConstants.FLOW_UP;
+import static org.firstinspires.ftc.teamcode.pedro.subsystems.subConstants.ShooterConstants.LOCKED_POS;
+import static org.firstinspires.ftc.teamcode.pedro.subsystems.subConstants.ShooterConstants.UNLOCKED_POS;
 
 import androidx.annotation.NonNull;
 
@@ -19,86 +27,31 @@ import org.firstinspires.ftc.teamcode.pedro.Constants;
 import org.firstinspires.ftc.teamcode.pedro.math.RampaPotencia;
 import org.firstinspires.ftc.teamcode.pedro.math.VoltageCompensator;
 import org.firstinspires.ftc.teamcode.pedro.subsystems.subConstants.IntakeConstants;
-import org.firstinspires.ftc.teamcode.pedro.subsystems.subConstants.ShooterCoefficients;
+import org.firstinspires.ftc.teamcode.pedro.subsystems.subConstants.ShooterConstants;
 
 public class Shooter {
 
     Intake intake;
     Servos servos;
-
+    ServoTaura lock;
+    CRServo flow;
     public DcMotorEx rs, ls;
     VoltageCompensator voltageController;
     private double potenciaUpdate;
     private double alvoTps = 0;
     private double medidoTps = 0;
-    private boolean encoderOff = false;
-    boolean isOn = false;
-    public boolean isShooting = false;
-    private VoltageSensor bateria;
-
-    public Telemetry telemetry;
-    public ElapsedTime runtime = new ElapsedTime();
+    private boolean encoderOff = false, isOn = false;
+    public boolean isShooting = false, isLocked = true, nectar = false;
     private final RampaPotencia rampa = new RampaPotencia(2.0, 2.0);  // 0→1 em 0,5 s
     //-- GnHk28 has left the Commits
 
-    public Shooter(@NonNull HardwareMap hardwareMap, Telemetry telemetry) {
-        ls = hardwareMap.get(DcMotorEx.class, "ls");
-        rs = hardwareMap.get(DcMotorEx.class, "rs");
-        servos = new Servos(hardwareMap);
-
-        ls.setDirection(DcMotorSimple.Direction.REVERSE);
-        rs.setDirection(DcMotorSimple.Direction.REVERSE);
-
-        ls.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        rs.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        voltageController = new VoltageCompensator(hardwareMap);
-        this.telemetry = telemetry;
-
-        ls.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-        rs.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-
-        intake = new Intake(hardwareMap);
-        bateria = hardwareMap.voltageSensor.iterator().next();
-    }
-
-    public Shooter(HardwareMap hardwareMap, Telemetry telemetry, Intake intake) {
-        this(hardwareMap, telemetry);
-        this.intake = intake;
-        servos = new Servos(hardwareMap);
-
-        ls.setDirection(DcMotorEx.Direction.REVERSE);
-        rs.setDirection(DcMotorEx.Direction.FORWARD);
-
-        ls.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
-        rs.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
-
-        ls.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.FLOAT);
-        rs.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.FLOAT);
-
-        voltageController = new VoltageCompensator(hardwareMap);
-    }
-
     public Shooter(HardwareMap hardwareMap, Intake intake) {
-        this(hardwareMap);
         servos = new Servos(hardwareMap);
         this.intake = intake;
 
-        ls.setDirection(DcMotorEx.Direction.REVERSE);
-        rs.setDirection(DcMotorEx.Direction.FORWARD);
-
-        ls.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
-        rs.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
-
-        ls.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.FLOAT);
-        rs.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.FLOAT);
-
-        voltageController = new VoltageCompensator(hardwareMap);
-    }
-
-    public Shooter(HardwareMap hardwareMap) {
-        ls = hardwareMap.get(DcMotorEx.class, "ls");
-        rs = hardwareMap.get(DcMotorEx.class, "rs");
-        servos = new Servos(hardwareMap);
+        Servo lockServo = hardwareMap.get(Servo.class, "trava");
+        lock = new ServoTaura(lockServo);
+        flow = hardwareMap.get(CRServo.class, "flow");
 
         ls.setDirection(DcMotorEx.Direction.REVERSE);
         rs.setDirection(DcMotorEx.Direction.FORWARD);
@@ -109,18 +62,52 @@ public class Shooter {
         ls.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.FLOAT);
         rs.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.FLOAT);
 
-        intake = new Intake(hardwareMap);
         voltageController = new VoltageCompensator(hardwareMap);
     }
     public boolean isOn() {
         return isOn;
     }
 
+    public void setLock(boolean locked) {
+        isLocked = locked;
+
+        if (isLocked) {
+            lock.setPosition(LOCKED_POS);
+        } else {
+            lock.setPosition(UNLOCKED_POS);
+        }
+
+    }
+
+    public void shootNectar(boolean var) {
+        nectar = var;
+        if (var) {
+            Scheduler.schedule(
+                    sequential(
+                            instant(() -> flow.setPower(FLOW_UP)),
+                            waitMs(1850),
+                            instant(() -> flow.setPower(0))
+                    )
+            );
+
+        } else {
+            Scheduler.schedule(
+                    sequential(
+                            instant(() -> flow.setPower(FLOW_DOWN)),
+                            waitMs(1850),
+                            instant(() -> flow.setPower(0))
+                    )
+            );
+        }
+
+
+    }
+
 
     //metodo p shootar no autooooo
     public Command shootPP() {
         return sequential(
-                instant(()-> servos.open()),
+                instant(()-> setLock(false)),
                 instant(() -> intake.in(IntakeConstants.intakeShooting)),
                 waitMs(1000),
 
@@ -134,7 +121,7 @@ public class Shooter {
     public void stop() {
         rs.setPower(0);
         ls.setPower(0);
-        servos.close();
+        setLock(true);
 
         isOn = false;
     }
@@ -142,11 +129,7 @@ public class Shooter {
     public void setAlvo(double tps) {
         alvoTps = tps;
 
-        if (tps > 0) {
-            isShooting = true;
-        } else {
-            isShooting = false;
-        }
+        isShooting = tps > 0;
 
     }
 
@@ -156,8 +139,8 @@ public class Shooter {
         if (alvoTps <= 0) {
             pedido = 0;
         } else {
-            double ff = ShooterCoefficients.kS + ShooterCoefficients.kV * alvoTps; //potencia q se pa vai ser
-            double fb = ShooterCoefficients.kP * (alvoTps - medidoTps); //correção do erro usando o p proporcional
+            double ff = ShooterConstants.kS + ShooterConstants.kV * alvoTps; //potencia q se pa vai ser
+            double fb = ShooterConstants.kP * (alvoTps - medidoTps); //correção do erro usando o p proporcional
             double compTensao = Constants.VoltageConstants.NOMINAL_VOLTAGE / Math.max(getTensao(), 9.0); //ajuste de tudo pela bateriaa
             pedido = Range.clip((ff + fb) * compTensao, 0, 1);
         }
@@ -168,7 +151,7 @@ public class Shooter {
     }
 
     public boolean atSpeed() {
-        return alvoTps > 0 && Math.abs(alvoTps - medidoTps) < ShooterCoefficients.READY_TOL;
+        return alvoTps > 0 && Math.abs(alvoTps - medidoTps) < ShooterConstants.READY_TOL;
     }
 
     private double readVelocity() {
@@ -207,7 +190,7 @@ public class Shooter {
         telemetry.addData("Vel esq", "%.0f", getVelEsq());
         telemetry.addData("Vel dir", "%.0f", getVelDir());
         telemetry.addData("Tensao", "%.2f", getTensao());
-        telemetry.addData("alvoTPS: ", ShooterCoefficients.ALVO_TPS);
+        telemetry.addData("alvoTPS: ", ShooterConstants.ALVO_TPS);
         telemetry.addData("potencia que ta indo pros motores: ", potenciaUpdate);
         telemetry.addLine("-------------------------------");
         telemetry.addData("Alvo", 2300);

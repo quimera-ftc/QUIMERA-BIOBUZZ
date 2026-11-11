@@ -1,5 +1,6 @@
+package org.firstinspires.ftc.teamcode.pedro.opmodes.red;
 
-package org.firstinspires.ftc.teamcode.pedro.opmodes.blue;
+import static org.firstinspires.ftc.teamcode.pedro.subsystems.subConstants.TurretConstants.MANUAL_POWER;
 
 import com.pedropathing.follower.Follower;
 import com.pedropathing.math.Pose;
@@ -16,11 +17,11 @@ import org.firstinspires.ftc.teamcode.pedro.subsystems.Shooter;
 import org.firstinspires.ftc.teamcode.pedro.subsystems.Turret;
 import org.firstinspires.ftc.teamcode.pedro.subsystems.Zones;
 import org.firstinspires.ftc.teamcode.pedro.subsystems.subConstants.IntakeConstants;
-import org.firstinspires.ftc.teamcode.pedro.subsystems.subConstants.ShooterCoefficients;
+import org.firstinspires.ftc.teamcode.pedro.subsystems.subConstants.ShooterConstants;
 
 import java.util.List;
 
-@TeleOp(name="TELEOP_RED_DOWN", group="Red")
+@TeleOp(name="TELEOP_RED_TOP", group="Red")
 public class teleop_RED_DOWN extends OpMode {
     Intake intake;
     Servos servos;
@@ -28,7 +29,7 @@ public class teleop_RED_DOWN extends OpMode {
     Shooter shooter;
     Turret turret;
     VoltageCompensator voltageController;
-    Pose startPose = new Pose(132.12, 51.28, Math.toRadians(270));
+    Pose startPose = new Pose(132.12, 51.28, Math.toRadians(270)); //todo: corrigir pose
     Follower follower;
     List<LynxModule> allHubs;
     Zones zones;
@@ -37,7 +38,7 @@ public class teleop_RED_DOWN extends OpMode {
     public void init() {
 
         follower = Constants.create(hardwareMap);
-        turret = new Turret(hardwareMap, startPose, Constants.Alliance.BLUE);
+        turret = new Turret(hardwareMap, startPose, Constants.Alliance.RED);
         driveTrain = new DriveTrain(hardwareMap, gamepad1);
         servos = new Servos(hardwareMap);
         intake = new Intake(hardwareMap);
@@ -45,17 +46,17 @@ public class teleop_RED_DOWN extends OpMode {
         voltageController = new VoltageCompensator(hardwareMap);
 
         turret.resetEncoder();
-        servos.agroUp();
+        intake.collectFlower(false);
         follower.setPose(startPose);
 
-        zones = new Zones(Constants.ShooterCoefficients.ALVO_TPS)
-                .addZone(34.20, 83.24, 96.00, 144.00, ShooterCoefficients.ALVO_TPS)
-                .addZone(0.00, 34.20, 96.00, 144.00, ShooterCoefficients.ALVO_TPS_LADO)
-                .addZone(83.63, 144.00, 96.00, 144.00, ShooterCoefficients.ALVO_TPS_AWAY)
+        zones = new Zones(ShooterConstants.ALVO_TPS)
+                .addZone(34.20, 83.24, 96.00, 144.00, ShooterConstants.ALVO_TPS)
+                .addZone(0.00, 34.20, 96.00, 144.00, ShooterConstants.ALVO_TPS_LADO)
+                .addZone(83.63, 144.00, 96.00, 144.00, ShooterConstants.ALVO_TPS_AWAY)
 
-                .addZone(60.76, 109.80, 96.00, 144.00, ShooterCoefficients.ALVO_TPS)
-                .addZone(109.80, 144.00, 96.00, 144.00, ShooterCoefficients.ALVO_TPS_LADO)
-                .addZone(0.00, 60.37, 96.00, 144.00, ShooterCoefficients.ALVO_TPS_AWAY);
+                .addZone(60.76, 109.80, 96.00, 144.00, ShooterConstants.ALVO_TPS)
+                .addZone(109.80, 144.00, 96.00, 144.00, ShooterConstants.ALVO_TPS_LADO)
+                .addZone(0.00, 60.37, 96.00, 144.00, ShooterConstants.ALVO_TPS_AWAY);
 
         allHubs = hardwareMap.getAll(LynxModule.class);
         for (LynxModule hub : allHubs) {
@@ -65,7 +66,7 @@ public class teleop_RED_DOWN extends OpMode {
 
     @Override
     public void start() {
-
+        turret.setMode(Turret.Mode.MANUAL);
     }
 
     @Override
@@ -100,9 +101,9 @@ public class teleop_RED_DOWN extends OpMode {
 
 
         if (gamepad1.right_bumper) {
-            turret.setManualPower(0.75);
+            turret.setManualPower(MANUAL_POWER);
         } else if (gamepad1.left_bumper) {
-            turret.setManualPower(-0.75);
+            turret.setManualPower(-MANUAL_POWER);
         } else turret.setManualPower(0);
 
         if (gamepad1.dpadRightWasPressed()) {
@@ -118,8 +119,6 @@ public class teleop_RED_DOWN extends OpMode {
         shooter.update();
         intake.update();
 
-        shooter.telemetriaTeste(telemetry);
-        telemetry.addData("intake", "%s (potência %.2f)", intake.isOn() ? "LIGADO" : "DESLIGADO", intake.intake.getPower());
         telemetry.update();
     }
 

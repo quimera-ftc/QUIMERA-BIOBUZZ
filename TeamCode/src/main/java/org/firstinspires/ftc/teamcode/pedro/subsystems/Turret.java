@@ -103,16 +103,16 @@ public class Turret{
                     setPower(0);
                 } else {
 
-                double error = clampToLimits(getDistanceToTarget() + getLimeLightOffset());
+                    double error = clampToLimits(getDistanceToTarget() + getLimeLightOffset());
 
-                integral += error * dt;
-                integral = Range.clip(integral, -maxIntegral, maxIntegral);
-                double derivative = (error - lastError) / dt;
-                double filteredDerivative = (alpha * derivative) + ((1.0 - alpha) * lastFilteredDerivative);
+                    integral += error * dt;
+                    integral = Range.clip(integral, -maxIntegral, maxIntegral);
+                    double derivative = (error - lastError) / dt;
+                    double filteredDerivative = (alpha * derivative) + ((1.0 - alpha) * lastFilteredDerivative);
 
-                lastFilteredDerivative = filteredDerivative;
-                setPower(TurretController.calculatePower(integral, error, filteredDerivative));
-                lastError = error;
+                    lastFilteredDerivative = filteredDerivative;
+                    setPower(TurretController.calculatePower(integral, error, filteredDerivative));
+                    lastError = error;
                 }
                 break;
 
@@ -168,10 +168,6 @@ public class Turret{
         return target - getRawAngle();
     }
 
-    public double getDistanciaGol() {
-        return TurretController.getTurretPose(currentPose).distance(getTrackingPose());
-    }
-
     public Pose getTrackingPose() {
 
         if (alliance == Constants.Alliance.BLUE) {
@@ -193,12 +189,8 @@ public class Turret{
         return (motor.getCurrentPosition() - zeroTicks) / ticksPerDegree;
     }
 
-    public void setReference(double deg) {
-        zeroTicks = motor.getCurrentPosition() - (deg * ticksPerDegree);
-    }
-
     public void correct(double deg) {
-        zeroTicks -= deg * ticksPerDegree;
+        zeroTicks += (deg * ticksPerDegree);
     }
 
     public double getZeroTicks() {

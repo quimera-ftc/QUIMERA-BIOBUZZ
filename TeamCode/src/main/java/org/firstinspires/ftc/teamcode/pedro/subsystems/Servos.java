@@ -14,10 +14,10 @@ public class Servos {
     Servo flowerRight;
     ServoTaura trava,agro;
     Servo t1, t2;
-    private CRServo continuo;
+    private CRServo flow;
     public boolean mixed = false;
     public boolean sas = false;
-    public final double  DOWN_RIGHT = 0.80;
+    public final double DOWN_RIGHT = 0.80;
     public final double UP_RIGHT = 0;
     public final double CONST_UP = 1;
     public final double CONST_DOWN = -1;
@@ -28,7 +28,7 @@ public class Servos {
     public Servos(@NonNull HardwareMap hardwareMap) {
         flowerRight = hardwareMap.get(Servo.class, "flowerRight");
         t1 = hardwareMap.get(Servo.class, "trava");
-        continuo = hardwareMap.get(CRServo.class,"cremalheira");
+        flow = hardwareMap.get(CRServo.class,"cremalheira");
         t2 = hardwareMap.get(Servo.class,"agro");
 
 
@@ -43,24 +43,6 @@ public class Servos {
 
     }
 
-
-    public void agroUp() {
-        flowerRight.setPosition(UP_RIGHT);
-        agro.setPosition(0.25);
-    }
-
-    public void agroDown() {
-        flowerRight.setPosition(DOWN_RIGHT);
-        agro.setPosition(1);
-    }
-
-    public void open(){
-        trava.setPosition(TRAVA_OPEN);
-    }
-
-    public void close(){
-        trava.setPosition(TRAVA_CLOSE);
-    }
     public void contup(){
         flow.setPower(CONST_UP);
         mixed = true;

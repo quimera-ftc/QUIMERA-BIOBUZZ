@@ -18,7 +18,6 @@ import com.pedropathing.paths.Path;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.pedro.Constants;
 import org.firstinspires.ftc.teamcode.pedro.subsystems.Intake;
@@ -26,7 +25,7 @@ import org.firstinspires.ftc.teamcode.pedro.subsystems.Servos;
 import org.firstinspires.ftc.teamcode.pedro.subsystems.Shooter;
 import org.firstinspires.ftc.teamcode.pedro.subsystems.Turret;
 import org.firstinspires.ftc.teamcode.pedro.subsystems.Zones;
-import org.firstinspires.ftc.teamcode.pedro.subsystems.subConstants.ShooterCoefficients;
+import org.firstinspires.ftc.teamcode.pedro.subsystems.subConstants.ShooterConstants;
 
 import java.util.List;
 
@@ -92,14 +91,14 @@ import java.util.List;
             agro = new Servos(hardwareMap);
             turret = new Turret(hardwareMap, torre, Constants.Alliance.RED);
 
-            zones = new Zones(ShooterCoefficients.ALVO_TPS)
-                    .addZone(50.96, 91.14, 105.14, 137.71, ShooterCoefficients.ALVO_TPS)
-                    .addZone(9.14, 50.96, 105.14, 137.71, ShooterCoefficients.ALVO_TPS_LADO)
-                    .addZone(91.14, 132.96, 105.14, 137.71, ShooterCoefficients.ALVO_TPS_LADO)
+            zones = new Zones(ShooterConstants.ALVO_TPS)
+                    .addZone(50.96, 91.14, 105.14, 137.71, ShooterConstants.ALVO_TPS)
+                    .addZone(9.14, 50.96, 105.14, 137.71, ShooterConstants.ALVO_TPS_LADO)
+                    .addZone(91.14, 132.96, 105.14, 137.71, ShooterConstants.ALVO_TPS_LADO)
 
-                    .addZone(50.96, 91.14, 6.29, 38.86, ShooterCoefficients.ALVO_TPS)
-                    .addZone(9.14, 50.96, 6.29, 38.86, ShooterCoefficients.ALVO_TPS_LADO)
-                    .addZone(91.14, 132.96, 6.29, 38.86, ShooterCoefficients.ALVO_TPS_LADO);
+                    .addZone(50.96, 91.14, 6.29, 38.86, ShooterConstants.ALVO_TPS)
+                    .addZone(9.14, 50.96, 6.29, 38.86, ShooterConstants.ALVO_TPS_LADO)
+                    .addZone(91.14, 132.96, 6.29, 38.86, ShooterConstants.ALVO_TPS_LADO);
 
             allHubs = hardwareMap.getAll(LynxModule.class);
             for (LynxModule hub : allHubs) {

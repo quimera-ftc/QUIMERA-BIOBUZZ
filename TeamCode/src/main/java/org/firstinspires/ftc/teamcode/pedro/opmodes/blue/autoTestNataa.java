@@ -24,7 +24,7 @@ import org.firstinspires.ftc.teamcode.pedro.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.pedro.subsystems.Shooter;
 import org.firstinspires.ftc.teamcode.pedro.subsystems.Turret;
 import org.firstinspires.ftc.teamcode.pedro.subsystems.Zones;
-import org.firstinspires.ftc.teamcode.pedro.subsystems.subConstants.ShooterCoefficients;
+import org.firstinspires.ftc.teamcode.pedro.subsystems.subConstants.ShooterConstants;
 
 import java.util.List;
 
@@ -44,9 +44,9 @@ public class autoTestNataa extends OpMode {
     List<LynxModule> allHubs;
 
     Pose startingPoint = poseFactory.of(86.06466512702079,134.1431469720298,0);
-    Pose collect1 = poseFactory.of(128.97337962962962, 132.37106481481478, 0);
+    Pose collect1 = poseFactory.of(126.97337962962962, 134.87106481481478, 0);
     Pose shoot2 = poseFactory.of(114.01981481481482, 17.932870370370395, 72);
-    Pose collect2 = poseFactory.of(102.44675925925927, 11.832638888888886, 250);
+    Pose collect2 = poseFactory.of(99.44675925925927, 13.832638888888886, 250);
     Pose shoot3 = poseFactory.of(114.01981481481482, 17.932870370370395, 70);
     Pose collect3 = poseFactory.of(129.0388888888889, 97.13055555555556, 0);
     Pose shoot4 = poseFactory.of(104.5462962962963, 125.4074074074074, 300);
@@ -87,14 +87,14 @@ public class autoTestNataa extends OpMode {
         turret = new Turret(hardwareMap, startingPoint, Constants.Alliance.BLUE);
         turret.resetEncoder();
 
-        zones = new Zones(ShooterCoefficients.IDLE_TPS)
-                .addZone(57.88,107.45,95.41,144.00, ShooterCoefficients.ALVO_TPS)
-                .addZone(107.45,141.50,95.41,138.87, ShooterCoefficients.ALVO_TPS_LADO)
-                .addZone(0.00, 57.88, 95.41, 144.00, ShooterCoefficients.ALVO_TPS_AWAY)
+        zones = new Zones(ShooterConstants.IDLE_TPS)
+                .addZone(57.88,107.45,95.41,144.00, ShooterConstants.ALVO_TPS)
+                .addZone(107.45,141.50,95.41,138.87, ShooterConstants.ALVO_TPS_LADO)
+                .addZone(0.00, 57.88, 95.41, 144.00, ShooterConstants.ALVO_TPS_AWAY)
 
-                .addZone(57.88, 107.45, 0.00, 48.59, ShooterCoefficients.ALVO_TPS)
-                .addZone(107.45, 141.50, 5.13, 48.59, ShooterCoefficients.ALVO_TPS_LADO)
-                .addZone(0.00, 57.88, 0.00, 48.59, ShooterCoefficients.ALVO_TPS_AWAY);
+                .addZone(57.88, 107.45, 0.00, 48.59, ShooterConstants.ALVO_TPS)
+                .addZone(107.45, 141.50, 5.13, 48.59, ShooterConstants.ALVO_TPS_LADO)
+                .addZone(0.00, 57.88, 0.00, 48.59, ShooterConstants.ALVO_TPS_AWAY);
 
         allHubs = hardwareMap.getAll(LynxModule.class);
         for (LynxModule hub : allHubs) {
@@ -125,22 +125,24 @@ public class autoTestNataa extends OpMode {
     public void start() {
         shooterLigado = true;
         Scheduler.schedule(routine());
+        shooter.setLock(true);
 
     }
     public Command routine() {
         return parallel(
                 sequential(
-                        instant(() ->servo.agroDown()),
-                        waitMs(3000),
+                        waitMs(1000),
                         shooter.shootPP(),
+                        instant(() -> shooter.setLock(true)),
                         parallel(
                                 follow(follower, START_TO_COLLECT1()),
-                                intake.intakePP()
+                                intake.intakeOnlyUse()
                         ),
                         waitMs(1500),
                         intake.intakestopPP(),
                         follow(follower, COLLECT1_TO_SHOOT2()),
                         shooter.shootPP(),
+                        instant(() -> shooter.setLock(true)),
                         parallel(
                                 follow(follower, SHOOT2_TO_COLLECT2()),
                                 intake.intakePP()
@@ -149,6 +151,7 @@ public class autoTestNataa extends OpMode {
                         intake.intakestopPP(),
                         follow(follower, COLLECT2_TO_SHOOT3()),
                         shooter.shootPP(),
+                        instant(() -> shooter.setLock(true)),
                         parallel(
                                 follow(follower, SHOOT3_TO_COLLECT3()),
                                 intake.intakePP()
@@ -157,11 +160,12 @@ public class autoTestNataa extends OpMode {
                         intake.intakestopPP(),
                         follow(follower, COLLECT3_TO_SHOOT4()),
                         shooter.shootPP(),
+                        instant(() -> shooter.setLock(true)),
                         follow(follower, SHOOT4_TO_PARK()),
                         instant(() -> shooterLigado = false)
                 ),
                 turret.autoaim(follower::pose),
-                instant(() -> servo.close())
+                instant(() -> shooter.setLock(true))
         );
 
     }

@@ -23,7 +23,7 @@ import org.firstinspires.ftc.teamcode.pedro.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.pedro.subsystems.Shooter;
 import org.firstinspires.ftc.teamcode.pedro.subsystems.Turret;
 import org.firstinspires.ftc.teamcode.pedro.subsystems.Zones;
-import org.firstinspires.ftc.teamcode.pedro.subsystems.subConstants.ShooterCoefficients;
+import org.firstinspires.ftc.teamcode.pedro.subsystems.subConstants.ShooterConstants;
 
 import java.util.List;
 @Autonomous(name="AUTO_BLUE_TOP_ALLIANCE", group="Blue")
@@ -94,14 +94,14 @@ public class autoAllianceTest extends OpMode {
         turret = new Turret(hardwareMap, startingPoint, Constants.Alliance.BLUE);
         turret.resetEncoder();
 
-        zones = new Zones(ShooterCoefficients.IDLE_TPS)
-                .addZone(57.88,107.45,95.41,144.00, ShooterCoefficients.ALVO_TPS)
-                .addZone(107.45,141.50,95.41,138.87, ShooterCoefficients.ALVO_TPS_LADO)
-                .addZone(0.00, 57.88, 95.41, 144.00, ShooterCoefficients.ALVO_TPS_AWAY)
+        zones = new Zones(ShooterConstants.IDLE_TPS)
+                .addZone(57.88,107.45,95.41,144.00, ShooterConstants.ALVO_TPS)
+                .addZone(107.45,141.50,95.41,138.87, ShooterConstants.ALVO_TPS_LADO)
+                .addZone(0.00, 57.88, 95.41, 144.00, ShooterConstants.ALVO_TPS_AWAY)
 
-                .addZone(57.88, 107.45, 0.00, 48.59, ShooterCoefficients.ALVO_TPS)
-                .addZone(107.45, 141.50, 5.13, 48.59, ShooterCoefficients.ALVO_TPS_LADO)
-                .addZone(0.00, 57.88, 0.00, 48.59, ShooterCoefficients.ALVO_TPS_AWAY);
+                .addZone(57.88, 107.45, 0.00, 48.59, ShooterConstants.ALVO_TPS)
+                .addZone(107.45, 141.50, 5.13, 48.59, ShooterConstants.ALVO_TPS_LADO)
+                .addZone(0.00, 57.88, 0.00, 48.59, ShooterConstants.ALVO_TPS_AWAY);
 
         allHubs = hardwareMap.getAll(LynxModule.class);
         for (LynxModule hub : allHubs) {
@@ -141,7 +141,7 @@ public class autoAllianceTest extends OpMode {
                         instant(() -> shooterLigado = false)
                 ),
                 turret.autoaim(follower::pose),
-                instant(() -> servo.close())
+                instant(() -> shooter.setLock(true))
 
         );
     }

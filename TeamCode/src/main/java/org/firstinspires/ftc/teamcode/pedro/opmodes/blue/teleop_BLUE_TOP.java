@@ -1,4 +1,3 @@
-
 package org.firstinspires.ftc.teamcode.pedro.opmodes.blue;
 
 import static org.firstinspires.ftc.teamcode.pedro.subsystems.subConstants.TurretConstants.MANUAL_POWER;
@@ -18,7 +17,7 @@ import org.firstinspires.ftc.teamcode.pedro.subsystems.Shooter;
 import org.firstinspires.ftc.teamcode.pedro.subsystems.Turret;
 import org.firstinspires.ftc.teamcode.pedro.subsystems.Zones;
 import org.firstinspires.ftc.teamcode.pedro.subsystems.subConstants.IntakeConstants;
-import org.firstinspires.ftc.teamcode.pedro.subsystems.subConstants.ShooterCoefficients;
+import org.firstinspires.ftc.teamcode.pedro.subsystems.subConstants.ShooterConstants;
 
 import java.util.List;
 
@@ -46,17 +45,17 @@ public class teleop_BLUE_TOP extends OpMode {
         shooter = new Shooter(hardwareMap, intake);
         voltageController = new VoltageCompensator(hardwareMap);
 
-        servos.agroUp();
+        intake.collectFlower(false);
         follower.setPose(startPose);
 
-        zones = new Zones(ShooterCoefficients.IDLE_TPS)
-                .addZone(57.88,107.45,95.41,144.00, ShooterCoefficients.ALVO_TPS)
-                .addZone(107.45,141.50,95.41,138.87, ShooterCoefficients.ALVO_TPS_LADO)
-                .addZone(0.00, 57.88, 95.41, 144.00, ShooterCoefficients.ALVO_TPS_AWAY)
+        zones = new Zones(ShooterConstants.IDLE_TPS)
+                .addZone(57.88,107.45,95.41,144.00, ShooterConstants.ALVO_TPS)
+                .addZone(107.45,141.50,95.41,138.87, ShooterConstants.ALVO_TPS_LADO)
+                .addZone(0.00, 57.88, 95.41, 144.00, ShooterConstants.ALVO_TPS_AWAY)
 
-                .addZone(57.88, 107.45, 0.00, 48.59, ShooterCoefficients.ALVO_TPS)
-                .addZone(107.45, 141.50, 5.13, 48.59, ShooterCoefficients.ALVO_TPS_LADO)
-                .addZone(0.00, 57.88, 0.00, 48.59, ShooterCoefficients.ALVO_TPS_AWAY);
+                .addZone(57.88, 107.45, 0.00, 48.59, ShooterConstants.ALVO_TPS)
+                .addZone(107.45, 141.50, 5.13, 48.59, ShooterConstants.ALVO_TPS_LADO)
+                .addZone(0.00, 57.88, 0.00, 48.59, ShooterConstants.ALVO_TPS_AWAY);
 
         allHubs = hardwareMap.getAll(LynxModule.class);
         for (LynxModule hub : allHubs) {
@@ -66,7 +65,7 @@ public class teleop_BLUE_TOP extends OpMode {
 
     @Override
     public void start() {
-
+        turret.setMode(Turret.Mode.MANUAL);
     }
 
     @Override

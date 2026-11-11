@@ -2,8 +2,10 @@ package org.firstinspires.ftc.teamcode.pedro.opmodes.calibration;
 
 import static com.pedropathing.ivy.commands.Commands.instant;
 import static com.pedropathing.ivy.commands.Commands.waitMs;
-import static com.pedropathing.ivy.groups.Groups.race;
 import static com.pedropathing.ivy.groups.Groups.sequential;
+
+import static org.firstinspires.ftc.teamcode.pedro.subsystems.subConstants.TurretConstants.CORRECTION_RATIO;
+import static org.firstinspires.ftc.teamcode.pedro.subsystems.subConstants.TurretConstants.MANUAL_POWER;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
@@ -18,14 +20,13 @@ import com.qualcomm.robotcore.hardware.VoltageSensor;
 import org.firstinspires.ftc.teamcode.pedro.Constants;
 import org.firstinspires.ftc.teamcode.pedro.math.TurretController;
 import org.firstinspires.ftc.teamcode.pedro.subsystems.Servos;
-import org.firstinspires.ftc.teamcode.pedro.subsystems.Servos;
 import org.firstinspires.ftc.teamcode.pedro.subsystems.DriveTrain;
 import org.firstinspires.ftc.teamcode.pedro.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.pedro.subsystems.Shooter;
 import org.firstinspires.ftc.teamcode.pedro.subsystems.Turret;
 import org.firstinspires.ftc.teamcode.pedro.subsystems.Zones;
 import org.firstinspires.ftc.teamcode.pedro.subsystems.subConstants.IntakeConstants;
-import org.firstinspires.ftc.teamcode.pedro.subsystems.subConstants.ShooterCoefficients;
+import org.firstinspires.ftc.teamcode.pedro.subsystems.subConstants.ShooterConstants;
 
 import java.util.List;
 
@@ -39,11 +40,7 @@ public class TestMechanisms extends OpMode {
     Follower follower;
     Zones zones;
     Pose startPose = new Pose(132.6505617977528, 133.92247191011242, Math.toRadians(270));
-    boolean flower = true;
-
-    double potenciaTeste = 0.0;
-    boolean dpadCimaAntes = false;
-    boolean dpadBaixoAntes = false;
+    boolean flower = false;
     List<LynxModule> allHubs;
 
     @Override
@@ -52,21 +49,22 @@ public class TestMechanisms extends OpMode {
         follower = Constants.create(hardwareMap);
         intake = new Intake(hardwareMap);
         driveTrain = new DriveTrain(hardwareMap, gamepad1);
-        shooter = new Shooter(hardwareMap, telemetry, intake);
+        shooter = new Shooter(hardwareMap, intake);
         turret = new Turret(hardwareMap, startPose, Constants.Alliance.BLUE);
         servos = new Servos(hardwareMap);
 
         follower.setPose(new Pose(132.6505617977528, 133.92247191011242, Math.toRadians(270)));
         turret.resetEncoder();
+        intake.collectFlower(false);
 
-        zones = new Zones(ShooterCoefficients.IDLE_TPS)
-                .addZone(57.88,107.45,95.41,144.00, ShooterCoefficients.ALVO_TPS)
-                .addZone(107.45,141.50,95.41,138.87, ShooterCoefficients.ALVO_TPS_LADO)
-                .addZone(0.00, 57.88, 95.41, 144.00, ShooterCoefficients.ALVO_TPS_AWAY)
+        zones = new Zones(ShooterConstants.IDLE_TPS)
+                .addZone(57.88,107.45,95.41,144.00, ShooterConstants.ALVO_TPS)
+                .addZone(107.45,141.50,95.41,138.87, ShooterConstants.ALVO_TPS_LADO)
+                .addZone(0.00, 57.88, 95.41, 144.00, ShooterConstants.ALVO_TPS_AWAY)
 
-                .addZone(57.88, 107.45, 0.00, 48.59, ShooterCoefficients.ALVO_TPS)
-                .addZone(107.45, 141.50, 5.13, 48.59, ShooterCoefficients.ALVO_TPS_LADO)
-                .addZone(0.00, 57.88, 0.00, 48.59, ShooterCoefficients.ALVO_TPS_AWAY);
+                .addZone(57.88, 107.45, 0.00, 48.59, ShooterConstants.ALVO_TPS)
+                .addZone(107.45, 141.50, 5.13, 48.59, ShooterConstants.ALVO_TPS_LADO)
+                .addZone(0.00, 57.88, 0.00, 48.59, ShooterConstants.ALVO_TPS_AWAY);
 
         allHubs = hardwareMap.getAll(LynxModule.class);
         for (LynxModule hub : allHubs) {
@@ -75,7 +73,7 @@ public class TestMechanisms extends OpMode {
     }
 
     public void start() {
-        servos.agroUp();
+        turret.setMode(Turret.Mode.MANUAL);
     }
 
     @Override
@@ -89,7 +87,9 @@ public class TestMechanisms extends OpMode {
         turret.update(currentPose);
 
         if (gamepad1.aWasPressed()) {
+
             if (!servos.sas) {
+
                 if(shooter.isShooting) {
                     intake.toggle(IntakeConstants.intakeShooting);
                 } else {
@@ -107,59 +107,45 @@ public class TestMechanisms extends OpMode {
         }
 
         if(gamepad1.bWasPressed()){
-            if (!servos.mixed) {
 
-                Scheduler.schedule(
-                        sequential(
-                                instant(() -> servos.contup()),
-                                waitMs(1850),
-                                instant(() -> servos.contstop())
-                        )
-                );
-            } else {
+            shooter.shootNectar(!shooter.nectar);
 
-                Scheduler.schedule(
-                        sequential(
-                                instant(() -> servos.contdown()),
-                                waitMs(1800),
-                                instant(() -> servos.contstop())
-                        )
-                );
-            }
         }
 
         if (gamepad1.xWasPressed()) {
-            servos.agroDown();
-        } else {
-            servos.agroUp();
+            intake.collectFlower(!intake.flower);
         }
 
         if (gamepad1.right_trigger > 0.5) {
             if (!servos.sas) {
                 shooter.setAlvo(zones.getTPS(currentPose.x(), currentPose.y()));
-                servos.open();
+                shooter.setLock(false);
             } else {
-                shooter.setAlvo(ShooterCoefficients.ALVO_TPS_BIGBALL);
-                servos.open();
+                shooter.setAlvo(ShooterConstants.ALVO_TPS_BIGBALL);
+                shooter.setLock(false);
             }
         } else {
             shooter.setAlvo(0);
-            servos.close();
+            shooter.setLock(true);
 
         }
 
         if (gamepad1.right_bumper) {
-            turret.setManualPower(0.75);
+            turret.setManualPower(MANUAL_POWER);
         } else if (gamepad1.left_bumper) {
-            turret.setManualPower(-0.75);
+            turret.setManualPower(-MANUAL_POWER);
         } else turret.setManualPower(0);
 
-        if (gamepad1.dpadRightWasPressed()) {
-
+        if (gamepad1.dpadDownWasPressed()) {
             if (turret.getMode() == Turret.Mode.MANUAL) {
                 turret.setMode(Turret.Mode.TRACKING);
             } else turret.setMode(Turret.Mode.MANUAL);
+        }
 
+        if (gamepad1.dpad_right) {
+            turret.correct(CORRECTION_RATIO);
+        } else if (gamepad1.dpad_left) {
+            turret.correct(-CORRECTION_RATIO);
         }
 
         shooter.update();
@@ -184,6 +170,7 @@ public class TestMechanisms extends OpMode {
         telemetry.addData("Turret X", turretPose.x());
         telemetry.addData("Turret Y", turretPose.y());
         telemetry.addData("target", target);
+        telemetry.addData("correction", turret.getZeroTicks());
         telemetry.addData("deslocamento (Raw)", turret.getRawAngle());
         telemetry.addData("Erro Atual", turret.getDistanceToTarget());
         telemetry.addData("lime offset", turret.getLimeLightOffset());
