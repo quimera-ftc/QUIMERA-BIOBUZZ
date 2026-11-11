@@ -21,7 +21,7 @@ import org.firstinspires.ftc.teamcode.pedro.subsystems.subConstants.ShooterConst
 
 import java.util.List;
 
-@TeleOp(name="TELEOP_RED_TOP", group="Red")
+@TeleOp(name="TELEOP_RED_DOWN", group="Red")
 public class teleop_RED_DOWN extends OpMode {
     Intake intake;
     Servos servos;
