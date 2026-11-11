@@ -60,10 +60,10 @@ public class downTestBlue extends OpMode {
 //    private final Pose turne = poseFactory.of(91.0176,37.9776,270);
 
 //    private final Pose shootStart = poseFactory.of(93.8607, 16.6075, 270);
-   private final Pose  shoot = poseFactory.of(78.63,9.73,90);
+   private final Pose  shoot = poseFactory.of(82.0592,17.5201,90);
 
 //    private final Pose fimStart = poseFactory.of(78.6305, 9.7349, 90);
-   private final Pose fim = poseFactory.of(129.45,17.79,90);
+   private final Pose fim = poseFactory.of(128.380745,20.8196,90);
 
     public Path START(){
         return line(torre,start).linear(torre,start);

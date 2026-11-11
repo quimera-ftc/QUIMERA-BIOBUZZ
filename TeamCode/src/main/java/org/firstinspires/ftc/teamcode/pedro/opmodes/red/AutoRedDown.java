@@ -43,28 +43,28 @@ import java.util.List;
         Pose currentPoseLocal;
         List<LynxModule> allHubs;
 
-        PoseFactory poseFactory =  PoseFactory.degrees();
+        PoseFactory poseFactory =  PoseFactory.degrees().mirrorY(70.75).mirrorX(70.75);
 
 
 
         private Follower follower;
 
-        private final Pose torre = poseFactory.of(8.889, 78.5051, 0);
+        private final Pose torre = poseFactory.of(78.5051, 8.889, 0);
 
-        private final Pose start = poseFactory.of(37.9776, 91.0176, 180);
+        private final Pose start =  poseFactory.of(91.0176, 37.9776, 180);
 
   //    private final Pose collectStart = poseFactory.of(16.61, 93.86, 180);
-        private final Pose collect = poseFactory.of(20.5272, 94.9311, 180);
+        private  final Pose collect = poseFactory.of(94.9311,20.5272, 180);
 
 //      private final Pose turneStart = poseFactory.of(26.23, 94.04, 180);
 
 //      private final Pose turne = poseFactory.of(37.9776, 91.0176, 180);
 
   //    private final Pose shootStart = poseFactory.of(16.6075, 93.8607, 180);
-        private final Pose shoot = poseFactory.of(9.73, 78.63, 0);
+        private final Pose  shoot = poseFactory.of(82.0592,17.5201, 0);
 
   //    private final Pose fimStart = poseFactory.of(9.7349, 78.6305, 0);
-        private final Pose fim = poseFactory.of(17.79, 129.45, 0);
+        private final Pose fim = poseFactory.of(128.380745,20.8196, 0);
 
         public Path START(){
             return line(torre,start).linear(torre,start);
