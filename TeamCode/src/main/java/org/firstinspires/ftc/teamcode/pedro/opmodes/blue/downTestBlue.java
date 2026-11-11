@@ -52,14 +52,14 @@ public class downTestBlue extends OpMode {
     private final Pose start =  poseFactory.of(91.0176, 37.9776, 270);
 
 //    private final Pose collectStart = poseFactory.of(93.86, 16.61, 270);
-    private  final Pose collect = poseFactory.of(91.9015,16.4284,270);
+    private  final Pose collect = poseFactory.of(91.9015,14.8245,270);
 
 //    private final  Pose turneStart = poseFactory .of(94.04,26.23,270);
 
-//    private final Pose turne = poseFactory.of(91.0176,37.9776,270);
+  private final Pose turne = poseFactory.of(91.0176,37.9776,270);
 
 //    private final Pose shootStart = poseFactory.of(93.8607, 16.6075, 270);
-   private final Pose  shoot = poseFactory.of(82.0592,17.5201,270);
+   private final Pose  shoot = poseFactory.of(82.0592,17.5201,90);
 
 //    private final Pose fimStart = poseFactory.of(78.6305, 9.7349, 90);
    private final Pose fim = poseFactory.of(128.380745,20.8196,90);
@@ -70,9 +70,10 @@ public class downTestBlue extends OpMode {
     public Path COLLECT(){
         return line(start,collect).linear(start,collect);
     }
+    public Path TURN(){return line(collect,turne).linear(collect,turne);}
 
     public Path SHOOT() {
-        return line(collect, shoot).linear(collect, shoot);
+        return line(turne, shoot).linear(turne, shoot);
     }
     public Path FIM(){
         return line(shoot,fim).linear(shoot, fim);
@@ -142,9 +143,9 @@ public class downTestBlue extends OpMode {
                         intake.intakePP()
                 ),
                         follow(follower, COLLECT()),
-                waitMs(1500),
+                waitMs(2000),
                 intake.intakestopPP(),
-
+                follow(follower, TURN()),
                 follow(follower,SHOOT()),
                         shooter.shootPP(),
                         follow(follower, FIM()),

@@ -48,22 +48,22 @@ import java.util.List;
 
         private Follower follower;
 
-        private final Pose torre = poseFactory.of(78.5051, 8.889, 0);
+        private final Pose torre = poseFactory.of(78.5051, 8.889, 90);
 
-        private final Pose start =  poseFactory.of(91.0176, 37.9776, 180);
+        private final Pose start =  poseFactory.of(91.0176, 37.9776, 270);
 
-  //    private final Pose collectStart = poseFactory.of(16.61, 93.86, 180);
-        private  final Pose collect = poseFactory.of(94.9311,20.5272, 180);
+        //    private final Pose collectStart = poseFactory.of(93.86, 16.61, 270);
+        private  final Pose collect = poseFactory.of(91.9015,14.8245,270);
 
-//      private final Pose turneStart = poseFactory.of(26.23, 94.04, 180);
+//    private final  Pose turneStart = poseFactory .of(94.04,26.23,270);
 
-//      private final Pose turne = poseFactory.of(37.9776, 91.0176, 180);
+        private final Pose turne = poseFactory.of(91.0176,37.9776,270);
 
-  //    private final Pose shootStart = poseFactory.of(16.6075, 93.8607, 180);
-        private final Pose  shoot = poseFactory.of(82.0592,17.5201, 0);
+        //    private final Pose shootStart = poseFactory.of(93.8607, 16.6075, 270);
+        private final Pose  shoot = poseFactory.of(82.0592,17.5201,90);
 
-  //    private final Pose fimStart = poseFactory.of(9.7349, 78.6305, 0);
-        private final Pose fim = poseFactory.of(128.380745,20.8196, 0);
+        //    private final Pose fimStart = poseFactory.of(78.6305, 9.7349, 90);
+        private final Pose fim = poseFactory.of(128.380745,20.8196,90);
 
         public Path START(){
             return line(torre,start).linear(torre,start);
@@ -71,9 +71,10 @@ import java.util.List;
         public Path COLLECT(){
             return line(start,collect).linear(start,collect);
         }
+        public Path TURN(){return line(collect,turne).linear(collect,turne);}
 
         public Path SHOOT() {
-            return line(collect, shoot).linear(collect, shoot);
+            return line(turne, shoot).linear(turne, shoot);
         }
         public Path FIM(){
             return line(shoot,fim).linear(shoot, fim);
@@ -89,16 +90,16 @@ import java.util.List;
             intake = new Intake(hardwareMap);
             shooter = new Shooter(hardwareMap, intake);
             agro = new Servos(hardwareMap);
-            turret = new Turret(hardwareMap, torre, Constants.Alliance.RED);
+            turret = new Turret(hardwareMap, torre, Constants.Alliance.BLUE);
 
-            zones = new Zones(ShooterConstants.ALVO_TPS)
-                    .addZone(50.96, 91.14, 105.14, 137.71, ShooterConstants.ALVO_TPS)
-                    .addZone(9.14, 50.96, 105.14, 137.71, ShooterConstants.ALVO_TPS_LADO)
-                    .addZone(91.14, 132.96, 105.14, 137.71, ShooterConstants.ALVO_TPS_LADO)
+            zones = new Zones(ShooterConstants.IDLE_TPS)
+                    .addZone(57.88,107.45,95.41,144.00, ShooterConstants.ALVO_TPS)
+                    .addZone(107.45,141.50,95.41,138.87, ShooterConstants.ALVO_TPS_LADO)
+                    .addZone(0.00, 57.88, 95.41, 144.00, ShooterConstants.ALVO_TPS_AWAY)
 
-                    .addZone(50.96, 91.14, 6.29, 38.86, ShooterConstants.ALVO_TPS)
-                    .addZone(9.14, 50.96, 6.29, 38.86, ShooterConstants.ALVO_TPS_LADO)
-                    .addZone(91.14, 132.96, 6.29, 38.86, ShooterConstants.ALVO_TPS_LADO);
+                    .addZone(57.88, 107.45, 0.00, 48.59, ShooterConstants.ALVO_TPS)
+                    .addZone(107.45, 141.50, 5.13, 48.59, ShooterConstants.ALVO_TPS_LADO)
+                    .addZone(0.00, 57.88, 0.00, 48.59, ShooterConstants.ALVO_TPS_AWAY);
 
             allHubs = hardwareMap.getAll(LynxModule.class);
             for (LynxModule hub : allHubs) {
@@ -109,6 +110,7 @@ import java.util.List;
         public void start() {
             shooterLigado = true;
             Scheduler.schedule(routine());
+            shooter.setLock(true);
         }
 
 
@@ -135,16 +137,16 @@ import java.util.List;
         public Command routine() {
             return parallel(
                     sequential(
-                            waitMs(5000),
+                            waitMs(4000),
                             shooter.shootPP(),
-                            follow(follower, START()),
                             parallel(
-                                    follow(follower, COLLECT()),
+                                    follow(follower, START()),
                                     intake.intakePP()
                             ),
-                            waitMs(1500),
+                            follow(follower, COLLECT()),
+                            waitMs(2000),
                             intake.intakestopPP(),
-
+                            follow(follower, TURN()),
                             follow(follower,SHOOT()),
                             shooter.shootPP(),
                             follow(follower, FIM()),
@@ -152,6 +154,7 @@ import java.util.List;
 
                     ), turret.autoaim(follower::pose));
         }
+
     }
 
 

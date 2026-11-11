@@ -73,7 +73,7 @@ public class Shooter {
     public void setLock(boolean locked) {
         isLocked = locked;
 
-        if (isLocked) {
+        if (!isLocked) {
             lock.setPosition(LOCKED_POS);
         } else {
             lock.setPosition(UNLOCKED_POS);
