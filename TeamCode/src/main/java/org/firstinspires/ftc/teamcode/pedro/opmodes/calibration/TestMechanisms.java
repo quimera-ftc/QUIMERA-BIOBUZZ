@@ -4,6 +4,7 @@ import static com.pedropathing.ivy.commands.Commands.instant;
 import static com.pedropathing.ivy.commands.Commands.waitMs;
 import static com.pedropathing.ivy.groups.Groups.sequential;
 
+import static org.firstinspires.ftc.teamcode.pedro.subsystems.FieldPose.topNestBLUE;
 import static org.firstinspires.ftc.teamcode.pedro.subsystems.subConstants.TurretConstants.CORRECTION_RATIO;
 import static org.firstinspires.ftc.teamcode.pedro.subsystems.subConstants.TurretConstants.MANUAL_POWER;
 
@@ -151,7 +152,7 @@ public class TestMechanisms extends OpMode {
         follower.update();
 
         Pose turretPose = TurretController.getTurretPose(currentPose);
-        double target = TurretController.computeTargetAngle(turretPose, TurretController.getTurretPose(turretPose));
+        double target = TurretController.computeTargetAngle(turretPose, turret.getTrackingPose());
 
         shooter.telemetriaTeste(telemetry); // TELEMETRIA PRA ANOTAR COISAS DE TESTE DO SHOOTER
         telemetry.addData("intake", "%s (potência %.2f)", intake.isOn() ? "LIGADO" : "DESLIGADO", intake.intake.getPower());
@@ -167,6 +168,7 @@ public class TestMechanisms extends OpMode {
         telemetry.addData("Turret X", turretPose.x());
         telemetry.addData("Turret Y", turretPose.y());
         telemetry.addData("target", target);
+        telemetry.addData("absolute heading", Math.toDegrees(currentPose.heading()) - turret.getRawAngle());
         telemetry.addData("correction", turret.getZeroTicks());
         telemetry.addData("deslocamento (Raw)", turret.getRawAngle());
         telemetry.addData("Erro Atual", turret.getDistanceToTarget());

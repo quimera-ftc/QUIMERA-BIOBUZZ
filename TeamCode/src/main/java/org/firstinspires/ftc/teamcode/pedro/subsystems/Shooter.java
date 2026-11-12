@@ -111,7 +111,7 @@ public class Shooter {
         return sequential(
                 instant(()-> setLock(false)),
                 instant(() -> intake.in(IntakeConstants.intakeShooting)),
-                waitMs(1000),
+                waitMs(1233),
                 instant(() -> intake.stop()),
                 instant(() -> setLock(true))
         );

@@ -44,9 +44,9 @@ public class autoTestNataa extends OpMode {
     List<LynxModule> allHubs;
 
     Pose startingPoint = poseFactory.of(86.06466512702079,134.1431469720298,0);
-    Pose collect1 = poseFactory.of(135.29337962962962, 130.47106481481478, 90);
-    Pose shoot2 = poseFactory.of(116.01981481481482, 20.932870370370395, 72);
-    Pose collect2 = poseFactory.of(100.94675925925927, 15.032638888888886, 250);
+    Pose collect1 = poseFactory.of(136.79337962962962, 130.47106481481478, 90);
+    Pose shoot2 = poseFactory.of(118.01981481481482, 22.932870370370395, 72);
+    Pose collect2 = poseFactory.of(103.64675925925927, 14.032638888888886, 260);
     Pose shoot3 = poseFactory.of(114.01981481481482, 17.932870370370395, 70);
     Pose collect3 = poseFactory.of(129.0388888888889, 97.13055555555556, 0);
     Pose shoot4 = poseFactory.of(104.5462962962963, 125.4074074074074, 300);
@@ -133,6 +133,7 @@ public class autoTestNataa extends OpMode {
                 sequential(
                         waitMs(2300),
                         shooter.shootPP(),
+                        instant(() -> shooter.setLock(true)),
                         parallel(
                                 follow(follower, START_TO_COLLECT1()),
                                 intake.intakeOnlyUse()
@@ -141,6 +142,7 @@ public class autoTestNataa extends OpMode {
                         intake.intakestopPP(),
                         follow(follower, COLLECT1_TO_SHOOT2()),
                         shooter.shootPP(),
+                        instant(() -> shooter.setLock(true)),
                         parallel(
                                 follow(follower, SHOOT2_TO_COLLECT2()),
                                 intake.intakePP()
@@ -149,6 +151,7 @@ public class autoTestNataa extends OpMode {
                         intake.intakestopPP(),
                         follow(follower, COLLECT2_TO_SHOOT3()),
                         shooter.shootPP(),
+                        instant(() -> shooter.setLock(true)),
                         parallel(
                                 follow(follower, SHOOT3_TO_COLLECT3()),
                                 intake.intakePP()
