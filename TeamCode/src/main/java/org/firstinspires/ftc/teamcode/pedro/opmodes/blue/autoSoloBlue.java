@@ -29,7 +29,7 @@ import org.firstinspires.ftc.teamcode.pedro.subsystems.subConstants.ShooterConst
 import java.util.List;
 
 @Autonomous(name="AUTO_BLUE_TOP", group="Blue")
-public class autoTestNataa extends OpMode {
+public class autoSoloBlue extends OpMode {
 
     boolean shooterLigado = false;
 

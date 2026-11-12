@@ -27,7 +27,7 @@ import org.firstinspires.ftc.teamcode.pedro.subsystems.subConstants.ShooterConst
 
 import java.util.List;
 @Autonomous(name="AUTO_BLUE_TOP_ALLIANCE", group="Blue")
-public class autoAllianceTest extends OpMode {
+public class autoAllianceBlue extends OpMode {
     boolean shooterLigado = false;
 
     Shooter shooter;
