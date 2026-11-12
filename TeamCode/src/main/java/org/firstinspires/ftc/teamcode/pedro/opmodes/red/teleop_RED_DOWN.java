@@ -29,7 +29,7 @@ public class teleop_RED_DOWN extends OpMode {
     Shooter shooter;
     Turret turret;
     VoltageCompensator voltageController;
-    Pose startPose = new Pose(132.12, 51.28, Math.toRadians(270)); //todo: corrigir pose
+    Pose startPose = new Pose(132.12, 51.28, Math.toRadians(0)); //todo: corrigir pose
     Follower follower;
     List<LynxModule> allHubs;
     Zones zones;
