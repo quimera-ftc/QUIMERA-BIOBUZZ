@@ -55,7 +55,7 @@ public class Shooter {
         lock = new ServoTaura(lockServo);
         flow = hardwareMap.get(CRServo.class, "cremalheira");
 
-        ls.setDirection(DcMotorEx.Direction.REVERSE);
+        ls.setDirection(DcMotorEx.Direction.FORWARD);
         rs.setDirection(DcMotorEx.Direction.FORWARD);
 
         ls.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
@@ -73,7 +73,7 @@ public class Shooter {
     public void setLock(boolean locked) {
         isLocked = locked;
 
-        if (isLocked) {
+        if (!isLocked) {
             lock.setPosition(LOCKED_POS);
         } else {
             lock.setPosition(UNLOCKED_POS);
@@ -111,13 +111,21 @@ public class Shooter {
         return sequential(
                 instant(()-> setLock(false)),
                 instant(() -> intake.in(IntakeConstants.intakeShooting)),
-                waitMs(1000),
-
-
-                instant(() -> intake.stop())
+                waitMs(1233),
+                instant(() -> intake.stop()),
+                instant(() -> setLock(true))
         );
     }
 
+    public Command shootPPMatesc() {
+        return sequential(
+                instant(()-> setLock(false)),
+                instant(() -> intake.in(IntakeConstants.intakeShooting)),
+                waitMs(913),
+                instant(() -> intake.stop()),
+                instant(() -> setLock(true))
+        );
+    }
     //metodo p shootar no telop
 
     public void stop() {

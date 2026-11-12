@@ -18,11 +18,11 @@ public class TurretConstants {
     public static double ticksPerDegree = ticksPerRev / 360.0;
     public static double maxPower = 1;
     public static double LIMIT_BUFFER = 90;
-    public static double TOLERANCE = 2.5;
-    public static volatile double kP = 0.051721222;
+    public static double TOLERANCE = 3;
+    public static volatile double kP = 0.049721222;
     public static volatile double kI = 0.0000;
     public static volatile double kD = 0.00321222;
-    public static volatile double kS = 0.25;
+    public static volatile double kS = 0.22;
     public static volatile double alpha = 0.45; // entre 0 - 1
     public static double kV = 3.927; // rad/s
     // --------- limelight -----------

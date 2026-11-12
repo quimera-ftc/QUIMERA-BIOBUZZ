@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.pedro.opmodes.blue;
+package org.firstinspires.ftc.teamcode.pedro.opmodes.red;
 
 import static com.pedropathing.api.Paths.curve;
 import static com.pedropathing.api.Paths.line;
@@ -28,8 +28,8 @@ import org.firstinspires.ftc.teamcode.pedro.subsystems.subConstants.ShooterConst
 
 import java.util.List;
 
-@Autonomous(name="AUTO_BLUE_TOP", group="Blue")
-public class autoTestNataa extends OpMode {
+@Autonomous(name="AUTO_RED_TOP", group="Red")
+public class autoSoloRed extends OpMode {
 
     boolean shooterLigado = false;
 
@@ -37,16 +37,16 @@ public class autoTestNataa extends OpMode {
     Intake intake;
     Servos servo;
     Turret turret;
-    PoseFactory poseFactory = PoseFactory.degrees();
+    PoseFactory poseFactory = PoseFactory.degrees().mirrorY(70.75).mirrorX(70.75);
     private Follower follower;
     Zones zones;
     Pose currentPoseLocal;
     List<LynxModule> allHubs;
 
     Pose startingPoint = poseFactory.of(86.06466512702079,134.1431469720298,0);
-    Pose collect1 = poseFactory.of(126.97337962962962, 134.87106481481478, 0);
-    Pose shoot2 = poseFactory.of(114.01981481481482, 17.932870370370395, 72);
-    Pose collect2 = poseFactory.of(99.44675925925927, 13.832638888888886, 250);
+    Pose collect1 = poseFactory.of(136.79337962962962, 130.47106481481478, 90);
+    Pose shoot2 = poseFactory.of(118.01981481481482, 22.932870370370395, 72);
+    Pose collect2 = poseFactory.of(103.64675925925927, 14.032638888888886, 260);
     Pose shoot3 = poseFactory.of(114.01981481481482, 17.932870370370395, 70);
     Pose collect3 = poseFactory.of(129.0388888888889, 97.13055555555556, 0);
     Pose shoot4 = poseFactory.of(104.5462962962963, 125.4074074074074, 300);
@@ -54,7 +54,7 @@ public class autoTestNataa extends OpMode {
 
 
     public Path START_TO_COLLECT1() {
-        return line(startingPoint, collect1).linear(startingPoint, collect1);
+        return curve(startingPoint, poseFactory.of(135.94, 96.9, 0),collect1).linear(startingPoint, collect1);
     }
     public Path COLLECT1_TO_SHOOT2() {
         return line(collect1, shoot2).linear(collect1, shoot2);
@@ -131,7 +131,7 @@ public class autoTestNataa extends OpMode {
     public Command routine() {
         return parallel(
                 sequential(
-                        waitMs(1000),
+                        waitMs(2300),
                         shooter.shootPP(),
                         instant(() -> shooter.setLock(true)),
                         parallel(
@@ -160,7 +160,6 @@ public class autoTestNataa extends OpMode {
                         intake.intakestopPP(),
                         follow(follower, COLLECT3_TO_SHOOT4()),
                         shooter.shootPP(),
-                        instant(() -> shooter.setLock(true)),
                         follow(follower, SHOOT4_TO_PARK()),
                         instant(() -> shooterLigado = false)
                 ),
@@ -170,3 +169,4 @@ public class autoTestNataa extends OpMode {
 
     }
 }
+
