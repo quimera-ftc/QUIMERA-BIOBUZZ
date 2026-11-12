@@ -1,8 +1,10 @@
 package org.firstinspires.ftc.teamcode.pedro.opmodes.blue;
 
+import static org.firstinspires.ftc.teamcode.pedro.subsystems.subConstants.TurretConstants.CORRECTION_RATIO;
 import static org.firstinspires.ftc.teamcode.pedro.subsystems.subConstants.TurretConstants.MANUAL_POWER;
 
 import com.pedropathing.follower.Follower;
+import com.pedropathing.ivy.Scheduler;
 import com.pedropathing.math.Pose;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
@@ -70,6 +72,8 @@ public class teleop_BLUE_DOWN extends OpMode {
 
     @Override
     public void loop() {
+        follower.update();
+        Scheduler.execute();
         for (LynxModule hub : allHubs) {
             hub.clearBulkCache();
         }
@@ -78,26 +82,45 @@ public class teleop_BLUE_DOWN extends OpMode {
         turret.update(currentPose);
 
         if (gamepad1.aWasPressed()) {
-            double coef = shooter.isShooting
-                    ? IntakeConstants.intakeShooting
-                    : IntakeConstants.intakeCollecting;
+            if (!shooter.nectar) {
+                if (shooter.isShooting) {
+                    intake.toggle(IntakeConstants.intakeShooting);
+                } else {
+                    intake.toggle(IntakeConstants.intakeCollecting);
+                }
+            } else {
+                intake.toggle(IntakeConstants.intakeBIGBALL);
+            }
 
-            intake.toggle(coef);
+
         }
 
         if (gamepad1.yWasPressed()) {
             intake.toggleReversed(IntakeConstants.intakeCollecting);
         }
 
-
-        if (gamepad1.right_trigger > 0.5) {
-            shooter.setAlvo(zones.getTPS(currentPose.x(), currentPose.y()));
-
-        } else {
-            shooter.setAlvo(0);
+        if (gamepad1.bWasPressed()) {
+            shooter.shootNectar(!shooter.nectar);
 
         }
 
+        if (gamepad1.xWasPressed()) {
+            intake.collectFlower(!intake.flower);
+        }
+
+        if (gamepad1.right_trigger > 0.5) {
+            if (!shooter.nectar) {
+                shooter.setAlvo(zones.getTPS(currentPose.x(), currentPose.y()));
+                shooter.setLock(false);
+            } else {
+                shooter.setAlvo(ShooterConstants.ALVO_TPS_BIGBALL);
+                shooter.setLock(false);
+            }
+        } else {
+            shooter.setAlvo(0);
+            shooter.setLock(true);
+
+        }
 
         if (gamepad1.right_bumper) {
             turret.setManualPower(MANUAL_POWER);
@@ -105,20 +128,21 @@ public class teleop_BLUE_DOWN extends OpMode {
             turret.setManualPower(-MANUAL_POWER);
         } else turret.setManualPower(0);
 
-        if (gamepad1.dpadRightWasPressed()) {
-
+        if (gamepad1.dpadDownWasPressed()) {
             if (turret.getMode() == Turret.Mode.MANUAL) {
                 turret.setMode(Turret.Mode.TRACKING);
             } else turret.setMode(Turret.Mode.MANUAL);
-
         }
 
-        follower.update();
-        driveTrain.driveStick();
-        shooter.update();
-        intake.update();
+        if (gamepad1.dpad_right) {
+            turret.correct(CORRECTION_RATIO);
+        } else if (gamepad1.dpad_left) {
+            turret.correct(-CORRECTION_RATIO);
+        }
 
-        telemetry.update();
+        shooter.update();
+        driveTrain.driveStick();
+        intake.update();
     }
 
 

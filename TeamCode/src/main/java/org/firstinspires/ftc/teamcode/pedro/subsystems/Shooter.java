@@ -55,7 +55,7 @@ public class Shooter {
         lock = new ServoTaura(lockServo);
         flow = hardwareMap.get(CRServo.class, "cremalheira");
 
-        ls.setDirection(DcMotorEx.Direction.FORWARD);
+        ls.setDirection(DcMotorEx.Direction.REVERSE );
         rs.setDirection(DcMotorEx.Direction.FORWARD);
 
         ls.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);

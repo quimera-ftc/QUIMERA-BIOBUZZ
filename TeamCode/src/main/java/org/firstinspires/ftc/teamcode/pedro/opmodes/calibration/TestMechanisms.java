@@ -79,6 +79,7 @@ public class TestMechanisms extends OpMode {
 
     @Override
     public void loop() {
+        follower.update();
         Scheduler.execute();
         for (LynxModule hub : allHubs) {
             hub.clearBulkCache();
@@ -149,7 +150,7 @@ public class TestMechanisms extends OpMode {
         shooter.update();
         driveTrain.driveStick();
         intake.update();
-        follower.update();
+
 
         Pose turretPose = TurretController.getTurretPose(currentPose);
         double target = TurretController.computeTargetAngle(turretPose, turret.getTrackingPose());
